@@ -1,0 +1,143 @@
+
+/**
+ * (c) 2005-2009 Sxoop Technologies Ltd.
+ * 
+ * For support email support@sxoop.com
+ *
+ * Sample Slick stylesheet
+ * This stylesheet is used by the sample slick editor
+ */
+
+* { 
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+	 padding: 0px;
+	 margin: 0px;
+}
+form {
+    padding: 0px;
+    margin: 0px;
+}
+a {
+    text-decoration: underline;
+}
+h1 {
+    font-size: 140%;
+}
+
+table.infotable td {
+    color: #aaaaaa;
+    padding-right: 12px;
+}
+
+.infolabel{
+    color: #999999;
+    font-weight: bold;
+}
+
+#left_pane {
+    position: absolute;
+    top: 64px;
+    left: 0px;
+    width: 215px;
+}
+
+table.toolstable td {
+    padding: 2px;
+}
+/*
+ * Bookmarklet links appear in the help section and should
+ * look different to regular bookmarklets.
+ * I'm not sure how you make something look 'draggable' - this is my best effort.
+ */
+
+.bookmarklet {
+    display: block;
+    color: black;
+    text-decoration: none;
+    border: 1px dashed black;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+#banner {
+    position: absolute; 
+    top: 0px; 
+    left: 224px;
+}
+
+#content {
+    position: relative; 
+    top:  8px; 
+    left: 8px
+              }
+
+#filename {
+    width: 200px;
+    background-color: transparent;
+}
+#canvas_container {
+    position:absolute; 
+    top: 96px;  
+    left:224px;
+}
+
+#google_ads {
+	clear: left;  
+	margin-top: 8px; 
+	padding-top: 10px; 
+	padding-left: 0px; 	
+	
+	width: 740px; height: 100px;
+}
+
+#font { width: 144px;}
+#bubbles_table img { cursor: pointer ; }
+#bubbles_table img:hover { background-color: steelblue; }
+
+/*
+ * =============================================================================
+ *
+ * STANDARD PXN8 ELEMENT STYLES GO HERE.
+ *
+ * =============================================================================
+ */
+
+/*
+ *  The canvas element is where the image will be displayed
+ */
+#pxn8_canvas 
+{
+    position: relative;
+	 margin-bottom: 12px;
+	 float: left; 
+
+    top:0px; 
+    left: 0px;
+    /* setting width to zero fixes IE bug (float left is not enough) */
+
+	 width: 0px;
+
+}
+/*
+ * The image_container appears within the canvas
+ */
+#pxn8_image_container 
+{
+    /* height must be specified for fade to work in IE */
+    height: 100%;
+}
+
+
+#pxn8_config_title 
+{
+    padding-bottom: 4px;
+    padding-top: 4px;
+    border-bottom: 2px solid #a0a0a0;
+    margin-bottom: 4px;
+}
+
+

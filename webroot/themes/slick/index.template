@@ -1,0 +1,1099 @@
+[%!include "prehtml.template";%]<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" CONTENT="text/html; charset=iso-8859-1"/>
+
+[% if ($pg->{target} eq "website") { %]
+
+   <!-- 
+         (c) Copyright SXOOP Technology 2005-2009
+         All rights reserved.
+   -->
+   <title>Pixenate - Edit photos online, fast and easily - No plugins required.</title>
+   <meta name="keywords" content="edit photos Online photo editor"/>
+   <meta name="subject" content="Online Photo editing"/>
+   <meta name="description" content="Online Photo editing"/>
+   <meta name="verify-v1" content="7cD8fmV34rUBTHhvakuiKUnt1+gRGCNHC5RJ0QJ14hU=" />
+   <link media="screen" rel="stylesheet" href="/pixenate/__all.css" type="text/css"/>
+
+	<!-- wph 20090227 jquery stuff for merchandise dialog -->
+	<link type="text/css" rel="stylesheet"	href="http://sxoop.com/twitter/uijquery/theme/ui.all.css" />
+	<script type="text/javascript" src="http://sxoop.com/twitter/jquery-1.3.1.min.js"></script>
+	<script type="text/javascript" src="http://sxoop.com/twitter/uijquery/jquery-ui-personalized-1.6rc6.min.js"></script>
+
+
+   <script src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>
+   <script type="text/javascript" src="/pixenate/__all.js"></script>
+<!--
+   <script type="text/javascript" src="/ec2/balance.pl"></script>
+-->
+   [% if ($pg->{country} ne "en") { %]
+   <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_[%print $pg->{country};%].js"></script>
+   [% } %]
+   <script type="text/javascript" src="/pixenate/javascript/pxn8_fonts.js"></script>
+
+   <!-- google analytics -->
+   <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+   <script type="text/javascript">
+   _uacct = "UA-1099286-1";
+   urchinTracker();
+   </script>
+   <!-- replaceOnSave can be set to false for pixenate.com -->
+   <script type="text/javascript"> PXN8.replaceOnSave = false; </script>
+   <!-- Embedded Styles -->
+   <style type="text/css">
+   #sourceoptions { display: none;margin-top: 4px; background: #efefef url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat;}
+   #tool_palette { margin-top: 4px; padding: 4px; background: #e0e0e0 url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat; }
+   #save_palette { margin-top: 4px; padding: 4px; background: #efefef url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat; }
+   #google_ads { background: #efefef url(/pixenate/themes/slick/images/topcorners736.gif) top left no-repeat; }
+   #text_config label { float: left; display: block; width: 5em;}
+   #banner {padding: 4px 8px 4px 8px; border-left: 6px solid #e8e8e8; height: 84px; background: #f4f4f4 ;}
+   #banner p , #banner a { font-size: 13px; }
+   #testimonial {padding: 4px 24px 0px 24px; font-size: 12px; height: 56px; background: url(/pxn8store/quotes.jpg) no-repeat;}
+   #who { text-align: right; }
+   #prodinfolink {    font-size: 12px !important;font-weight: bold;}
+   div.button { width: 44px; height: 44px; background-image:url(/pixenate/themes/shared/images/sprite2009.png);  cursor: pointer; }
+   .sprite { background-image: url(/pixenate/themes/shared/images/sprite2009.png); }
+   button { border-width: 1px; padding: 0px; cursor: pointer; margin: 4px;}
+   select { border-width: 1px;}
+   option { padding: 0px 8px;}
+   </style>
+
+[% } else { %]
+
+   <title>YOUR TITLE HERE</title>
+   <link media="screen" rel="stylesheet" href="../../styles/pxn8_tooltips.css" type="text/css"/>
+   <link media="screen" rel="stylesheet" href="../../styles/pxn8_fields.css" type="text/css"/>
+   <link media="screen" rel="stylesheet" href="../../styles/pxn8_core.css" type="text/css"/>
+   <link media="screen" rel="stylesheet" href="../../styles/pxn8_colors.css" type="text/css"/>
+   <link media="screen" title="" rel="stylesheet" href="./slick.css" type="text/css"/>
+
+   [% if ($pg->{target} eq "hosted") { %]
+
+      <script type="text/javascript" src="http://pixenate.com/h/js"></script>
+      <!-- obtain a list of fonts -->
+      <script type="text/javascript" src="http://pixenate.com/pixenate/javascript/pxn8_fonts.js"></script>
+
+   [% }else{ %]
+
+      <script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+      <script type="text/javascript" src="../../javascript/pxn8_strings_[%print $pg->{country};%].js"></script>
+      <script type="text/javascript" src="../../javascript/pxn8_fonts.js"></script>
+
+   [% } %]
+
+   <script type="text/javascript" src="../shared/javascript/tooltips.js"></script>
+   <script type="text/javascript" src="../shared/javascript/tools_ui.js"></script>
+   <script type="text/javascript" src="../shared/javascript/imagemagick.js"></script>
+   <script type="text/javascript" src="./slick.js"></script>
+   <script type="text/javascript" src="./text.js"></script>
+   <script type="text/javascript" src="./clipart.js"></script>
+   <script type="text/javascript" src="./valentine.js"></script>
+   <!-- Embedded Styles -->
+   <style type="text/css">
+   #sourceoptions { display: none;margin-top: 4px; background: #efefef url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat;}
+   #tool_palette { margin-top: 4px; padding: 4px; background: #e0e0e0 url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat; }
+   #save_palette { margin-top: 4px; padding: 4px; background: #efefef url(/pixenate/themes/slick/images/topcorners.gif) top left no-repeat; }
+   #google_ads { background: #efefef url(/pixenate/themes/slick/images/topcorners736.gif) top left no-repeat; }
+   #text_config label { float: left; display: block; width: 5em;}
+   div.button { width: 44px; height: 44px; background-image:url(../shared/images/sprite2009.png);  cursor: pointer; }
+   .sprite { background-image: url(../shared/images/sprite2009.png); }
+   button { border-width: 1px; padding: 0px; cursor: pointer; margin: 4px;}
+   select { border-width: 1px;}
+   option { padding: 0px 8px;}
+   </style>
+
+[% } %]
+	
+	<script type="text/javascript" src="/pixenate/javascript/3rdparty/raphael-uncompressed.js"></script>
+
+</head>
+<body>          
+[%!include "body_inc.template";%]
+<div id="content">
+
+[% if ($pg->{target} eq "website") { %]
+   <div class="sprite" style="width: 200px; height: 60px; background-position: 200px 422px"></div>
+[% }else{ %]
+   <div style="height: 60px; width: 215px; text-align: center; font-weight: bold; color: white; background-color: steelblue;">Your 215 x 60 Logo Here</div>
+[% } %]
+
+[% if ($pg->{target} eq "website") { %]
+   <div id="banner">
+     <table>
+       <tr>
+         <td width="220" valign="top" style="font-size: 12px;border-right: 1px solid #ccc;">
+           Pixenate is the photo editor of choice for photo printing and photo sharing businesses. <br/>
+           <a id="prodinfolink" href="/productinfo/">Click here</a> to find out how Pixenate can enhance your photo website.
+         </td>
+         <td width="430" valign="top"><div id="testimonial"><span style="font-size: 12px;"></span></div><div id="who"></div></td>
+       </tr>
+     </table>
+     <script type="text/javascript" src="pixenate/themes/slick/testimonials.js"></script>
+   </div> <!-- end of banner -->
+[% } %]
+
+[%
+   my $y = "../..";
+   if ($pg->{target} eq "website"){
+      $y = "/pixenate";
+   }
+%]
+<!-- y is [%print $y;%] -->
+<div id="left_pane">
+  <table cellpadding="0" cellspacing="0" border="0" class="lefttable">
+    <tr>
+      <td> 
+        <div id="image_source" style="line-height: 14px;">
+          1. <a href="javascript:void(0);" onclick="return toggleVisibility(this,'sourceoptions');">[%if ($pg->{country} eq "en"){%]Choose your image to edit.[%}%][%if ($pg->{country} eq "es"){%]Elija su foto para editar[%}%]</a>
+          <div id="sourceoptions" style="display: none;"><!-- display: none; must be inline style for toggleVisibility() to work -->
+            <div id="paddedsourceoptions" style="padding-left: 8px; padding-top:8px;">
+              [%if ($pg->{country} eq "en"){%]Use an image stored on your computer or camera.<p style="font-size: 10px; color: #888888;">(make sure your camera is connected and turned on.)</p>[%}%]
+              [%if ($pg->{country} eq "es"){%]Elija una foto de su ordenador o cámara.<p style="font-size: 10px; color: #888888;">(cerciorese de que la cámara este conectada y enchufada.)</p>[%}%]
+              [%if ($pg->{target} eq "hosted" or $pg->{target} eq "website"){ %]
+              <form action="http://pixenate.com/pixenate/upload.pl" method="POST" enctype="multipart/form-data" onsubmit="return submit_upload_form(this);">
+                [%}else{%]
+              <form action="[%print $y;%]/upload.pl" method="POST" enctype="multipart/form-data" onsubmit="return submit_upload_form(this);">
+                  [%}%]
+                  <input type="hidden" name="pxn8_root" value=""/>
+                  <input type="hidden" name="next_page" value=""/>
+                  <!-- resize images which are too big on upload to disable this feature remove the following line of code.. -->
+                  <input type="hidden" name="max_dim" value="1280"/>
+                  <input type="hidden" name="image_param_name" value="image" />
+                  <input class="pxn8_has_tooltip" type="file" name="filename" id="filename" >
+                  <input style="margin-top: 4px;" 
+                         onmouseover="PXN8.tooltip.show(this,'filename');" 
+                         onmouseout="PXN8.tooltip.hide(this,'filename');" 
+                         type="submit" 
+                         onclick="PXN8.tooltip.hide(this,'filename');PXN8.prepareForSubmit('Uploading Image. Please wait...');"
+                  [%if ($pg->{country} eq "en"){ %]value="Upload this image." [%}%]
+                  [%if ($pg->{country} eq "es"){ %]value="Subir esta foto." [%}%]
+                  />
+              </form>
+[%
+
+  if ($pg->{target} eq "website")
+  {
+
+%]
+              <div style="margin-top: 8px; padding: 4px; border-top: 2px solid #cccccc;">
+                <p>Facebook users click the blue button to let Pixenate edit your facebook photos from the comfort of Facebook.com</p>
+                <a href="http://www.facebook.com/login.php?api_key=48e7ececbcfd374d131bbb81cc8677ad&v=1.0">
+                  <!--
+                  <img src="http://static.ak.facebook.com/images/devsite/facebook_login.gif"/>
+                  -->
+                  <div class="button" style="width: 109px; height: 24px;background-position: 308px 112px;"></div>
+                </a>
+              </div>
+[%
+
+  } # endif target eq "website"
+
+%]
+              <div style="margin-top: 8px; padding: 4px; border-top: 2px solid #cccccc;">
+                [%if ($pg->{country} eq "en"){%] Or <a href="javascript:void(0)" onclick="return loadImageFromPrompt();">enter the web address of an image</a>[%}%]
+                [%if ($pg->{country} eq "es"){%] o <a href="javascript:void(0)" onclick="return loadImageFromPrompt();">indique la direcci&oacute;n web de una foto</a>[%}%]
+              </div>
+[% 
+
+ if ($pg->{target} eq "website") 
+ { 
+
+%]
+      [%if ($pg->{country} eq "en"){%]You can edit any image on the web using this bookmarklet...[%}%]
+      [%if ($pg->{country} eq "es"){%]Puede editar cualquier foto en la web usando este bookmarklet...[%}%]
+              <script type="text/javascript">
+                function bookmarklet_warning(){
+                var warning = "You must first drag and drop this link onto the browser's links toolbar.\n" +
+                "(Internet Explorer users: right click and select 'Add to Favourites'; Create in 'Links')\n" +
+                "To use this bookmarklet, Visit a web page with images and click the 'Import to Pixenate' button in your browser's toolbar";
+                alert(warning);
+                return false;
+                }
+              </script>
+              <a class="bookmarklet" title="Import to Pixenate"   
+                 onclick="return bookmarklet_warning();" 
+                 href="javascript:try{void(d=document);void(h=d.getElementsByTagName('head')[0]);void((s=d.createElement('script')).setAttribute('src','http://pixenate.com/bookmarklet.js'));void(h.appendChild(s));}catch(e){void(window.location.href='http://pixenate.com/index.php?image='+escape(window.location.href));}">Import to Pixenate</a>
+<p>
+              Drag and drop the bookmarklet onto your
+                 browser's <b>Links</b> toolbar. Now when you're
+                 viewing a web page with photos, you can edit any
+                 photo by clicking the 'Import to Pixenate' button in
+                 your 'Links' toolbar. 
+</p>
+<p>
+              We have some <a href="/bookmarklets.html"
+              target="_blank">more bookmarklets</a> to make editing
+              photos easier.
+</p>
+                <p style="font-weight: bold;">Please respect copyright law. Ensure that you have the permission of the photo's owner before editing photos which are not your own!</p>
+[%
+  } # end if target eq "website"
+%]
+            </div> <!-- end of paddedsourceoptions -->
+          </div> <!-- end of source_options -->
+        </div> <!-- end of image_source -->
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="tools">
+          [%if ($pg->{country} eq "en"){%]2. Edit your image with the following tools.[%}%]
+          [%if ($pg->{country} eq "es"){%]2. Edite su foto con las siguientes herramientas[%}%]
+[%
+   my $x = "..";
+   if ($pg->{target} eq "website"){
+      $x = "/pixenate/themes";
+   }
+   my $icon_suffix = ".png";
+   #my $icon_path = "";
+   my $icon_path = "/ideogramme/";
+
+%]
+<!-- x is [%print $x;%] -->
+<!-- 
+ ======================================================================
+ TOOL PALETTE
+ ======================================================================
+-->    
+<div id="tool_palette" >
+  <div id="all_tools">
+    <table class="toolstable" id="tool_table">
+      
+      <tr>
+        <td><div id="undo" title="Undo last operation" class="button pxn8_has_tooltip" style="background-position: 176px 352px;"></div></td>
+        <td><div id="redo" title="Redo last operation" class="button pxn8_has_tooltip" style="background-position: 132px 352px;"></div></td>
+        <td><div id="selectall" title="Select entire photo" class="button pxn8_has_tooltip" style="background-position: 88px 352px;"></div></td>
+        <td><div id="selectnone" title="Select none" class="button pxn8_has_tooltip" style="background-position: 44px 352px;"></div></td>
+      </tr>
+      <tr>
+        <td><div id="zoomin" title="Zoom In" class="button pxn8_has_tooltip" style="background-position: 176px 308px;"></div></td>
+        <td><div id="zoomout" title="Zoom Out" class="button pxn8_has_tooltip" style="background-position: 132px 308px;"></div></td>
+        <td><div id="crop" title="Crop Photo" class="button pxn8_has_tooltip" style="background-position: 88px 308px;"></div></td>
+        <td><div id="resize" title="Resize Photo" class="button pxn8_has_tooltip" style="background-position: 44px 308px;"></div></td>
+      </tr>
+      <tr>
+        <td><div id="fliphorizontally" title="Flip Horizontally" class="button pxn8_has_tooltip" style="background-position: 176px 264px;"></div></td>
+        <td><div id="flipvertically" title="Flip Vertically" class="button pxn8_has_tooltip" style="background-position: 132px 264px;"></div></td>
+        <td><div id="rotateccw" title="Rotate Counter-Clockwise" class="button pxn8_has_tooltip" style="background-position: 88px 264px;"></div></td>
+        <td><div id="rotate" title="Rotate Clockwise" class="button pxn8_has_tooltip" style="background-position: 44px 264px;"></div></td>
+      </tr>
+      <tr>
+        <td><div id="normalize" title="Improve Color Balance" class="button pxn8_has_tooltip" style="background-position: 176px 220px;"><div></td>
+        <td><div id="enhance" title="Smooth Photo" class="button pxn8_has_tooltip" style="background-position: 132px 220px;"></div></td>
+        <td><div id="fill_flash" title="Brighten Photo" class="button pxn8_has_tooltip" style="background-position: 88px 220px;"></div></td>
+        <td><div id="spiritlevel" title="Straighten Horizon" class="button pxn8_has_tooltip" style="background-position: 44px 220px;"></div></td>
+      </tr>
+      <tr>
+        <td><div id="redeye" title="Remove Red-Eye" class="button pxn8_has_tooltip" style="background-position: 176px 176px;"></div></td>
+        <td><div id="whiten" title="Whiten Teeth" class="button pxn8_has_tooltip" style="background-position: 132px 176px;"></div></td>
+        <td><div id="bsh" title="Change Brightness, Saturation, Hue and Contrast" class="button pxn8_has_tooltip" style="background-position: 44px 176px;"></div></td>
+        <td><div id="freehand" title="Draw lines and shapes on top of the photo" class="button pxn8_has_tooltip" 
+[% if ($pg->{target} eq "website") { %]
+      style="background-position: 88px 0px;"
+[% }else{ %]
+      style="background-position: 44px 0px;"
+[% } %]
+          ></div></td>
+      </tr>
+    </table>
+
+    <a href="#show_or_hide_fun_effects" class="collapsed" onclick="return toggleVisibility(this,'fun_effects',{show: 'Show fun effects', hide: 'Hide fun effects'});">Show fun effects</a>
+    <div style="display:none;" id="fun_effects">
+      <table class="toolstable">
+        <tr>
+          <td><div id="lomo" title="Add Lomo Effect" class="button pxn8_has_tooltip" style="background-position: 176px 132px;"></div></td>
+          <td><div id="addtext" title="Add Text to Photo" class="button pxn8_has_tooltip" style="background-position: 132px 132px;"></div></td>
+          <td><div id="filter" title="Add Lens Filter effect" class="button pxn8_has_tooltip" style="background-position: 88px 132px;"></div></td>
+          <td><div id="roundedcorners" title="Add Rounded Corners" class="button pxn8_has_tooltip" style="background-position: 44px 132px;"></div></td>
+        </tr>
+        <tr>
+          <td><div id="oilpainting" title="Turn Photo into an Oil Painting" class="button pxn8_has_tooltip" style="background-position: 176px 88px;"></div></td>
+          <td><div id="bubbles" title="Add Speech Bubbles" class="button pxn8_has_tooltip" style="background-position: 132px 88px;"></div></td>
+          <td><div id="interlace" title="Add TV/Interlace effect" class="button pxn8_has_tooltip" style="background-position: 88px 88px;"></div></td>
+          <td><div id="heart" title="Create heart-shaped cut-out" class="button pxn8_has_tooltip" style="background-position: 44px 88px;"></div></td>
+        </tr>
+        <tr>
+          <td><div id="snow" title="Add Snowflakes" class="button pxn8_has_tooltip" style="background-position: 176px 44px;"></div></td>
+          <td><div id="clipart" title="Add Clip-Art" class="button pxn8_has_tooltip" style="background-position: 132px 44px;"></div></td>
+          <td><div id="popart" title="Create Pop-Art Poster" class="button pxn8_has_tooltip" style="background-position: 88px 44px;"></div></td>
+			 <td><div id="sepia" title="Sepia-Tone photo" class="button pxn8_has_tooltip" style="background-position: 88px 176px;"></div></td>
+			 <!--
+          <td><div id="polaroid" title="Turn Photo into Polaroid" class="button pxn8_has_tooltip" style="background-position: 44px 44px;"></div></td>
+			 -->
+        </tr>
+
+[% ;
+#
+#   Pencil Sketch is an expensive Operation
+#
+#       <tr>
+#         <td><a id="sketch" title="Pencil Sketch"  class="pxn8_has_tooltip"><img src="/shared/images/" border="0" alt="Pencil Sketch"/></a></td>
+#         <td>&nbsp;</td>
+#         <td>&nbsp;</td>
+#         <td>&nbsp;</td>
+#       </tr>
+#
+
+;%]
+    </table>
+      
+  </div> <!-- end fun_effects -->
+    
+</div> <!-- end all_tools -->
+  
+<!-- 
+ ======================================================================
+ TOOL CONFIGURATION PANEL
+ ======================================================================
+-->    
+<div id="pxn8_config_area" class="panel" style="display: none;">
+  <div id="pxn8_config_title"></div>
+  <div id="pxn8_config_content"></div>
+  <!-- centers the preview pane in IE -->   
+  <div style="text-align: center;"><!-- VERY IMPORTANT that the preview pane's width & height are inline rather than declared elsewhere -->
+    <div id="pxn8_preview" style="overflow: hidden; text-align: right; margin-right: auto; margin-left: auto; width: 144px; height: 144px; display: none;"></div> 
+  </div>
+  <div class="pxn8_config_buttons" align="right">
+    <button id="pxn8_apply" style="">Apply</button>
+    <button id="pxn8_cancel" onclick="toggleConfigVisibility(false); return false;" >Cancel</button>
+  </div>
+  <div id="pxn8_tool_prompt">&nbsp;</div>
+</div> <!-- end pxn8_config_area -->
+
+<!-- 
+ ========================================================================
+ BUBBLE CONFIGURATION PANEL 
+ ========================================================================
+-->
+
+<div id="bubble_config" class="panel" style="display: none;">
+  <h3>Add Speech Bubbles</h3>
+  <h4>Choose a bubble type...</h4>
+  <p>Click on any of the bubbles below and a bubble of that type will appear on the photo. You can drag and resize the bubble using the mouse.</p>
+  <table id="bubbles_table">
+    <tr>
+      <td><div class="button" style="width: 85px; height: 57px; background-position: 308px 264px;" onclick="change_bubble('speech','right')"></div></td>
+      <td><div class="button" style="width: 85px; height: 57px; background-position: 308px 352px;" onclick="change_bubble('speech','left')"></div></td>
+    </tr>
+    <tr>
+      <td><div class="button" style="width: 85px; height: 57px; background-position: 308px 440px;" onclick="change_bubble('thought','right')"></div></td>
+      <td><div class="button" style="width: 85px; height: 57px; background-position: 308px 528px;" onclick="change_bubble('thought','left')"></div></td>
+    </tr>
+  </table>
+  <form onsubmit="return false;">
+	 <label for="bubble_text_size">Text Size:</label>
+	 <select name="bubble_text_size" id="bubble_text_size">
+		<option value="12">12 pt</option>
+		<option value="14" selected="selected">14 pt</option>
+		<option value="18">16 pt</option>
+		<option value="22">22 pt</option>
+	 </select>
+	   <p>Type the text you would like to appear in the speech bubble...</p>
+    <textarea name="bubble_text" id="bubble_text" rows="3" cols="25">Add Your Text Here.</textarea>
+    <br />
+    <button onclick="PXN8.tools.undo();return false;">Undo</button>
+    <button onclick="add_bubble_to_photo();return false;">Apply</button>
+    <button onclick="hide_bubble_config();return false;">Done</button>
+  </form>
+</div><!-- end of bubble_config -->
+
+<!-- 
+ ========================================================================
+ crop markup 
+ ========================================================================
+-->
+<div id="crop_config" class="panel" style="display: none;">
+  <h3>Configure Crop Tool</h3>
+  <table>
+    <tr>
+      <td>Aspect ratio: </td>
+      <td>
+        <select id="aspect_ratio" name="aspect_ratio" onchange="PXN8.selectByRatio(this.value);">
+          <option value="free" selected="selected">free select</option>
+          <option value="1x1">Square</option>
+          <option value="1x1.618">Golden Ratio</option>
+          <option value="4x6">4x6</option>
+          <option value="5x7">5x7</option>
+          <option value="8x10">8x10</option>
+          <option value="6x8">6x8</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><button onclick="PXN8.tools.preview_crop();">Preview</button></td>
+	 </tr>
+	 <tr>
+		<td colspan="2"><button onclick="PXN8.rotateSelection()">Rotate selection</button></td>
+    </tr>
+    <tr>
+      <td>Width:</td>
+      <td><input onchange="slick_dimchange_crop()"
+      id="slick_crop_width" type="text" class="pxn8_small_field" value="0"/></td>
+    </tr>
+    <tr>
+      <td>Height:</td>
+      <td><input onchange="slick_dimchange_crop()"
+      id="slick_crop_height" type="text" class="pxn8_small_field" value="0"/></td>
+    </tr>
+  </table>
+  <div align="right">
+    <button onclick="slick_apply_crop()">Apply</button>
+    <button onclick="slick_cleanup_crop();">Cancel</button>
+  </div>
+</div>
+
+<!-- crop javascript -->
+<script type="text/javascript">
+/**
+ * Called when the user clicks the crop icon
+ */
+function slick_setup_crop()
+{
+    document.getElementById("all_tools").style.display="none";
+    document.getElementById("crop_config").style.display = "block";
+
+    slick_setup_crop.old_selection = PXN8.getSelection();
+    PXN8.listener.add(PXN8.ON_SELECTION_CHANGE, slick_selchange_crop);
+}
+function slick_dimchange_crop()
+{
+    var w = document.getElementById("slick_crop_width").value;
+    var h = document.getElementById("slick_crop_height").value;
+    if (isNaN(w) || isNaN(h) || w < 0 || h < 0){
+        return;
+    }
+    var sz = PXN8.getImageSize();
+    w = Math.min( w, sz.width);
+    h = Math.min( h, sz.height);
+    
+    PXN8.select(0, 0, w, h);
+}
+
+/**
+ * Called when the user clicks the 'Apply' button in the crop panel.
+ */
+function slick_apply_crop()
+{
+    PXN8.tools.ui.crop();
+    slick_cleanup_crop();
+}
+function slick_cleanup_crop()
+{
+    document.getElementById("all_tools").style.display="block";
+    document.getElementById("crop_config").style.display = "none";
+    PXN8.selectByRatio("free");
+    PXN8.select(slick_setup_crop.old_selection);
+    PXN8.listener.remove(PXN8.ON_SELECTION_CHANGE, slick_selchange_crop);
+}
+function slick_selchange_crop()
+{
+    var s = PXN8.getSelection();
+    var w = document.getElementById("slick_crop_width");
+    w.value = s.width;
+    var h = document.getElementById("slick_crop_height");
+    h.value = s.height;
+}
+</script>
+
+
+<!-- 
+ ========================================================================
+     VALENTINE CONFIG PANEL
+ ========================================================================
+-->
+
+<div id="valentine_config" class="panel" style="display: none;">
+  <style type="text/css">
+    h3.config_title 
+    {
+    padding-bottom: 4px;
+    padding-top: 4px;
+    border-bottom: 2px solid #a0a0a0;
+    margin-bottom: 4px;
+    }
+  </style>
+  <h3 class="config_title">Create Heart-shaped cutout</h3>
+  
+  <form name="valentine" onsubmit="return false;">
+    <b>Background Color:</b><br/>
+    <br/>
+    <input type="radio" id="heart_white" name="bgColor" checked value="#FFFFFF"/>White <br/>
+    <input type="radio" name="bgColor" id="heart_pink" value="#FFC0CB"/>Pink <br/>
+    <input type="radio" name="bgColor" id="heart_transparent" value="#00000000"/>Transparent<br/>
+    <br/>
+	 <button onclick="create_cutout();return false;">Apply</button> 
+    <button onclick="hide_valentine_config();return false;">Cancel</button> 
+    
+  </form>
+</div>
+
+<div id="freehand_config" class="panel" style="display: none;">
+  <h3>Freehand Drawing</h3>
+  <!-- color picker goes here -->
+  <div id="freehand_colorpicker_container"></div>
+  <select name="freehand_brush" onchange="PXN8.freehand.width=this.value;">
+	 <option value="1">1x1 Pixel</option>
+	 <option value="3">3x3 Pixels</option>
+	 <option selected="selected" value="6">6x6 Pixels</option>
+	 <option value="9">9x9 Pixels</option>
+	 <option value="12">12x12 Pixels</option>
+	 <option value="18">18x18 Pixels</option>
+	 <option value="24">24x24 Pixels</option>
+  </select>
+<form onsubmit="return false;">
+  <button onclick="PXN8.freehand.undo();return false;">Undo</button>
+  <button onclick="apply_freehand();return false;">Apply</button>
+  <button onclick="hide_freehand_config();return false;">Cancel</button>
+</form>
+</div><!-- end of freehand_config -->
+<script type="text/javascript">
+function show_freehand_config()
+{
+   document.getElementById("freehand_config").style.display = "block";
+   document.getElementById("all_tools").style.display="none";
+   var container = document.getElementById("freehand_colorpicker_container");
+   container.innerHTML = "";
+   var picker = PXN8.colors.picker("#00ff00",function(v)
+   {
+       PXN8.freehand.color = v;
+   });
+   container.appendChild(picker);
+   PXN8.freehand.start();
+   PXN8.freehand.color = "#00ff00";
+   PXN8.freehand.width = 6;
+}
+function hide_freehand_config()
+{
+   document.getElementById("freehand_config").style.display = "none";
+   document.getElementById("all_tools").style.display="block";
+   PXN8.freehand.end();
+}
+function apply_freehand()
+{
+   PXN8.tools.freehand();
+   PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,hide_freehand_config);
+}
+</script>
+
+
+<!-- 
+ ========================================================================
+ ClipArt CONFIGURATION PANEL 
+ ========================================================================
+-->
+
+<div id="clipart_config" class="panel" style="display: none;">
+
+  <h3>Add Clipart</h3>
+  <h4>Choose an item of clipart...</h4>
+  <p>Click on any of the clipart images below to begin. You can then drag and resize the clipart using the mouse.</p>
+  <style type="text/css">
+    #clipart_table img { cursor: pointer;}
+  </style>
+
+  <div id="clipart_table_container"> <!-- container for clipart which is loaded on demand to speed up initial page load -->
+
+  </div><!-- end of clipart table container -->
+  
+<script type="text/javascript">
+gSanta_clip = {
+          gif: "/images/clipart/left_santa.gif",
+          png: "/images/clipart/left_santa.png", 
+          width: 160, 
+          height: 153
+      };
+
+gMoustache_clip = {
+          gif: "/images/clipart/black_moustache.gif",
+          png: "/images/clipart/black_moustache.png", 
+          width: 150, 
+          height: 50
+};
+
+ PXN8.clipart = gMoustache_clip;
+ 
+</script>
+
+<form onsubmit="return false;">
+  <button onclick="PXN8.tools.undo();return false;">Undo</button>
+  <button onclick="add_clipart_to_photo();return false;">Apply</button>
+  <button onclick="hide_clipart_config();return false;">Done</button>
+</form>
+</div><!-- end of clipart_config -->
+</div> <!-- end inner tool_palette -->
+</div> <!-- end of tools -->
+      </td>
+    </tr>
+
+
+
+    <tr>
+      <td>
+        <div id="image_save">
+          [%if ($pg->{country} eq "en"){%]3. What would you like to do with this image ?[%}%]
+          [%if ($pg->{country} eq "es"){%]3. Que quiere hacer con esta foto ?[%}%]
+          <div id="save_palette" >
+            <table>
+[%if ($pg->{target} eq "website"){%]
+	 <tr>
+		<td colspan="2" style="border-bottom: 2px dotted #888888;">
+		  <a href="#" onclick="show_merchandise_dialog();return  false;"><img border="0" src="/images/zazzle_merchandise.png" /></a>
+		  <p align="center">Turn this photo into a gift.</p>
+		</td>
+	 </tr>
+[% } %]
+              <tr>
+                <td style="padding-right: 8px; border-right: 2px dotted #888888;"> 
+                  <div id="save" class="button sprite pxn8_has_tooltip" onclick="PXN8.save.toDisk();" style="margin: 0px 0px 4px 24px;width: 28px; height: 28px; background-position: 220px 44px;"></div>
+                  <p style="padding-left: auto; padding-right: auto;text-align:center;">
+                    [%if ($pg->{country} eq "en"){%]Save to Disk.[%}%]
+                    [%if ($pg->{country} eq "es"){%]Guardar en el disco[%}%]
+                  </p>
+                </td>
+
+[% if ($pg->{target} eq "website"){ %]
+
+                <td style="padding-left: 8px;">
+                  <!-- Flickr integration won't work in product version -->
+                  <form style="padding-left: 20px;" action="/flickrLogin.pl"  method="POST" onsubmit="return PXN8.save.toFlickr(this);">
+                    <input type="image" 
+                           src="./pixenate/images/save2flickr.gif" 
+                           border="0" name="submit" id="flickrsave" class="pxn8_has_tooltip" />
+                  </form>
+                  <p style="padding-left: auto; padding-right:auto;text-align: center;">
+                    [%if ($pg->{country} eq "en"){%]Upload to Flickr.[%}%]
+                    [%if ($pg->{country} eq "es"){%]Subir a Flickr[%}%]
+                  </p>
+                </td>
+
+[% }else{ %]
+                <td style="color: white; text-align: center; font-weight: bold; background-color: steelblue; padding-left: 8px;">Your 'Save' Link Here</td>
+[% } %]
+              </tr>
+[%
+
+   ##########################################################################
+if ($pg->{target} eq "website" )
+   ##########################################################################
+
+{
+
+%]
+<!-- QUICK HACK FOR PIXENATE.COM - Not available in product version -->
+<script type="text/javascript">
+
+function post_to_myspace()
+{
+    var changedImage = PXN8.getUncompressedImage();
+    
+    PXN8.prepareForSubmit('Saving image. Please wait...');
+    
+    var req = PXN8.ajax.createRequest();
+    //
+    // myspace doesn't like tinyurl !
+    //
+    req.open("GET", "/allyoucanupload.pl?use_tinyurl=0&image=" + PXN8.server + PXN8.root + "/" + changedImage,true);
+    PXN8.json.bind(req, function(response){
+        var timer = document.getElementById("pxn8_timer");
+        if (timer){
+            timer.style.display = "none";
+        }
+        PXN8.updating = false;
+        var content = encodeURIComponent("<img src=\"" + response.original_image + "\"/>");
+        
+        var targetUrl = "http://www.myspace.com/Modules/PostTo/Pages/?" + 
+            "t=" + encodeURIComponent("") + 
+            "&c=" + content + 
+            "&u=" + encodeURIComponent("http://pixenate.com/?image=" + response.original_image) + "&l=1"  ;
+        
+        setTimeout(function(){window.open(targetUrl);},10);
+        
+    });
+    req.send(null);
+}
+    
+function save_to_myspace()
+{
+    var changedImage = PXN8.getUncompressedImage();
+    if (!changedImage){
+         alert("You have not changed the image!");
+         return false;
+    }
+    
+    var theImage = document.getElementById("pxn8_image");
+    var zoom = PXN8.zoom.value();
+    var real_width = theImage.width / zoom;
+    // myspace doesn't like images greater than 475 pixels in width
+    if (real_width > 475)
+    {
+        var real_height = theImage.height / zoom;
+        var new_height = real_height * (475 / real_width);
+        PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+                post_to_myspace();
+            });
+        PXN8.tools.resize(475,new_height);
+    }else{
+        post_to_myspace();
+    }
+    return true;
+}
+</script>
+
+<!-- wph 20080416 : AllYouCanUpload.com is no longer available 
+<tr>
+  <td colspan="2" style="background-color: mistyrose; border-top: 2px dotted #888888;"> <b>NEW!</b> <a onclick="save_to_myspace();" href="javascript:void(0)">Post Photo to MySpace <img src="http://x.myspace.com/images/myspace_logo_16.gif" border="0? alt="Post to MySpace!" /> </a></td>                      
+</tr>
+<tr> 
+  <td style="border-top: 2px dotted #888888;padding-top: 4px" valign="top" colspan="2">
+    <a href="#save_to_allyoucanupload" onclick="PXN8.save.allyoucanupload(); return false;"><img align="right" src="./pixenate/images/aycu_medium.gif" border="0"/></a>
+    <span style="font-size: 10px">
+      [%if ($pg->{country} eq "en"){%]To save this image permanently on the Internet for use on Bebo etc. Click here.[%}%]
+      [%if ($pg->{country} eq "es"){%]Para guardar este imagen en Myspace o Bebo, Pulse aqu&iacute;[%}%]
+    </span>
+  </td>
+</tr>
+
+-->
+
+<div style="display: none;">
+
+<div id="merchandise_dialog" title="Please choose a Gift">
+  <a href="gift.pl?type=tshirt" target="_blank" onclick="return gift(this,'tshirt');"><img border="0" src="/images/merc_tshirt.png" /></a>
+  <a href="gift.pl?type=mug" target="_blank" onclick="return gift(this,'mug');"><img border="0" src="/images/merc_mug.png" /></a>
+  <a href="gift.pl?type=bag" target="_blank" onclick="return gift(this,'bag');"><img border="0" src="/images/merc_bag.png" /></a>
+  <a href="gift.pl?type=mousemat" target="_blank" onclick="return gift(this,'mousemat');"><img border="0" src="/images/merc_mousemat.png" /></a>
+</div>
+
+<script type="text/javascript">
+function show_merchandise_dialog()
+{
+     var d = $("#merchandise_dialog").dialog({width: 340});
+     d.dialog("open");
+}  
+function close_merchandise_dialog()
+{
+     $("#merchandise_dialog").dialog("close");
+}
+function gift(link,type)
+{
+     var i =0;
+     var src = document.getElementById("pxn8_image").src;
+     // if it's a sample image warn the user about copyright infringement
+     for (i = 0;i < gSampleImages.length; i++){
+       if (src == gSampleImages[i]){
+			 close_merchandise_dialog();			   
+			 alert("You can not turn this photo into a gift. Please ensure you have permission to use the photo");			    
+          return false;
+       }
+     }
+     var uncompressed = PXN8.getUncompressedImage();
+     if (uncompressed){
+        src = PXN8.server + PXN8.root + uncompressed;
+     }
+     link.href += "&cont=" + window.geo_continent + "&image=" + escape(src);
+     close_merchandise_dialog();			   
+     return true;
+}
+</script>
+
+</div><!-- end of invisible container -->
+[%
+   ##########################################################################
+}  # end if target eq website
+   ##########################################################################
+
+%]
+
+                     </table>
+                  </div>
+               </div> <!-- end of image_save -->
+            </td>
+         </tr>
+
+[%
+   ##########################################################################
+if ($pg->{target} ne "website" )
+{  
+   ##########################################################################
+%]
+<tr><td style="text-align: center;"><a href="http://pixenate.com/"><img src="[%print $y;%]/images/poweredbypixenate100x45.gif" border="0" /></a></td></tr>
+[%
+   ##########################################################################
+}  # end if target ne website
+   ##########################################################################
+%]
+
+<tr>
+  <td style="text-align: center;">
+    <a href="http://sxoop.com">
+      <div class="sprite" style="width: 204px;  height:42px;background-position: 204px 462px;"></div>
+    </a>
+  </td>
+</tr>
+<tr>
+  <td style="text-align: center;font-size: 80%;">&copy; 2005-2009. All rights reserved.</td>
+</tr>
+[%
+
+if ($pg->{country} eq "es")
+{
+
+%]
+<tr><td style="text-align: center;">Traducido por <a style="font-size: 100%" href="http://www.kanben.com/">Juan Luis Hortelano</a>.</td></tr>
+[%
+
+}
+
+%]
+[%
+
+if ($pg->{target} eq "website" )
+{
+
+%]
+<tr><td style="text-align: center;"><a href="/privacy.html">Privacy Policy</a></td></tr>
+[%
+
+}
+
+%]
+</table> 
+</div><!-- end of left_pane-->
+
+
+<div id="canvas_container">
+ <div>
+ <table class="infotable">
+ <tr>
+ <td valign="top" class="infolabel">Selection:</td><td id="pxn8_selection_size"> ----,---- </td>
+ <td valign="top" class="infolabel">Size:</td><td id="pxn8_image_size"> ----,---- </td>
+ <td valign="top" class="infolabel">Zoom:</td><td id="pxn8_zoom"> 100% </td>
+ <td valign="top" class="infolabel">Position:</td><td id="pxn8_mouse_pos"> ----,---- </td>
+ </tr>
+ </table>
+ </div>
+ <div id="pxn8_canvas"></div>
+
+
+<div id="google_ads">
+[%
+
+if ($pg->{target} ne "website" )
+{
+
+%]
+<b>Your own google ads should appear here instead</b>
+[%
+
+}
+
+%]
+ <script type="text/javascript">
+ google_ad_client = "pub-6257674001240662";
+ google_ad_width = 728;
+ google_ad_height = 90;
+ google_ad_format = "728x90_as";
+ google_ad_type = "text";
+ google_ad_channel ="";
+ google_color_border = "EFEFEF";
+ google_color_bg = "EFEFEF";
+ google_color_link = "4682B4";
+ google_color_url = "800000";
+ google_color_text = "000000";
+ </script>
+ <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+</div><!-- end of google_ads -->
+
+</div> <!-- end of canvas_container -->
+
+</div><!-- end of content -->
+[%!include "tooltips_inc.template";%]
+[%
+
+# START TARGET eq WEBSITE
+
+if ($pg->{target} eq "website")
+{ 
+
+%]
+<div style="background-color: #ffe0e0; padding: 4px; position: absolute; top: 0px; right: 0px;">
+   <a href="index.[%print $pg->{language};%]">English</a> | <a href="index_es.[%print $pg->{language};%]">Espa&ntilde;ol</a>
+</div>
+
+<!--
+      <tr>
+        <td colspan="3">St. Pathrick's day is fast approaching so it would be
+        remiss of us to let the occasion pass without some festive
+        clipart. <b>Pixenate - the only 100% Irish online photo editor.</b></td>
+        <td valign="top"><a id="paddysday" class="pxn8_has_tooltip"><img src="[%print $x;%]/shared/images/clipart.gif" border="0" alt="Add Leprechaun hat"/></a></td>
+      </tr>
+-->           
+
+[% 
+
+} # END TARGET eq WEBSITE
+
+%]
+<!-- A special hidden Pixenate div for preloading images (optional) -->
+<div id="pxn8_preloaded_images"></div>
+
+
+
+
+<!-- 
+ ==============================
+ THIS PANEL IS FOR CONFIGURING THE TEXT TOOL 
+ ==============================
+-->
+<textarea id="configure_text" style="display: none;">
+<div id="text_config">
+ <label for="font">Font:</label>
+ <select class="pxn8_field" name="font" id="font"></select>
+ <br/>
+ <label for="pointsize">Size:</label>
+ <input type="text" class="pxn8_small_field" value="40" name="pointsize" id="pointsize"> pt
+ <br/>
+ <label for="gravity">Gravity:</label>
+ <select class="pxn8_field" name="gravity" id="gravity">
+   <option value="Center">Center </option>
+   <option value="North" selected>North </option>
+   <option value="South">South </option>
+   <option value="East">East </option>
+   <option value="West">West </option>
+   <option value="NorthEast">NorthEast </option>
+   <option value="NorthWest">NorthWest </option>
+   <option value="SouthEast">SouthEast </option>
+   <option value="SouthWest">SouthWest </option>
+ </select>
+ <br/>
+ <label for="text">Text:</label>
+ <input class="pxn8_field" type="text" name="text" id="text" value="Greetings"/>
+ <br/>
+ <button onclick="return previewText();">Preview</button> (Preview may not exactly match the operation)
+ <br/>
+</div>
+</textarea><!-- end of configure_text -->
+
+<script type="text/javascript">
+//
+// Initialize tool palette buttons
+//
+var clickHandlers = 
+{
+    "undo" : _undo,
+    "redo" : _redo,
+    "selectall" : _selectall,
+    "selectnone" : _selectnone,
+    "zoomin" : _zoomin,
+    "zoomout" : _zoomout,
+    "enhance" : _enhance,
+    "normalize" : _normalize,
+    "flipvertically" : _flipvertically,
+    "fliphorizontally" : _fliphorizontally,
+    "fill_flash" : _fill_flash,
+    //"crop" : _crop,
+"crop" : slick_setup_crop,
+    "resize" : _resize,
+    "rotate" : _rotate,
+    "rotateccw" : _rotateccw,
+    "spiritlevel" : _spiritlevel,
+    "redeye" : _redeye,
+    "whiten" : _whiten,
+    "sepia" : _sepia,
+    "bsh" : _bsh,
+    "lomo" : _lomo,
+    "filter" : _filter,
+    "roundedcorners" : _roundedcorners,
+    "interlace" : _interlace,
+    "snow" : _snow,
+    "addtext" : _addtext,
+    "oilpainting" : _oilpainting,
+    "bubbles" : _bubbles,
+    "clipart" : function(){ show_clipart_config(); return false;},
+    "freehand" : function(){ show_freehand_config(); return false;},
+    "popart" : imagemagick_popart,
+    "polaroid" : function(){imagemagick_polaroid(-5,null);}, 
+    "santa" : function(){ show_clipart_config(); return false;},
+    "heart" : function(){ show_valentine_config(); return false;},
+    "paddysday" : function(){ PXN8.clipart = {gif: "/images/clipart/left_leprechaun_hat.gif", png: "/images/clipart/left_leprechaun_hat.png", width: 150, height: 100};{};show_clipart_config(); return false;},
+    "sketch": _sketch
+};
+
+for (var i in clickHandlers)
+{
+   var el = document.getElementById(i);
+   if (el)
+   {
+       el.href = "javascript:void(0)";
+       el.onclick = clickHandlers[i];
+   }
+}
+
+[%
+
+if ($pg->{target} eq "website") { 
+# PHP code
+%]
+{
+   var start_op = "<?php echo $_GET["op"]?>";
+   var sel_width = "<?php echo $_GET["selw"]?>" ;
+   var sel_height = "<?php echo $_GET["selh"]?>" ;
+   if (start_op != ""){
+      PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,clickHandlers[start_op]);
+   }
+   if (! isNaN(parseInt(sel_width))){
+       sel_width = parseInt(sel_width);
+       sel_height = parseInt(sel_height);
+       PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+           var size = PXN8.getImageSize();
+           var x = (size.width / 2) - (sel_width / 2);
+           var y = (size.height / 2) - (sel_height /2 );
+           PXN8.select(x,y,sel_width, sel_height);
+       });
+   }
+PXN8.dom.addLoadEvent(function(){
+   window.geo_continent = geoplugin_continentCode();
+});
+}
+[% 
+
+ } # end target eq "website"
+
+%]
+</script>
+<!--[if gte IE 5.5000]>
+<script type="text/javascript">
+
+// yuck.
+
+function correctPNG() // correctly handle PNG transparency in Win IE 5.5 or higher.
+   {
+   for(var i=0; i<document.images.length; i++)
+      {
+      var img = document.images[i]
+      var imgName = img.src.toUpperCase()
+      if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+         {
+         var imgID = (img.id) ? "id='" + img.id + "' " : ""
+         var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+         var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+         var imgStyle = "display:inline-block;" + img.style.cssText 
+         if (img.align == "left") imgStyle = "float:left;" + imgStyle
+         if (img.align == "right") imgStyle = "float:right;" + imgStyle
+         if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle       
+         var strNewHTML = "<span " + imgID + imgClass + imgTitle
+         + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+         + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+         + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
+         img.outerHTML = strNewHTML
+         i = i-1
+         }
+      }
+   }
+</script>
+<![endif]-->
+
+</body>
+</html>
+[%!include "posthtml.template";%]

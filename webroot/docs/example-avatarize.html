@@ -1,0 +1,45 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+* { font-family: Arial; 
+}
+     
+</style>
+</head>
+<body>
+<p>In this example you can choose a square area of the photo. You can
+  adjust the selected area either by dragging it or by dragging the
+  resize handles in the corners of the selected area. When
+  you click 'Crop + Resize' the photo will be cropped <em>and</em> resized to 72x72.</p>
+
+
+<div>
+  <button onclick="PXN8.tools.undo();">Undo</button>
+  <button onclick="PXN8.tools.redo();">Redo</button>
+  <button onclick="avatarize();">Crop + Resize</button>
+</div>
+
+<div id="pxn8_canvas"></div>
+
+</body>
+<script type="text/javascript">
+
+PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+
+PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD, function(){
+  PXN8.selectByRatio("1x1");
+});
+
+function avatarize()
+{
+    PXN8.tools.startTransaction();
+    PXN8.tools.crop();
+    PXN8.tools.resize(72, 72);
+    PXN8.tools.endTransaction();
+
+    PXN8.unselect();
+}
+
+</script>
+</html>

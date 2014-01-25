@@ -1,0 +1,28 @@
+<html>
+<head>
+  <!-- Dependencies -->
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+  <script type="text/javascript">
+  //
+  // When the document has loaded...
+  //
+  PXN8.dom.addLoadEvent(function(){
+    //
+    // ...Initialize Pixenate
+    // 
+    PXN8.initialize("shrug.jpg");
+
+  });
+  </script>
+</head>
+<body>
+
+  <button onclick="PXN8.tools.rotate({'angle': 90})">Rotate 90&deg;</button>
+  <button onclick="PXN8.save.toDisk()">Download...</button>
+  <!-- The Pixenate Canvas: Photo will be displayed here -->
+  <div id="pxn8_canvas"></div>
+
+</body>
+</html>
+

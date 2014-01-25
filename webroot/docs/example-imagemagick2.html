@@ -1,0 +1,133 @@
+<!--
+    Copyright Sxoop Technologies Ltd. 2005 - 2009
+    All rights reserved.
+-->
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+ li { float: left; list-style: none; margin: 8px; font-size: 300%;}
+ p { font-family: Tahoma; font-size: 150%;}
+</style>
+</head>
+<body>
+<div id="pxn8_canvas"></div>
+
+<br style="clear:both;"/>
+
+<button onclick="polaroid(-5,'Pigeon');return false;">Turn into Polaroid</button>
+
+<p><h1>Source Code</h1>
+<pre>
+/**
+ * Create a fake polaroid effect using Pixenate's ImageMagick bridge plugin.
+ *
+ * Pixenate plugin development in Javascript - Yay!
+ */ 
+function polaroid(degrees, text)
+{
+    //
+    // image is the current image being edited (see PXN8.initialize())
+    //
+    var image = PXN8.ImageMagick.start();
+
+    var size = PXN8.getImageSize();
+    //
+    // crop the image to a square shape.
+    //
+    image.Method("Crop",{height: size.height, width: size.height, x: (size.width-size.height)/2});
+
+    var xBorderWidth = size.height / 8;
+    var yBorderWidth = xBorderWidth * 2;
+    
+    //
+    // create a polaroid-style border
+    //
+    var border = new PXN8.ImageMagick();
+    border.Method("Set", {size:  (size.height + xBorderWidth*2) + "x" + (size.height + yBorderWidth*2)});
+    border.Method("Read", "xc:#ffffff");
+    //
+    // superimpose the cropped photo on top of the border
+    //
+    border.Method("Composite", {image: image, compose: "Over", x: xBorderWidth, y: xBorderWidth});
+    border.Method("Annotate", {text: text, gravity: "South", y: xBorderWidth, pointsize: 12});
+
+    // 
+    // create a drop-shadow
+    var shadow = new PXN8.ImageMagick();
+    shadow.Method("Set",{size: (size.height + (xBorderWidth * 2) + 4) + "x" + (size.height + (yBorderWidth*2)+4)});
+    shadow.Method("Read","xc:white");
+    shadow.Method("Draw",{primitive: "Rectangle",points: "1,1," +(size.height+ (xBorderWidth* 2 + 1)) + "," + (size.height + (yBorderWidth*2)+1), fill: "#808080"});
+    shadow.Method("Blur","2.0x2.0");
+    //
+    // superimpose the border on top of the shadow
+    //
+    shadow.Method("Composite",{image: border, compose: "Over", x: 1, y: 1});
+    // 
+    // rotate the image slightly
+    //
+    shadow.Method("Rotate", {degrees: degrees, background: "white"});
+    
+    PXN8.ImageMagick.end(shadow);
+}
+</pre>
+</p>
+<script type="text/javascript">
+PXN8.replaceOnSave = false;
+
+PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+
+/**
+ * Create a fake polaroid effect using Pixenate's ImageMagick bridge plugin.
+ *
+ * Pixenate plugin development in Javascript - Yay!
+ */ 
+function polaroid(degrees, text)
+{
+    //
+    // image is the current image being edited (see PXN8.initialize())
+    //
+    var image = PXN8.ImageMagick.start();
+
+    var size = PXN8.getImageSize();
+    //
+    // crop the image to a square shape.
+    //
+    image.Method("Crop",{height: size.height, width: size.height, x: (size.width-size.height)/2});
+
+    var xBorderWidth = size.height / 8;
+    var yBorderWidth = xBorderWidth * 2;
+    
+    //
+    // create a polaroid-style border
+    //
+    var border = new PXN8.ImageMagick();
+    border.Method("Set", {size:  (size.height + xBorderWidth*2) + "x" + (size.height + yBorderWidth*2)});
+    border.Method("Read", "xc:#ffffff");
+    //
+    // superimpose the cropped photo on top of the border
+    //
+    border.Method("Composite", {image: image, compose: "Over", x: xBorderWidth, y: xBorderWidth});
+    border.Method("Annotate", {text: text, gravity: "South", y: xBorderWidth, pointsize: 12});
+
+    // 
+    // create a drop-shadow
+    var shadow = new PXN8.ImageMagick();
+    shadow.Method("Set",{size: (size.height + (xBorderWidth * 2) + 4) + "x" + (size.height + (yBorderWidth*2)+4)});
+    shadow.Method("Read","xc:white");
+    shadow.Method("Draw",{primitive: "Rectangle",points: "1,1," +(size.height+ (xBorderWidth* 2 + 1)) + "," + (size.height + (yBorderWidth*2)+1), fill: "#808080"});
+    shadow.Method("Blur","2.0x2.0");
+    //
+    // superimpose the border on top of the shadow
+    //
+    shadow.Method("Composite",{image: border, compose: "Over", x: 1, y: 1});
+    // 
+    // rotate the image slightly
+    //
+    shadow.Method("Rotate", {degrees: degrees, background: "white"});
+    
+    PXN8.ImageMagick.end(shadow);
+}
+</script>
+</body>
+</html>

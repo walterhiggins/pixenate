@@ -1,0 +1,237 @@
+@import url(../../styles/pxn8_tooltips.css); /* tooltip elements */
+@import url(../../styles/pxn8_fields.css);   /* tool fields  */
+@import url(../../styles/pxn8_core.css);   /* Core PXN8 elements  */
+@import url(../../styles/pxn8_colors.css);   /* core PXN8 elements  */
+
+/*
+ * Copyright @ 2005-2009 Sxoop Technologies Ltd.
+ *
+ * Default Stylesheet
+ * 
+ * If you have purchased PXN8 for use on your own servers we strongly 
+ * recommend that you make a copy of this stylesheet and rename it to something
+ * meaningful (like yourcompanyname_pxn8.css) and work on that instead.
+ *
+ */
+
+/*
+ * Defaults for ALL elements
+ */
+
+* {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  padding: 0px;   
+  margin: 0px;
+}
+
+
+form {
+    padding: 0px;
+	 margin: 0px;
+	 border: none;
+}
+
+a.btn {
+	border-width: 2px;
+	padding: 2px;
+	text-decoration: none;
+	border-style: outset;
+	background-color: #efefef;
+	text-align: center;
+}
+
+body{
+     margin: 0px;
+	  padding: 0px; 
+	  position: relative;
+}
+
+/*
+ * Bookmarklet links appear in the help section and should
+ * look different to regular bookmarklets.
+ * I'm not sure how you make something look 'draggable' - this is my best effort.
+ */
+
+.bookmarklet {
+	display: block;
+	color: black;
+	text-decoration: none;
+	border: 1px dashed black;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	text-align: center;
+}
+
+ul {
+	 margin-top: 0px;
+	 padding-top: 0px;
+}
+/*
+ * Collapsed list items show a - (minus) icon
+ */
+li.collapsed{
+	margin-left: 18px;
+	list-style-image: url(../../images/collapsed.gif);
+	padding-left: 0px;
+	cursor: pointer;
+}
+
+/*
+ * Expanded list items show a + (plus) icon
+ */
+li.expanded{
+	margin-left: 18px;
+	list-style-image: url(../../images/expanded.gif);
+	padding-left: 0px;
+	cursor: pointer;
+	margin-bottom: 6px;
+}
+
+._48 {
+  width: 48px;
+}
+
+._32 {
+	width: 32px;
+}
+
+/*
+ * buttons which appear on the config panel 
+ * ('Apply' and 'Cancel')
+ */
+.config_buttons {
+   margin-top: 8px;
+}
+
+
+div.toolbar
+{
+    background: #efefef url(../../images/hz.jpg) bottom left repeat-x;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 72px;
+}
+
+div.palette
+{
+    background-color: #efefef;
+    position: absolute;
+    top: 72px;
+    left: 0px;
+    width: 210px;
+}
+
+#config_content{
+    font-size: 9px;
+}
+
+
+select {
+    border: 1px solid #cccccc;
+}
+
+
+span.fixW {
+    width: 60px;
+}
+
+input.button { 
+    font-weight: bold;
+    color: white; 
+    background-color: #85accd;
+    
+    border:none;
+}
+
+a.button {
+    padding-left: 8px; 
+    padding-right: 8px;
+    padding-bottom: 1px;
+    padding-top: 1px;
+    font-weight: bold;
+    text-decoration: none; 
+    color: white; 
+    background-color: #85accd;
+    border:none;
+    margin-right: 4px;
+    margin-top: 3px;
+}
+
+td.buttoncell {
+    background-color: #85accd;
+    border: 1px solid #808080;	
+}
+
+
+input.file_location{ 
+    border: none; 
+    padding: 1px; 
+    height: 16px;
+    width: 100%;
+    margin: 1px;
+}
+
+
+/*
+ * FAQ Answers are shown in the help area
+ */
+.faq_answer {
+    border-top: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    background-color: white;
+    color: black;
+    margin-bottom: 4px;
+    margin-right: 4px;
+}
+
+/* 
+ * Divs of class 'panel' are containers for 
+ * buttons and text.
+ */
+.panel {
+    padding-left: 4px;
+    background: #efefef url(../../images/hz.jpg) bottom left repeat-x;
+    padding-bottom: 12px;
+}
+
+/* 
+ * order-list items 
+ */
+ol, ul { 
+    padding-top: 4px;
+}
+ol li {
+    margin-left: 24px;
+    padding: 0px;
+}
+
+/*
+ * =============================================================================
+ *
+ * STANDARD PXN8 ELEMENT STYLES GO HERE.
+ *
+ * =============================================================================
+ */
+
+/*
+ *  The canvas element is where the image will be displayed
+#pxn8_canvas {
+    position:absolute; 
+    top:72px; 
+    left: 212px;
+}
+ */
+
+#pxn8_image_container {
+    position: relative;
+}
+
+
+#pxn8_config_title {
+	background-color: #cccccc;
+}

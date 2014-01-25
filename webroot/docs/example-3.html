@@ -1,0 +1,65 @@
+<html>
+<head>
+  <style type="text/css">
+  #pxn8_warning { 
+     position: absolute; top: 0px; left: 0px;
+     background-color: maroon; color: white; 
+     padding: 6px; font-family: Arial; 
+  }
+  #pxn8_canvas {overflow: hidden;}
+  #pxn8_timer {
+     position: absolute; top: 0px; left: 0px;
+     padding: 6px 0px 6px 28px; font-family: Arial; 
+	  background: white url(/pixenate/images/countdown.gif) 6px 2px no-repeat;
+	  opacity: 0.7;
+	  filter: "alpha(opacity: 70)";
+  } 
+  #toolbar { margin: 4px 0px 4px 0px; 
+             padding: 4px; 
+             border: 1px solid #cccccc; 
+             background-color: #f0f0f0;
+  }
+  button { font-size: 11px; }
+  </style>
+  <!-- Dependencies -->
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+  <script type="text/javascript">
+  //
+  // When the document has loaded...
+  //
+  PXN8.dom.addLoadEvent(function(){
+    //
+    // ...Initialize Pixenate
+    // 
+    PXN8.initialize("shrug.jpg");
+
+  });
+  </script>
+</head>
+<body>
+  <div id="toolbar">
+  <button onclick="PXN8.tools.undo()">Undo</button><button 
+          onclick="PXN8.tools.redo()">Redo</button>&nbsp;
+			 <button onclick="PXN8.tools.rotate({'angle': 90})">Rotate 90&deg;</button><button 
+                  onclick="PXN8.tools.rotate({'angle': 270})">Rotate 270&deg;</button><button
+						onclick="PXN8.tools.rotate({'fliphz': true})">Flip Horizontally</button><button
+						onclick="PXN8.tools.rotate({'flipvt': true})">Flip Vertically</button>&nbsp;
+			 <button onclick="doCrop()">Crop</button>&nbsp;
+			 <script type="text/javascript">
+			 function doCrop(){
+			    var selection = PXN8.getSelection();
+				 if (selection.width > 0){
+				    PXN8.tools.crop(selection);
+				 }else{
+				    alert('You must first select an area to crop');
+				 }
+			 }
+			 </script>
+          <button onclick="PXN8.save.toDisk()">Download...</button>
+  </div><!-- end of toolbar -->
+  <!-- The Pixenate Canvas: Photo will be displayed here -->
+  <div id="pxn8_canvas"></div>
+
+</body>
+</html>

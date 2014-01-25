@@ -1,0 +1,205 @@
+<html>
+<head>
+<style type="text/css">
+.notabene{
+   background-color: lemonchiffon;
+	border: 2px solid gold;
+	padding: 8px;
+	margin: 8px;
+}
+</style>
+</head>
+<body>
+<h1>Installing PXN8 Software</h1>
+(The PXN8 Manual is online at <a href="http://sxoop.wordpress.com/pxn8-manual/">http://sxoop.wordpress.com/pxn8-manual</a>)
+<h2>Prerequisites</h2>
+
+	If your webserver is Apache and your Operating System is either
+	Linux or FreeBSD then most likely you will already have all of the
+	required software to use PXN8. To verify that all of the required
+	prerequisites are already present on your machine, try the following commands...
+
+	<p>$ perl -MLWP::Simple -e 0<br/>
+	If you get an error like this "Can't locate LWP::Simple in @INC..."
+	then you need to install the 'LWP::Simple' perl module (see next
+	section).</p>
+
+	<p>$ perl -MImage::Magick -e 0<br/>
+	If you get an error like this "Can't locate Image::Magick in
+	@INC..." then you need to install ImageMagick (see the ImageMagick
+	section below).</p>
+	
+	If both of these commands return successfully then you are ready to
+	install and run PXN8. Proceed to the "Installation" section.
+	
+	
+<h3>Perl 5.8</h3>
+<p>PXN8 is written in Perl. The target machine should have perl 5.8
+    installed. Perl comes as standard on Linux and FreeBSD. For
+    windows we recommend using ActiveState's Perl. A commercial
+    license for ActiveState Perl for Windows can be purchased from
+    <a href="http://www.activestate.com/">ActiveState.com</a>.</p>
+    
+    The following perl modules are required by PXN8...
+    <ol>
+    <li>LWP::Simple</li>
+    </ol>
+	 <p>
+    This module may not come as standard on FreeBSD. This module can
+    be installed from the command line using the following command...
+    </p>
+
+    perl -MCPAN -e "shell"<br/>
+    &gt; install LWP::Simple<br/>
+    
+<h3>ImageMagick</h3>
+<p>
+    The latest version (6.2.5) should be installed prior to installing
+    PXN8.
+    ImageMagick can be installed on Linux, FreeBSD and Windows.
+    Installing the Binary Release is recommended. 
+    Binary downloads are available from the following location...
+</p>
+    <a href="http://www.imagemagick.com/www/binary-releases.html">http://www.imagemagick.com/www/binary-releases.html</a>
+<p>
+    Once Perl and ImageMagick are installed you can verify the
+    installation by issuing the following command...
+</p>
+    perl -MImage::Magick -e "print 'OK'"
+<p>
+    ... If an error occurs then ImageMagick and/or PerlMagick (the
+    Perl API for ImageMagick) may not have been installed correctly.
+   </p> 
+<h3>Apache web server version 1.3 or 2.0</h3>
+<p>
+    PXN8 uses regular CGI to handle client requests. 
+    Ensure that apache is configure to handle perl scripts by adding
+    the following line to httpd.conf...
+</p>
+    AddHandler cgi-script .pl
+<p>    
+    Also, in the DocumentRoot directory entry, ensure that 'ExecCGI'
+    appears on the same line as 'Options'
+</p>
+<p>    Options ... ExecCGI ...</p>
+
+<h3>...or Microsoft Internet Information Server</h3>
+<p>
+For information on Running perl CGI scripts on IIS please refer to the
+following article...<br/>
+<a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;245225">http://support.microsoft.com/default.aspx?scid=kb;en-us;245225</a>
+
+The preferred method for IIS is to use the Perl.exe executable. There
+have been reported problems with perliis.dll and loading of Perl
+modules.
+
+</p>
+<h2>Installation</h2>
+<p>
+   PXN8 is distributed as a compressed archive. It can be decompressed
+   using the following command on Linux/FreeBSD...
+</p>
+   tar -xvzf pxn8.tar.gz
+<p>
+   ... On windows, decompress the archive using Winzip.
+</p>
+
+<div class="notabene">
+N.B. By default you should change the current working to the webroot
+folder before executing the <code>tar -xvzf pxn8.tar.gz</code>
+command.
+On Linux/Unix/FreeBSD with Apache this will usually be /var/www/html.
+On Windows with IIS this will usually be c:\inetpub\wwwroot.
+With Tomcat this will usually be c:\Tomcat\webapps\ROOT.
+
+
+PXN8 assumes that it has been installed in a folder called 'pixenate'
+in the webroot folder.<b>PXN8 will not overwrite any existing files
+in the webroot folder.</b>
+<p>
+If you installed PXN8 in a folder other than the webroot you will need
+to change the <code>PXN8.root</code> javascript variable in the
+following files...
+<ul>
+<li>themes/default/index.php (or .jsp/.asp)</li>
+<li>themes/slick/slick.js </li>
+<li>themes/memphis/index.php (or .jsp/.asp)</li>
+<li>themes/toolbar1/index.html</li>
+<li>themes/toolbar2/index.html</li>
+</ul>
+</p>
+</div>
+
+   The decompressed archive will have the following directory structure...
+<pre>
+   pixenate/
+        lib/
+		      Sxoop/
+				      PXN8/
+						     plugins/
+        javascript/
+        styles/
+        images/
+               samples/
+               icons/
+        cache/
+        themes/
+               default/
+               slick/
+                     images/
+               memphis/
+                       images/
+               toolbar1/
+               toolbar2/
+               shared/
+                      images/
+
+</pre>
+
+<h2>Post Install / Configuration</h2>
+
+<p>
+After unzipping the pxn8.tar.gz file you might need to change the
+permissions on the pixenate/cache/ folder.
+</p>
+<p>
+The permissions for the pixenate/cache/ folder should be
+<b>drwxrwxrwx</b> (Everyone should be able to write to the folder -
+PXN8 stores working images in this folder).
+</p>
+<p> Run the following command ...<br/>
+
+<code>ls -la pixenate/</code><br/>
+To ensure that the cache folder has the correct permissions. 
+
+<div class="notabene">
+By default, PXN8 does not support saving the image to the server
+because each customer stores photos in different locations. If you
+want your users to be able to save images to your server's gallery
+then you will need to add this feature.
+</div>
+
+<h2>Trying it out...</h2>
+<p>You can try out PXN8 by going to any of the following URLs...
+<ul>
+<li><a href="http://localhost/pixenate/themes/slick/index.php">http://localhost/pixenate/themes/slick/index.php</a></li>
+<li><a href="http://localhost/pixenate/themes/slick/index.jsp">http://localhost/pixenate/themes/slick/index.jsp</a></li>
+<li><a href="http://localhost/pixenate/themes/slick/index.asp">http://localhost/pixenate/themes/slick/index.asp</a></li>
+<li><a href="http://localhost/pixenate/themes/default/index.php">http://localhost/pixenate/themes/default/index.php</a></li>
+<li><a href="http://localhost/pixenate/themes/default/index.jsp">http://localhost/pixenate/themes/default/index.jsp</a></li>
+<li><a href="http://localhost/pixenate/themes/default/index.asp">http://localhost/pixenate/themes/default/index.asp</a></li>
+<li><a href="http://localhost/pixenate/themes/memphis/index.php">http://localhost/pixenate/themes/memphis/index.php</a></li>
+<li><a href="http://localhost/pixenate/themes/memphis/index.jsp">http://localhost/pixenate/themes/memphis/index.jsp</a></li>
+<li><a href="http://localhost/pixenate/themes/memphis/index.asp">http://localhost/pixenate/themes/memphis/index.asp</a></li>
+<li><a href="http://localhost/pixenate/themes/hires/index.php">http://localhost/pixenate/themes/hires/index.php</a></li>
+<li><a href="http://localhost/pixenate/themes/hires/index.jsp">http://localhost/pixenate/themes/hires/index.jsp</a></li>
+<li><a href="http://localhost/pixenate/themes/hires/index.asp">http://localhost/pixenate/themes/hires/index.asp</a></li>
+<li><a href="http://localhost/pixenate/themes/toolbar1/index.html">http://localhost/pixenate/themes/toolbar1/index.html</a></li>
+<li><a href="http://localhost/pixenate/themes/toolbar2/index.html">http://localhost/pixenate/themes/toolbar2/index.html</a></li>
+</ul>
+<p>
+If you have any problems please email <a
+href="mailto:walterh@rocketmail.com?subject=PXN8 install problems">walterh@rocketmail.com</a>.
+</p>
+</body>
+</html>

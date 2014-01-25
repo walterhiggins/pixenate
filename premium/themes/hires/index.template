@@ -1,0 +1,82 @@
+[%!include "prehtml.template";%]
+<html>
+<head>
+<title>Hi-Resolution Photo Editor (powered by PXN8)</title>
+<link media="screen" title="Default Style" rel="stylesheet" href="../memphis/memphis.css" type="text/css"/>
+[%if ($pg->{target} eq "hosted"){%]
+  <script language="JavaScript" type="text/javascript" src="http://pixenate.com/h/js"></script>
+[%}else{%]
+  <script language="JavaScript" type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+[%}%]
+
+<script language="JavaScript" type="text/javascript" src="../memphis/memphis.js"></script>
+
+</head>
+<body bgcolor="white">
+<script type="text/javascript">
+
+var image = "";
+var pxn8_original_filename = "";
+var hires_image = "";
+
+[%if ($pg->{language} eq "php"){%]
+image = "<?php $img = ""; if (isset($_GET["image"])){$img = $_GET["image"];} echo $img ?>";
+pxn8_original_filename = "<?php $img = ""; if (isset($_GET["originalFilename"])){$img = $_GET["originalFilename"];} echo $img ?>";
+hires_image = "<?php $hr = ""; if (isset($_GET["hires_image"])){$hr =$_GET["hires_image"];} echo $hr ?>";
+[%}%]
+
+[%if ($pg->{language} eq "jsp"){%]
+image = "<%=request.getParameter("image")!=null?request.getParameter("image"):""%>";
+pxn8_original_filename = "<%=request.getParameter("originalFilename")!=null?request.getParameter("originalFilename"):""%>";
+hires_image= "<%=request.getParameter("hires_image")!= null?request.getParameter("hires_image"):""%>";
+[%}%]
+
+[%if ($pg->{language} eq "asp"){%]
+image = "<%=Request.QueryString("image") %>";
+pxn8_original_filename = "<%=Request.QueryString("originalFilename")%>";
+hires_image = "<%=Request.QueryString("hires_image")%>";
+[%}%]
+
+[%if ($pg->{language} eq "pl"){%]
+image = "[%% print $request->param("image") ne ""?$request->param('image') : "";%]";
+pxn8_original_filename = "[%% print $request->param("originalFilename") ne ""?$request->param('originalFilename') : "";%]";
+hires_image = "[%% print $request->param("hires_image");%]";
+[%}%]
+
+
+function hires_save()
+{ 
+
+  PXN8.tools.hi_res({url: hires_image},function(jsonResponse){
+          // change the location to the new image
+          var newURL = PXN8.root + "/save.pl?image=" + jsonResponse.image;
+          document.location = newURL;
+      });
+}
+
+/**
+ * Replace standard PXN8.save.toDisk 
+ */
+PXN8.save.toDisk = hires_save;
+
+
+if (image == ""){
+	image = "/pixenate/images/samples/garinish.jpg";
+	hires_image = "/pixenate/images/samples/hires/garinish.jpg";
+	pxn8_original_filename  = "garinish.jpg";
+}
+
+
+PXN8.dom.addLoadEvent(function(){
+	PXN8.initialize(image);
+	/**
+    * HERE IS A GOOD PLACE TO ADD YOUR OWN ON_IMAGE_LOAD LISTENER
+    *
+	PXN8.listener.add(PXN8.ON_IMAGE_LOAD,function(){});
+   */
+});
+</script>
+[%!include "memphis.template";%]
+</body>
+</html>
+[%!include "posthtml.template";%]

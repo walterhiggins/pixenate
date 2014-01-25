@@ -1,0 +1,23 @@
+/* 
+ * Styles for tooltip elements
+ */
+div.pxn8_tip {
+	position: absolute;
+	z-index: 3;
+	border: 1px solid black;
+	width: 160px;
+	background-color: white;
+}
+
+div.pxn8_tip h1 {
+	background-color: #e4e4e4;
+	padding: 4px;
+	font-size: 100%;
+	color: black;
+	border-bottom: 1px solid #cccccc;
+}
+
+div.pxn8_tip p 
+{
+	padding: 4px;
+}

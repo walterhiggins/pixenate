@@ -1,0 +1,62 @@
+<html>
+  <head>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_fonts.js"></script>
+
+	 <script type="text/javascript">
+
+function start_text()
+{
+     var image = PXN8.ImageMagick.start();
+     // image manipulation goes here....
+     var ti = new PXN8.ImageMagick();
+     var sz = PXN8.getImageSize();
+     ti.Set({size: (sz.width/4) + "x" + (sz.height/4)});
+     ti.Read("xc:#00000000");
+     ti.Annotate({
+             text: "Hello World", 
+             pointsize: 18, 
+             fill: "red",
+             gravity: "Center",
+             x: 0,
+             y: 0
+             });
+     //image.Border({width: 5, height: 5, bordercolor: "red"});
+     var textOp= PXN8.ImageMagick.end(ti,false);
+     textOp.__extension = '.png';
+  
+     PXN8.ajax.submitScript([textOp],function(o)
+     {
+         gClipartURL = PXN8.server + PXN8.root + "/" + o.image;
+         PXN8.select.constrainToImageBounds = false;
+         PXN8.overlay.start(gClipartURL,{x: 0, y:0, width: sz.width/4, height: sz.height/4});
+     });
+}
+var gClipartURL = "";
+
+function apply_text()
+{
+    var sel = PXN8.getSelection();
+    sel.url = gClipartURL;
+    PXN8.tools.overlay(sel);
+    PXN8.overlay.stop();
+    PXN8.select.constrainToImageBounds = true;
+    PXN8.unselect();
+    
+}
+
+
+	 </script>
+  </head>
+  <body>
+	 <div id="pxn8_canvas"></div>
+
+    <script type="text/javascript">
+    PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+    </script>
+
+	 <button onclick="start_text()">Start</button>
+	 <button onclick="apply_text()">Apply</button>
+  </body>
+</html>
+

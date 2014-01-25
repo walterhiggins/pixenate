@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+			 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+	 <style type="text/css">
+	 </style>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+	 <script type="text/javascript">
+
+var gProducts = {
+     "a" : {width: 432, height: 288},
+     "b" : {width: 216, height: 288},
+     "c" : {width: 800, height: 600}
+};
+
+var gLastProduct = "b";
+
+var gConstrainSelection = snapToMinimum(gProducts[gLastProduct]);
+
+function snapToMinimum(sz){
+    return function()
+    {
+        var sel = PXN8.getSelection();
+        if (sel.width == 0){
+            return;
+        }
+        var tooSmall = false;
+        if (sel.width < sz.width){
+            sel.width = sz.width;
+            tooSmall = true;
+        }
+        if (sel.height < sz.height){
+            sel.height = sz.height;
+            tooSmall = true;
+        }
+        if (tooSmall){
+            PXN8.select(sel);
+        }
+    };
+}
+
+function check_image_size(product)
+{
+    if (!product){
+        product = gLastProduct;
+    }
+    var imageSize = PXN8.getImageSize();
+    var productSize = gProducts[product];
+    if (imageSize.width < productSize.width ||
+        imageSize.height < productSize.height){
+        alert("This image is too small for that product. Please choose a different image or product.");
+        check_image_size(gLastProduct);
+        return;
+    }else{
+        gLastProduct = product;
+        PXN8.listener.remove(PXN8.ON_SELECTION_CHANGE,gConstrainSelection);
+        gConstrainSelection = snapToMinimum(productSize);
+        var ratio = productSize.width + "x" + productSize.height;
+        PXN8.selectByRatio(ratio, true);
+        PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,gConstrainSelection);
+        
+    }
+}
+									
+	 </script>
+  </head>
+  <body>
+    <div>
+        <label for="product">Please choose a product:</label>
+		<select name="product" onchange="check_image_size(this.value);return false;">
+		  <option value="a">432 X 288 pixels (landscape)</option>
+		  <option value="b" selected="selected">216 X 288 (portrait)</option>
+		  <option value="c">800 X 600</option>
+		</select>
+		<button onclick="PXN8.tools.crop();">Crop</button>
+		<button onclick="PXN8.tools.undo();">Undo</button>
+	 </div>
+	 <div id="pxn8_canvas"></div>
+	 <script type="text/javascript">
+		PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){check_image_size(gLastProduct)});
+
+	 </script>
+  </body>
+</html>

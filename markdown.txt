@@ -1,0 +1,2894 @@
+
+<h1 class="section"><a name="Introduction">Introduction</a></h1>
+This is a Reference guide to Pixenate's Javascript properties, functions and the special elements used by Pixenate&trade;. 
+This reference guide should be used in conjunction with it's companion document - <a href="Customization-Guide.html">Pixenate&trade; Customization Guide</a>. 
+The VARIABLES section lists all of the Pixenate variables which can be read or modified. 
+The FUNCTIONS section lists and describes all of the public functions in Pixenate&trade; API. 
+The ELEMENTS section lists and describes all of the special elements used by Pixenate&trade;. 
+The CALLBACKS section lists and describes all of the events which Pixenate fires and which can be subscribed to in custom code.
+
+
+<h1 class="section"><a name="VARIABLES">VARIABLES</a></h1>
+Pixenate uses a number of javascript variables...
+
+<h1 class=""><a name="PXN8">PXN8</a></h1>
+PXN8 is the name of the global variable used by Pixenate to store variables and
+functions used by the Pixenate javascript API. PXN8 acts as a global namespace for all such
+variables and functions.
+
+
+<h1 class=""><a name="PXN8.root">PXN8.root</a></h1>
+Specifies where Pixenate&trade; is located relative to the Web
+Root. If you install Pixenate in a directory other than one named
+'pixenate' in the webroot folder, *You must change this value
+accordingly*. For example if your webroot is /var/www/html and you have installed PXN8
+in /var/www/html/pixenate, then you should set PXN8.root = "/pixenate/".
+
+Type
+----
+String
+
+Default Value
+-------------
+    "/pixenate/"
+
+
+<h1 class=""><a name="PXN8.basename">PXN8.basename</a></h1>
+Specifies the basename Pixenate&trade; CGI script
+
+Type
+----
+String
+
+Default Value
+-------------
+    "pxn8.pl"
+
+
+<h1 class=""><a name="PXN8.replaceOnSave">PXN8.replaceOnSave</a></h1>
+replaceOnSave specifies how PXN8 handles image URLs.
+If set to true then PXN8 always assumes that the photo at the supplied URL has changed.
+If set to false then PXN8 will assume that the photo at the supplied url hasn't changed since it was last retrieved.
+If the photo URL maps to a filepath on the webserver and your photo-editing application
+overwrites the original file when saved then you should set this to true.
+By default, it's set to true to avoid potential caching problems when save operation overwrites the original image.
+
+Type
+----
+boolean
+
+Default Value
+-------------
+    true
+
+
+
+<h1 class=""><a name="PXN8.aspectRatio">PXN8.aspectRatio</a></h1>
+The currently enforced aspect-ratio which is enforced when the user
+selects an area of the photo. If the value is anything other than...
+
+    {width: 0, height: 0}
+
+...then that aspect ratio is enforced. E.g. to
+enforce a 2x3 aspect ratio on selections...
+
+    PXN8.selectByRatio("2x3");
+
+Type
+----
+Object (with *width* and *height* properties). *READ ONLY*
+
+Default Value
+-------------
+    {width: 0, height: 0}
+
+
+<h1 class=""><a name="PXN8.position">PXN8.position</a></h1>
+
+The current mouse position on the photo. The PXN8.position property
+takes into account the current magnification level so it is always the
+position of the mouse relative to the top-left corner of the un-magnified photo.
+
+Type
+----
+Object (with *x* and *y* properties). *READ ONLY*
+
+Default Value
+-------------
+    {x: "-", y: "-"}
+
+
+<h1 class=""><a name="PXN8.style">PXN8.style</a></h1>
+PXN8.style is a namespace used to define style-related variables used by Pixenate.
+
+
+<h1 class=""><a name="PXN8.style.notSelected">PXN8.style.notSelected</a></h1>
+This variable defines the opacity and color of the non-selected areas of the photo.
+
+Type
+----
+Object (with *opacity* and *color* properties).
+
+Default Value
+-------------
+    {opacity: 0.33,
+     color:   "black"}
+
+
+<h1 class=""><a name="PXN8.style.resizeHandles">PXN8.style.resizeHandles</a></h1>
+Defines the color, and size (in pixels) of the resize handles which appear at
+the corners and sides of the selected area of the image.
+
+Type
+----
+Object (with *color* and *size* properties).
+
+Default Value
+-------------
+    {color: "white",
+     size:  6};
+
+<h1 class=""><a name="PXN8.select.constrainToImageBounds">PXN8.select.constrainToImageBounds</a></h1>
+Controls the selection behaviour. By default users cannot select an area which clips the
+bounds of the image. However, there are cases where the user might want to do this - for example when adding
+clip-art to an image , part of the clip-art may be off-image (e.g. adding santa hats to photos - constraining
+the overlay tool so that all of the overlay image must appear on top of the photo does not make sense).
+
+Type
+----
+boolean
+
+Default Value
+-------------
+true
+
+
+<h1 class=""><a name="PXN8.convertToJPEG">PXN8.convertToJPEG</a></h1>
+By default Pixenate assumes it is working with photographic images which don't have an alpha channel.
+If you would like to edit .GIF or .PNG images while keeping the alpha channel information then set this variable to false.
+
+Type
+----
+boolean
+
+Default Value
+-------------
+true
+
+
+<h1 class="section"><a name="CALLBACKSandRelatedFunctions">CALLBACKS and Related Functions</a></h1>
+Hooks can be added to Pixenate using the following pre-defined Pixenate event types.
+For more information on adding hooks to Pixenate please refer to the *PXN8.listener* set
+of functions.
+
+<h1 class=""><a name="PXN8.ON_IMAGE_LOAD">PXN8.ON_IMAGE_LOAD</a></h1>
+This event fires whenever *a new photo* is loaded into the
+web page as a result of an editing operation. It does not fire when
+the user *Undoes* or *Redoes* an operation - to catch those events use *PXN8.ON_IMAGE_CHANGE*.
+
+Examples
+--------
+    function myOnImageLoad(eventType){
+        alert("A new image has been loaded");
+    }
+    PXN8.listener.add(PXN8.ON_IMAGE_LOAD,myOnImageLoad);
+
+
+<h1 class=""><a name="PXN8.ON_IMAGE_CHANGE">PXN8.ON_IMAGE_CHANGE</a></h1>
+This event fires whenever the photo is changed as a result of an
+editing operation (including the undo and redo family of operations).
+
+Examples
+--------
+    function myOnImageChange(eventType){
+        alert("The image has been modified");
+    }
+    PXN8.listener.add(PXN8.ON_IMAGE_CHANGE,myOnImageChange);
+
+<h1 class=""><a name="PXN8.BEFORE_IMAGE_CHANGE">PXN8.BEFORE_IMAGE_CHANGE</a></h1>
+This event fires before the photo is changed as a result of an
+editing operation (including the undo and redo family of operations).
+
+Examples
+--------
+    function myBeforeImageChange(eventType){
+        alert("The image is about to be modified");
+    }
+    PXN8.listener.add(PXN8.BEFORE_IMAGE_CHANGE,myBeforeImageChange);
+
+<h1 class=""><a name="PXN8.ON_ZOOM_CHANGE">PXN8.ON_ZOOM_CHANGE</a></h1>
+This event is fired whenever the magnification level of the photo has been changed
+(when the user zooms in and out).
+
+Examples
+--------
+
+    function myOnImageZoom(eventType){
+        alert("You have zoomed the image to " + (PXN8.zoom.value() * 100) + "%");
+    };
+    PXN8.listener.add(PXN8.ON_IMAGE_ZOOM, myOnImageZoom);
+
+
+<h1 class=""><a name="PXN8.ON_SELECTION_CHANGE">PXN8.ON_SELECTION_CHANGE</a></h1>
+This event fires whenever the selection area is modified. *Do
+not do anything which requires User interaction (such as alert,
+confirm, prompt etc) in your listener as this event can fire quite frequently* while
+the user is resizing, moving or initializing the selection area using the mouse. If you
+want your hook to be called after the user has finished selecting the area, then use
+*PXN8.ON_SELECTION_COMPLETE* instead.
+
+Examples
+--------
+
+Please see the <a href="example-selection-limit.html">Limiting Selection Size</a> example, which demonstrates how to modify the selection behaviour so that a minimum area of 400x200 pixels must be selected.
+
+<h1 class=""><a name="PXN8.ON_SELECTION_COMPLETE">PXN8.ON_SELECTION_COMPLETE</a></h1>
+This event fires when the user mouseups after making a selection or when a selection
+has been made programmatically.
+
+Examples
+--------
+
+    function myOnSelectionComplete(eventType){
+        var log = document.getElementById("my_log");
+        var sel = PXN8.getSelection();
+        alert("You selected: " + sel.top + "," + sel.left + "," +
+              sel.width + "," + sel.height);
+    }
+    PXN8.listener.add(PXN8.ON_SELECTION_COMPLETE,myOnSelectionComplete);
+
+
+<h1 class=""><a name="PXN8.ON_IMAGE_ERROR">PXN8.ON_IMAGE_ERROR</a></h1>
+This event is fired when an image update fails or an image fails to load.
+
+
+<h1 class=""><a name="PXN8.listener.add">PXN8.listener.add()</a></h1>
+Adds a new callback function to the list of functions to be called when a PXN8 event occurs.
+Listeners can be added for the following event types...
+* PXN8.ON_ZOOM_CHANGE : Fired when the image is zoomed in or out.
+* PXN8.ON_SELECTION_CHANGE : Fired when the selection has changed (and during a manual selection operation).
+* PXN8.ON_SELECTION_COMPLETE : Fired when the user has completed making a selection or when the selection has changed programattically.
+* PXN8.ON_IMAGE_CHANGE : Fired when the image has been modified. This is fired *after* the changed image has been loaded into the browser.
+
+Parameters
+----------
+* eventType : See above event types.
+* callback : A function which will be called when an event of eventType fires. This should be a
+javascript function reference or literal. The callback should take a single parameter called eventType which will be
+one of the above defined event types.
+
+Returns
+-------
+The supplied callback parameter.
+
+Example
+-------
+The following snippet of code displays an alert message every time the image is modified.
+
+    // add an anonymous function as a listener
+    //
+    var myListener = PXN8.listener.add(PXN8.ON_IMAGE_CHANGE, function(eventType){
+        if (eventType == PXN8.ON_IMAGE_CHANGE){
+           alert("The image has changed");
+        }
+    });
+
+The code above is equivalent to...
+
+    // define and name the function
+    function myListener(eventType){
+        if (eventType == PXN8.ON_IMAGE_CHANGE){
+           alert("The image has changed");
+        }
+    }
+
+    // add the named function
+    PXN8.listener.add(PXN8.ON_IMAGE_CHANGE,myListener);
+
+Related
+-------
+<a href="#PXN8.listener.remove">PXN8.listener.remove</a> <a href="#PXN8.listener.onceOnly
+">PXN8.listener.onceOnly
+</a> 
+
+<h1 class=""><a name="PXN8.listener.remove">PXN8.listener.remove()</a></h1>
+Removes a callback function from the list of functions to be called when a PXN8 event occurs.
+
+
+Parameters
+----------
+
+* eventType : The type of event for which you want to remove the listener (A listener
+can potentially listen for different types of events).
+* callback : a function reference which will be removed from Pixenate's list of listeners
+for that particular event type.
+
+Example
+-------
+
+    PXN8.listener.remove(PXN8.ON_IMAGE_CHANGE,myListener);
+
+Related
+-------
+<a href="#PXN8.listener.add">PXN8.listener.add</a> <a href="#PXN8.listener.onceOnly
+">PXN8.listener.onceOnly
+</a> 
+
+<h1 class=""><a name="PXN8.listener.onceOnly">PXN8.listener.onceOnly()</a></h1>
+Add a special-case of listener that *will only be invoked once and once only*.
+
+Parameters
+----------
+* eventType : The type of event for which you want to listen (once only).
+* callback : The function to be called when the event occurs (only called once then removed from list).
+
+Returns
+-------
+The newly added Listener.
+
+Related
+-------
+<a href="#PXN8.listener.add">PXN8.listener.add</a> <a href="#PXN8.listener.remove
+">PXN8.listener.remove
+</a> 
+
+<h1 class="section"><a name="CorePixenateFunctions">Core Pixenate Functions</a></h1>
+Pixenate's core javascript API relies on the following functions...
+
+
+<h1 class=""><a name="PXN8.initialize">PXN8.initialize()</a></h1>
+Call this function to initialize the PXN8 editor.
+
+Parameters
+----------
+* image_url : A string value which is an Image URL of any of the forms specified below.
+
+The image_url parameter can be any of the following.
+
+* full URL : E.g. "http://pixenate.com/pixenate/images/samples/hongkong.jpg"
+* absolute path (relative to domain) : E.g. "/pixenate/images/samples/hongkong.jpg"
+* relative path (relative to page) : E.g. "../../images/samples/hongkong.jpg"
+
+
+Alternatively it can be an object with 2 attributes *url* (see above) and *filepath*.
+The filepath should be a path relative to where Pixenate is installed and
+which can be used by the Pixenate server CGI to access the image from the server's filesystem.
+
+PXN8.initialize() can also be used to load images from a database or other custom source.
+For example, if you keep your images as BLOBs in a database you can create a custom image loader by specifying a *source* parameter.
+For more information please see <a href="http://sxoop.wordpress.com/2009/03/24/pixenate-virtual-directories-and-secure-websites/">http://sxoop.wordpress.com/2009/03/24/pixenate-virtual-directories-and-secure-websites/</a> .
+
+Example
+-------
+Pixenate can be initialized anywhere on the page *as long as the PXN8.initialize() function is called after
+the 'pxn8_canvas' div has been parsed by the browser*. For example the following code won't work on many browsers...
+
+*WRONG*
+
+    <script type="text/javascript">PXN8.initialize("http://pixenate.com/pixenate/images/samples/hongkong.jpg");</script>
+    <div id="pxn8_canvas"></div>
+
+The correct approach is as follows...
+
+    <div id="pxn8_canvas"></div>
+    <!-- declare the pxn8_canvas BEFORE calling initialize -->
+    <script type="text/javascript">PXN8.initialize("http://pixenate.com/pixenate/images/samples/hongkong.jpg");</script>
+
+Another approach is to call PXN8.initialize() when the *window.onload* event fires...
+
+    <!-- the following javascript block can appear anywhere on the page -->
+    <script type="text/javascript">
+      PXN8.dom.addLoadEvent(function(){
+          // pxn8_canvas will have been parsed by the time this javascript is executed.
+          PXN8.initialize("http://pixenate.com/pixenate/images/samples/hongkong.jpg");
+      });
+    </script>
+
+Related
+-------
+<a href="#PXN8.dom.addLoadEvent
+">PXN8.dom.addLoadEvent
+</a> 
+
+<h1 class=""><a name="PXN8.select">PXN8.select()</a></h1>
+Selects an area of the image. Use this function to programmatically select
+an area of the image.
+
+Parameters
+----------
+* left : The start position of the selected area along the X axis (starts at left).
+* top : The start position of the selected area along the Y axis (starts at top).
+* width : The width of the selected area.
+* height : The height of the selected area.
+
+Alternatively you can provide a single object as a parameter (with the following properties)...
+
+* left : The start position of the selected area along the X axis (starts at left).
+* top : The start position of the selected area along the Y axis (starts at top).
+* width : The width of the selected area.
+* height : The height of the selected area.
+
+Example
+-------
+The following example code will select the top half of the photo...
+
+    var theImage = document.getElementById("pxn8_image");
+    var zoomValue = PXN8.zoom.value();
+    //
+    // the image's width and height might not reflect the true width and height if the image
+    // has been zoomed in or out.
+    //
+    var realWidth = theImage.width / zoomValue;
+    var realHeight = theImage.height / zoomValue;
+
+    PXN8.select(0, 0, realWidth, realHeight / 2);
+
+For an example of limiting the selection area by size please <a href="example-selection-limit.html">click here</a>
+
+Related
+-------
+<a href="#PXN8.getSelection">PXN8.getSelection</a> <a href="#PXN8.selectByRatio
+">PXN8.selectByRatio
+</a> 
+
+<h1 class=""><a name="PXN8.select.enable">PXN8.select.enable()</a></h1>
+Enable selection of parts of the photo. No need to call this at startup because
+Selection will be enabled by default.
+
+Parameters
+----------
+* enabled : A boolean value, true to enable the selection. false to disable it.
+* unselect (optional) : A boolean value indicating whether or not to discard the current selection.
+
+Example
+-------
+
+Please see the <a href="example-selection-disable.html">Disabling Selection</a> example, which demonstrates how to disable and enable selection.
+
+Returns
+-------
+null
+
+Related
+-------
+<a href="#
+">
+</a> 
+<h1 class=""><a name="PXN8.getSelection">PXN8.getSelection()</a></h1>
+Return a Rect that represents the current selection.
+
+Returns
+-------
+An object with the following properties...
+* top : The topmost coordinate on the Y axis of the selected area.
+* left: The leftmost coordinate on the X axis of the selected area.
+* width: The width of the selected area.
+* height: The height of the selected area.
+
+Example
+-------
+    var selectedArea = PXN8.getSelection();
+    alert ("You have selected an area " + selectedArea.width + "x" + selectedArea.height );
+Related
+-------
+<a href="#PXN8.select">PXN8.select</a> <a href="#PXN8.selectByRatio
+">PXN8.selectByRatio
+</a> 
+
+<h1 class=""><a name="PXN8.selectByRatio">PXN8.selectByRatio()</a></h1>
+Selects an area using an aspect ratio of the form "WxH" where W is width and H is height.
+
+Parameters
+----------
+* ratio : The ratio is expressed as a string e.g. "4x6".
+* override (optional) : A boolean value indicating whether or not to ignore the images's dimensions (don't optimize selection size).
+The default value if none is specified is *false*.
+
+Example
+-------
+
+Assuming the user is working with a photo which is 300x225, calling
+PXN8.selectByRatio("2x3") will result in the following selection...
+    {width: 300, height: 200, left: 0, top: 12}
+<table>
+  <tr><td>Original</td><td>PXN8.selectByRatio("2x3")</td></tr>
+  <tr>
+     <td valign="top"><img src="pigeon300x225.jpg"/></td>
+     <td valign="top"><img src="pigeon300x225sbr2x3.jpg"/></td>
+  </tr>
+  <tr><td>Original</td><td>PXN8.selectByRatio("2x3",true)</td></tr>
+  <tr>
+     <td valign="top"><img src="pigeon300x225.jpg"/></td>
+     <td valign="top"><img src="pigeon300x225sbr2x3true.jpg"/></td>
+  </tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.select">PXN8.select</a> <a href="#PXN8.selectAll">PXN8.selectAll</a> <a href="#PXN8.unselect">PXN8.unselect</a> <a href="#PXN8.getSelection
+">PXN8.getSelection
+</a> 
+
+<h1 class=""><a name="PXN8.rotateSelection">PXN8.rotateSelection()</a></h1>
+Rotates the selection area by 90 degrees.
+
+Example
+-------
+<table>
+  <tr><td>Before</td><td>After PXN8.rotateSelection()</td></tr>
+  <tr>
+     <td valign="top"><img src="pigeon300x225b4rotatesel.jpg"/></td>
+     <td valign="top"><img src="pigeon300x225afterrotatesel.jpg"/></td>
+  </tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.select">PXN8.select</a> <a href="#PXN8.selectByRatio">PXN8.selectByRatio</a> <a href="#PXN8.selectAll">PXN8.selectAll</a> <a href="#PXN8.unselect">PXN8.unselect</a> <a href="#PXN8.getSelection
+">PXN8.getSelection
+</a> 
+
+<h1 class=""><a name="PXN8.selectAll">PXN8.selectAll()</a></h1>
+Selects the entire photo area.
+
+Example
+-------
+<table>
+  <tr><td>Before</td><td>After *PXN8.selectAll()*</td></tr>
+  <tr>
+     <td valign="top"><img src="pigeon300x225.jpg"/></td>
+     <td valign="top"><img src="pigeon300x225selectall.jpg"/></td>
+  </tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.select">PXN8.select</a> <a href="#PXN8.selectByRatio">PXN8.selectByRatio</a> <a href="#PXN8.rotateSelection">PXN8.rotateSelection</a> <a href="#PXN8.unselect">PXN8.unselect</a> <a href="#PXN8.getSelection
+">PXN8.getSelection
+</a> 
+
+<h1 class=""><a name="PXN8.unselect">PXN8.unselect()</a></h1>
+Unselect the entire photo. The selection will be discarded.
+
+
+<h1 class=""><a name="PXN8.getUncompressedImage">PXN8.getUncompressedImage()</a></h1>
+Returns the relative URL to the uncompressed 100% full quality image.
+This version of the image is not normally downloaded and displayed in the browser
+during an editing session because it is typically much larger than the more bandwidth-friendly
+lower resolution image (typically using 85% quality). Normally this
+function be called from pxn8_save_image or some other function which
+will save the image to the server.
+
+Returns
+-------
+A path (relative the PXN8.root) to the uncompressed image if the image has changed or <em>false</em> if no changes have been made.
+
+Examples
+--------
+
+    var uncompressed = PXN8.getUncompressedImage();
+
+	 if (uncompressed != false)
+	 {
+		  // the image has been modified
+		  // uncompressed = "cache/01_feabcdd1d0workingjpg.jpg";
+        // view the image
+        document.location = PXN8.server + PXN8.root + "/" +	 uncompressed;
+    }
+
+Related
+-------
+<a href="#PXN8.save.toServer">PXN8.save.toServer</a> <a href="#pxn8_save_image
+">pxn8_save_image
+</a> 
+
+<h1 class=""><a name="PXN8.getScript">PXN8.getScript()</a></h1>
+Return a list (a copy) of all the operations which have been performed (doesn't include undone operations).
+
+Returns
+-------
+A array of objects each of which is a distinct operation which was performed on the image.
+
+Examples
+--------
+The following code retrieves all of the operations performed in the current editing session and displays a series
+of alerts telling the user what they have done.
+
+    var whatYouDid = PXN8.getScript();
+    for (var i = 0; i < whatYouDid.length; i++){
+        alert("you performed a '" + whatYouDid[i].operation + "' operation");
+    }
+
+
+<h1 class=""><a name="PXN8.isUpdating">PXN8.isUpdating()</a></h1>
+Is pixenate currently updating the photo ?
+
+Returns
+-------
+*true* or *false* depending on whether the photo is currently being updated.
+
+
+<h1 class=""><a name="PXN8.getImageSize">PXN8.getImageSize()</a></h1>
+Returns the real width and height of the image.
+
+Returns
+-------
+Returns an object with <em>width</em> and <em>height</em> attributes - the real width and height of the image.
+
+
+<h1 class=""><a name="PXN8.objectToString">PXN8.objectToString()</a></h1>
+Converts a given javascript object to a string which can be evaluated as a JSON
+expression.
+
+Parameters
+----------
+* object : The object to be converted into a string.
+
+Returns
+-------
+A string which can later be evaluated as a JSON expression.
+Boolean literals (*true* and *false*) are converted to strings.
+
+Examples
+--------
+
+    var myObject = {
+                    name: "Walter Higgins",
+                    contacts: ["John Doe", "K DeLong"],
+                    available: false
+                    };
+
+    var myObjectAsString = PXN8.objectToString(myObject);
+
+    // myObjectAsString = '{"name":"Walter Higgins", "contacts":["John Doe","K DeLong"],"available":"false"}';
+
+
+
+<h1 class="section"><a name="Zooming:VariablesandRelatedFunctions">Zooming : Variables and Related Functions</a></h1>
+The following variables and functions are used for zooming in and out.
+Zooming (or magnification) only changes the appearance of the photo in the
+browser and does not change the photo's real size.
+
+
+<h1 class=""><a name="PXN8.zoom">PXN8.zoom</a></h1>
+PXN8.zoom is a namespace used by all of the zoom-related variables and functions.
+
+
+<h1 class=""><a name="PXN8.zoom.values">PXN8.zoom.values</a></h1>
+Users can zoom in and out of a photo by cycling through an array of predefined zoom values.
+PXN8.zoom.values specifies the levels of magnification a user can cycle through.
+
+Type
+----
+Array
+
+Default Value
+-------------
+    [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2, 3, 4 ];
+
+Related
+-------
+<a href="#PXN8.zoom.index
+">PXN8.zoom.index
+</a> 
+<h1 class=""><a name="PXN8.zoom.index">PXN8.zoom.index</a></h1>
+PXN8.zoom.index is an index into the (zero-based) array of PXN8.zoom.values.
+
+Type
+----
+number
+
+Default Value
+-------------
+    3
+
+<h1 class=""><a name="PXN8.zoom.value">PXN8.zoom.value()</a></h1>
+Get the current magnification value in use. This is expressed as a float. e.g. 200% magnification
+returns a value of 2.0
+
+Returns
+-------
+A float value - the current magnification factor.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn()</a></h1>
+Indicates whether or not the image magnification can be increased any further.
+
+Returns
+-------
+true or false.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut()</a></h1>
+Indicates whether or not the image magnification can be decreased any further.
+
+Returns
+-------
+true or false.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize
+">PXN8.zoom.toSize
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex()</a></h1>
+Zoom the photo to a magnification level at the specified index (see the
+PXN8.zoom.values array for a list of magnification levels.
+
+Parameters
+----------
+
+* index : The index into the PXN8.zoom.values array. E.g. PXN8.zoom.values has this value
+
+     [0.25, 0.5, 0.75, 1.0, 1.5, 2]
+
+The PXN8.zoom.zoomByIndex(2) will zoom the image to 75% (0.75 is the value a PXN8.zoom.values[2]).
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.shrinkToWidth">PXN8.zoom.shrinkToWidth()</a></h1>
+Zoom the photo to a magnification level such that the photo's width does not exceed the specified width.
+The height will be adjusted accordingly. Note: This operation does not resize the photo permanently.
+<b>If the photo's width is already less than the specified width then no action is taken.</b>
+
+Parameters
+----------
+
+* width : The width to shrink the image to.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth</a> <a href="#PXN8.zoom.toHeight">PXN8.zoom.toHeight</a> <a href="#PXN8.zoom.shrinkToHeight">PXN8.zoom.shrinkToHeight</a> <a href="#PXN8.zoom.expandToHeight
+">PXN8.zoom.expandToHeight
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth()</a></h1>
+Zoom the photo to a magnification level such that the photo's width matches the specified width.
+The height will be adjusted accordingly. Note: This operation does not resize the photo permanently.
+<b>If the photo's width is already greater than the specified width then no action is taken.</b>
+
+Parameters
+----------
+
+* width : The width to expand the image to.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth</a> <a href="#PXN8.zoom.toHeight">PXN8.zoom.toHeight</a> <a href="#PXN8.zoom.shrinkToHeight">PXN8.zoom.shrinkToHeight</a> <a href="#PXN8.zoom.expandToHeight
+">PXN8.zoom.expandToHeight
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.expandToHeight">PXN8.zoom.expandToHeight()</a></h1>
+Zoom the photo to a magnification level such that the photo's height matches the specified height.
+The height will be adjusted accordingly. Note: This operation does not resize the photo permanently.
+<b>If the photo's height is already greater than the specified height then no action is taken.</b>
+
+Parameters
+----------
+
+* height : The height to expand the image to.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth</a> <a href="#PXN8.zoom.toHeight">PXN8.zoom.toHeight</a> <a href="#PXN8.zoom.shrinkToHeight">PXN8.zoom.shrinkToHeight</a> <a href="#PXN8.zoom.expandToHeight
+">PXN8.zoom.expandToHeight
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.toWidth">PXN8.zoom.toWidth()</a></h1>
+Zoom the photo to a magnification level such that the photo's width matches the specified width.
+The height will be adjusted accordingly. Note: This operation does not resize the photo permanently.
+
+Parameters
+----------
+
+* width : The width to set the image to.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth</a> <a href="#PXN8.zoom.toHeight">PXN8.zoom.toHeight</a> <a href="#PXN8.zoom.shrinkToHeight">PXN8.zoom.shrinkToHeight</a> <a href="#PXN8.zoom.expandToHeight
+">PXN8.zoom.expandToHeight
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.toHeight">PXN8.zoom.toHeight()</a></h1>
+Zoom the photo to a magnification level such that the photo's height matches the specified width.
+The width will be adjusted accordingly. Note: This operation does not resize the photo permanently.
+
+Parameters
+----------
+
+* height : The height to set the image to.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.toWidth">PXN8.zoom.toWidth</a> <a href="#PXN8.zoom.expandToWidth">PXN8.zoom.expandToWidth</a> <a href="#PXN8.zoom.shrinkToHeight">PXN8.zoom.shrinkToHeight</a> <a href="#PXN8.zoom.expandToHeight
+">PXN8.zoom.expandToHeight
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.zoomIn">PXN8.zoom.zoomIn()</a></h1>
+Zoom in (Increase the magnification level) so the photo appears bigger.
+The amount by which the magnification level increases depends on the values in the
+*PXN8.zoom.values* array.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.zoomOut">PXN8.zoom.zoomOut()</a></h1>
+Zoom out (Decrease the magnification level) so the photo appears smaller.
+The amount by which the magnification level decreases depends on the values in the
+*PXN8.zoom.values* array.
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.toSize">PXN8.zoom.toSize()</a></h1>
+Zoom the image to a fixed width and height.
+
+Parameters
+----------
+
+* width : The width to zoom to.
+* height: The height to zoom to.
+
+Example
+-------
+
+To adjust the visible area of the photo (when it's first loaded) so that it's height is 500 Pixels high (and the width is also adjusted accordingly)
+
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD, function(){
+       var img = document.getElementById("pxn8_image");
+       var oh  = img.height;
+       var ow = img.width;
+       var nh = 800; // new height
+       var ratio = oh / nh;
+       var nw = ow / ratio;
+       PXN8.zoom.toSize(nw,nh);
+    });
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomByIndex">PXN8.zoom.zoomByIndex</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByValue
+">PXN8.zoom.zoomByValue
+</a> 
+
+<h1 class=""><a name="PXN8.zoom.zoomByValue">PXN8.zoom.zoomByValue()</a></h1>
+Zoom the photo to a magnification level.
+
+Parameters
+----------
+
+* value : The magnification value
+
+The PXN8.zoom.zoomByValue(2) will zoom the image to 200% .
+
+Related
+-------
+<a href="#PXN8.zoom.canZoomIn">PXN8.zoom.canZoomIn</a> <a href="#PXN8.zoom.canZoomOut">PXN8.zoom.canZoomOut</a> <a href="#PXN8.zoom.zoomIn">PXN8.zoom.zoomIn</a> <a href="#PXN8.zoom.zoomOut">PXN8.zoom.zoomOut</a> <a href="#PXN8.zoom.value">PXN8.zoom.value</a> <a href="#PXN8.zoom.toSize">PXN8.zoom.toSize</a> <a href="#PXN8.zoom.zoomByIndex
+">PXN8.zoom.zoomByIndex
+</a> 
+
+<h1 class="section"><a name="Photo-Editingfunctions">Photo-Editing functions</a></h1>
+As well as the core selection, zoom and initialization functions, the Pixenate&trade;
+javascript API is composed of a series of photo-editing functions which perform various
+modifications to the photo by calling equivalent CGI functions in the Pixenate software running on
+the web server.
+
+<h1 class=""><a name="PXN8.tools">PXN8.tools</a></h1>
+This variable defines a namespace within which all of the Pixenate photo-editing
+functions are defined.
+
+<h1 class=""><a name="PXN8.tools.history">PXN8.tools.history()</a></h1>
+Go back in time 'offset' number of operations. Clients should not call this function
+directly. Use the *PXN8.tools.undo()* and *PXN8.tools.redo()* functions instead.
+
+Parameters
+----------
+* offset : A number (positive or negative) indicating how many operations to move forwards or backwards
+in the user session stack.
+
+Examples
+--------
+    PXN8.tools.history(-1);
+    // same as PXN8.tools.undo();
+
+    PXN8.tools.history(+1)
+    // same sas PXN8.tools.redo();
+
+Related
+-------
+<a href="#PXN8.tools.undo">PXN8.tools.undo</a> <a href="#PXN8.tools.redo
+">PXN8.tools.redo
+</a> 
+
+<h1 class=""><a name="PXN8.tools.undo">PXN8.tools.undo</a></h1>
+Undo the last operation.
+
+Related
+-------
+<a href="#PXN8.tools.undoall">PXN8.tools.undoall</a> <a href="#PXN8.tools.redo">PXN8.tools.redo</a> <a href="#PXN8.tools.redoall">PXN8.tools.redoall</a> <a href="#PXN8.tools.history
+">PXN8.tools.history
+</a> 
+
+<h1 class=""><a name="PXN8.tools.redo">PXN8.tools.redo()</a></h1>
+Redo the last undone operation.
+
+Related
+-------
+<a href="#PXN8.tools.undo">PXN8.tools.undo</a> <a href="#PXN8.tools.redoall">PXN8.tools.redoall</a> <a href="#PXN8.tools.history
+">PXN8.tools.history
+</a> 
+
+<h1 class=""><a name="PXN8.tools.undoall">PXN8.tools.undoall()</a></h1>
+Undo all changes that were made to the photo
+
+Related
+-------
+<a href="#PXN8.tools.undo">PXN8.tools.undo</a> <a href="#PXN8.tools.redoall">PXN8.tools.redoall</a> <a href="#PXN8.tools.history">PXN8.tools.history</a> <a href="#PXN8.tools.redo
+">PXN8.tools.redo
+</a> 
+
+<h1 class=""><a name="PXN8.tools.redoall">PXN8.tools.redoall()</a></h1>
+Redo all changes made to the photo.
+
+Related
+-------
+<a href="#PXN8.tools.undo">PXN8.tools.undo</a> <a href="#PXN8.tools.redoall">PXN8.tools.redoall</a> <a href="#PXN8.tools.history">PXN8.tools.history</a> <a href="#PXN8.tools.redo
+">PXN8.tools.redo
+</a> 
+<h1 class=""><a name="PXN8.tools.updateImage">PXN8.tools.updateImage()</a></h1>
+This function takes an array of operations as a parameter and submits the
+operations to the server to update the image. This function is called by all other PXN8.tools.*
+functions (except PXN8.tools.undo(), PXN8.tools.redo(),  PXN8.tools.undoall(), PXN8.tools.redoall() ).
+
+
+Parameters
+----------
+* operations : An array of 'operations' which will be performed on the image.
+
+Example
+-------
+The following code will crop the photo and rotate it by 90&deg; ...
+
+    PXN8.tools.updateImage([
+                            {operation: "crop", top: 40, left: 40, width: 200, height: 200},
+                            {operation: "rotate", angle: 90}
+                           ]);
+
+PXN8.tools.updateImage() can be used to combine multiple image-editing operations into a single
+user operation (to the user it appears to be one operation even though the image goes through
+two transformations, being first normalized and then enhanced).
+When the user clicks *Undo*, both the *crop* and *rotate* operations will be undone.
+PXN8.tools.updateImage() is really useful if you would like to create your own custom 'quick-fix'
+operations which are combinations of existing operations.
+Please see <a href="#OPERATIONS">API Operations</a> for a full list of operations
+
+
+<h1 class=""><a name="PXN8.tools.startTransaction">PXN8.tools.startTransaction()</a></h1>
+If you want to combine multiple image-editing operations into a single atomic user operation, you can do so
+by bracketing the operations with PXN8.tools.startTransaction() and PXN8.tools.endTransaction().
+
+Examples
+--------
+
+    PXN8.tools.startTransaction();
+
+    PXN8.tools.snow();
+    PXN8.tools.rotate({angle: 90});
+    PXN8.tools.resize(40,40);
+
+    // commit changes to the server
+    PXN8.tools.endTransaction();
+
+
+In the above example, the PXN8.tools.snow(), PXN8.tools.rotate() and PXN8.tools.resize() set of statements will be treated as a single user operation. If the user clicks 'Undo' all 3 operations will be undone. Please see <a href="example-transaction.html">Combining many operations in a single click.</a>
+
+Related
+-------
+<a href="#PXN8.tools.endTransaction
+">PXN8.tools.endTransaction()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.endTransaction">PXN8.tools.endTransaction()</a></h1>
+If you want to combine multiple image-editing operations into a single atomic user operation, you can do so
+by bracketing the operations with PXN8.tools.startTransaction() and PXN8.tools.endTransaction().
+PXN8.tools.endTransaction() commits changes to the server.
+
+Examples
+--------
+
+    PXN8.tools.startTransaction();
+
+    PXN8.tools.snow();
+    PXN8.tools.rotate({angle: 90});
+    PXN8.tools.resize(40,40);
+
+    // commit changes to the server
+    PXN8.tools.endTransaction();
+
+
+In the above example, the PXN8.tools.snow(), PXN8.tools.rotate() and PXN8.tools.resize() set of statements will be treated as a single user operation. If the user clicks 'Undo' all 3 operations will be undone.
+
+Related
+-------
+<a href="#PXN8.tools.startTransaction
+">PXN8.tools.startTransaction()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.enhance">PXN8.tools.enhance()</a></h1>
+Apply a digital filter to enhance a noisy photo. This is useful for smoothing facial lines.
+
+
+<h1 class=""><a name="PXN8.tools.normalize">PXN8.tools.normalize()</a></h1>
+Transform photo to span the full range of color values. This results in a more
+colorful, better balanced image.
+
+
+<h1 class=""><a name="PXN8.tools.instantFix">PXN8.tools.instantFix()</a></h1>
+instant_fix performs both 'enhance' and 'normalize'
+
+Related
+-------
+<a href="#PXN8.tools.enhance">PXN8.tools.enhance</a> <a href="#PXN8.tools.normalize
+">PXN8.tools.normalize
+</a> 
+
+<h1 class=""><a name="PXN8.tools.spiritlevel">PXN8.tools.spiritlevel()</a></h1>
+Fix the horizon on a photo: Uses two points (left and right) to ascertain
+what the correct angle of the photo should be.
+This function is a wrapper for PXN8.tools.rotate().
+
+Parameters
+----------
+* x1 : the X coordinate of the first point
+* y1 : The Y coordinate of the first point
+* x2 : The X coordinate of the second point
+* y2 : The Y coordinate of the second point
+
+Related
+-------
+<a href="#PXN8.tools.rotate
+">PXN8.tools.rotate
+</a> 
+
+<h1 class=""><a name="PXN8.tools.rotate">PXN8.tools.rotate()</a></h1>
+Rotate a photo or flip it.
+
+Parameters
+----------
+* params : An object which must have at least one of the following properties...
+  * angle : A number specifing the degrees through which the photo should be rotated.
+  * flipvt : A boolean indicating whether or not the photo should be flipped vertically.
+  * fliphz : A boolean indicating whether or not the photo should be flipped horizontally.
+
+If no parameters are supplied, the default is to rotate the photo through 90 degrees clockwise.
+
+Examples
+--------
+To rotate a photo 90 degrees clockwise...
+
+    PXN8.tools.rotate({angle: 90});
+
+To flip a photo along the horizontal pane (mirror photo)...
+
+    PXN8.tools.rotate({fliphz: true});
+
+
+<h1 class=""><a name="PXN8.tools.blur">PXN8.tools.blur()</a></h1>
+Blur an area of the photo (or the entire photo).
+
+Examples
+--------
+To blur the entire photo with a radius of 2x2...
+
+    PXN8.tools.blur({radius: 2});
+
+To blur an area of the photo...
+
+    PXN8.tools.blur({radius: 2, top: 4, left: 40, width: 400, height: 200});
+
+
+<h1 class=""><a name="PXN8.tools.colors">PXN8.tools.colors()</a></h1>
+Change the brightness, saturation ,hue and contrast of a photo.
+
+Examples
+--------
+To increase saturation by 20%...
+
+    PXN8.tools.colors({saturation: 120});
+
+To increase contrast & reduce brightness by 20 %
+
+    PXN8.tools.colors({contrast: 1, brightness: 80});
+
+To increase saturation, brightness, hue and contrast...
+
+    PXN8.tools.colors ({brightness: 110, saturation: 110, hue: 180, contrast: 2});
+
+Contrast must be in the range -5 to +5.
+All other parameters must be in the range 0 - 200
+
+
+<h1 class=""><a name="PXN8.tools.crop">PXN8.tools.crop()</a></h1>
+Crop a photo to the dimensions provided. The most common way to call this is
+as follows...
+
+    PXN8.tools.crop();
+
+... which will simply crop the photo to the currently selected area. This is
+equivalent to ...
+    PXN8.tools.crop(PXN8.getSelection());
+
+Parameters
+----------
+* geometry : An object with *width*, *height*, *top* and *left* properties.
+
+Examples
+--------
+Crop the photo begining at 10 pixels from left, 200 pixels from the top and
+extending 40 pixels to the right and 80 pixels to the bottom...
+
+    PXN8.tools.crop({top: 10, left: 200, width: 40, height: 80});
+
+
+<h1 class=""><a name="PXN8.tools.previewCrop">PXN8.tools.previewCrop()</a></h1>
+A utility function to allow the user to preview what a crop based on the current
+selection would look like.
+
+Parameters
+----------
+* timeoutMillis : Exit the preview mode after the timeoutMillis milliseconds.
+
+
+<h1 class=""><a name="PXN8.tools.filter">PXN8.tools.filter()</a></h1>
+Apply a 'lens-filter' effect to the photo.This mimics the effect
+of using those tinted lens filters on SLR to create more dramatic
+skies.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* params : An object with *top*, *color* and *opacity* properties. (see below).
+
+Examples
+--------
+The following javascript code will produce the image on the right...
+
+    PXN8.tools.filter({top: 125, color: '#ffa500', opacity: 80});
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225filter.jpg"/></td></tr>
+</table>
+
+The *top* property specifies where the filter should trail off completely. The filter
+is always applied starting at the top of the photo. If you would like the filter to begin
+at the bottom of the photo you should use the following code instead...
+
+    PXN8.tools.updateImage([
+                           {operation: "rotate", flipvt: true},
+                           {operation: "filter", top: 125, color: '#ffa500', opacity: 80},
+                           {operation: "rotate", flipvt: true},
+                           ]);
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225filterflip.jpg"/></td></tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.tools.interlace">PXN8.tools.interlace()</a></h1>
+Adds TV-like scan-lines overlaying the photo to make it appear like it is a
+screen-grab from broadcast TV.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* params : An object with *color* and *opacity* properties.
+
+Examples
+--------
+
+    PXN8.tools.interlace({color: '#ffffff', opacity: 66 });
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225interlace.jpg"/></td></tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.tools.lomo">PXN8.tools.lomo()</a></h1>
+This function adds a 'lomo' effect to the photo. This is an atmospheric and artistic
+effect that darkens the corners and (optionally) saturates the colors so that the photo
+appears to have been taken using a Russian LOMO&trade; camera.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* params : An object with *opacity* (numeric) and *saturate* (boolean) properties.
+
+Examples
+--------
+
+    PXN8.tools.lomo({opacity: 30, saturate: true});
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225lomo.jpg"/></td></tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.tools.fillFlash">PXN8.tools.fillFlash()</a></h1>
+Adds a fill-flash effect to the photo to brighten it. This is more
+subtle than using the PXN8.tools.colors() function as it composites a
+duplicate layer on top of the existing image using the 'SCREEN'
+compositing operation.
+
+Parameters
+----------
+* luminosity : A value between 1 and 100 (default value is 50 if parameter not passed).
+
+Examples
+--------
+
+    PXN8.tools.fillFlash();
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225fillflash.jpg"/></td></tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.tools.snow">PXN8.tools.snow()</a></h1>
+Adds snowflakes to the photo. This is basically a wrapper around PXN8.tools.overlay().
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Examples
+--------
+
+    PXN8.tools.snow();
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225snow.jpg"/></td></tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.tools.overlay
+">PXN8.tools.overlay()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.overlay">PXN8.tools.overlay()</a></h1>
+Overlays an image on top of the photo.
+The overlay tool is useful for superimposing clip-art and borders on top of photos.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+
+* params : An object with the following properties...
+  * filepath : The image property should be a relative path to the overlay image (relative to where pixenate is installed *not* the webroot). This is the image which will be overlaid in front of (or behind) the user's photo. You can provide either a <em>filepath</em> or <em>url</em> property. filepath will always be used if both url and filepath are provided. You must provide either the <em>filepath</em> or <em>url</em> parameter!
+  * url : A url to the image to use as the overlay. You can use this instead of the filepath parameter.
+  * image : (deprecated - use 'filepath' or 'url' instead) The image property should be a relative path to the overlay image (relative to where pixenate is installed *not* the webroot). This is the image which will be overlaid in front of (or behind) the user's photo.
+  * tile  : (optional) A boolean indicating whether the image should be tiled (repeated in the x and y direction).
+  * left : (optional) The X coordinate where the left-most side of the overlay will appear (ignored if *tile* is true).
+  * top : (optional) The Y coordinate where the top-most side of the overlay will appear (ignored if *tile* is true).
+  * width: (optional) The width to which the overlay will be resized. If the width property is not present then the overlay will not be resized.
+  * height: (optional) The height to which the overlay will be resized.
+  * position: (optional) The position to place the overlay relative to the photo. Possible values are *"front"* and *"back"* (default value is *"front"*).
+  * extend: (optional) A boolean indicating whether or not the photo canvas should be extended (not scaled) to match the size of the overlay image (used for Overlays which have an Alpha Channel).
+  * opacity: (optional) A value between 1 and 100 specifying the opacity of the overlay (default is 100).
+Examples
+--------
+
+Let's say your users have been working on a photo and would now like to stick it on to a background image to give it a border.
+
+<img align="center" src="border1.jpg"/>
+
+The border is 300 x 225 pixels in size and is a plain JPEG image (no transparency). What we are going to do is position the above image at the *back* of the photo.
+
+<img align="center" src="pigeon200x150.jpg"/>
+
+(a 200 x 150 photo) which will result in the following completed image
+
+<img align="center" src="overlay1.jpg"/>
+
+This can be achieved with the following code...
+
+    PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+    // more code..
+    PXN8.tools.overlay({image: "docs/border1.jpg", position: "back", left: 50, top: 37});
+
+Please see <a href="example-borders.html">Adding Borders</a> and <a href="example-speech-bubbles.html">Speech bubbles</a> for more Examples.
+
+Related
+-------
+<a href="#PXN8.tools.snow">PXN8.tools.snow()</a> <a href="#PXN8.tools.addText
+">PXN8.tools.addText()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.addText">PXN8.tools.addText()</a></h1>
+Adds text to a photo.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+
+* params : An object with the following properties...
+  * text : (this is the only compulsory property) The text to add.
+  * gravity : A string specifying where the text will appear. Possible values are "North", "South", "East", "West", "NorthWest", "SouthWest", "NorhtEast", "SouthEast", "Center".
+  * y : The Y coordinate where the text will appear (this is an offset from the default position specified by gravity)
+  * x : The X coordinate where the text will appear (this is an offset from the default position specified by gravity)
+  * font : The font family to use when adding text (default is Arial or Courier depending on what fonts are installed on the server).
+  * fill : The font color (expressed as a &hash; prefixed hexadecimal string).
+  * pointsize: The size of the font.
+  * style: (optional) Values can be "Normal", "Italic", "Oblique", "Any".
+  * stretch: (optional) Values can be "Normal", "UltraCondensed", "ExtraCondensed","Condensed","SemiCondensed", "SemiExpanded","Expanded","ExtraExpanded","UltraExpanded".
+  * stroke: (optional) The stroke color (expressed as a &hash; prefixed hexadecimal string).
+  * strokewidth: (optional) The stroke width (for outlining text).
+  * antialias: (optional) values can be <em>true</em> or <em>false</em>.
+  * rotate: (optional) The number of degrees to rotate the text.
+
+Examples
+--------
+To position text on the photo using the *gravity* property...
+
+    PXN8.tools.addText({fill : '#ffffff', font: 'Arial', pointsize: 20, text: 'Hello World', gravity: 'NorthEast'});
+
+<img src="pigeon300x225textgravity.jpg"/>
+
+The following table illustrates how the *gravity* and *x* and *y* parameters are used in conjunction with each other.
+The red arrow in each diagram points to the adjusted position used for *gravity*...
+
+<table>
+  <tr>
+    <td><img src="pigeonNorthWest.jpg"/></td>
+    <td><img src="pigeonNorth.jpg"/></td>
+    <td><img src="pigeonNorthEast.jpg"/></td>
+  </tr>
+  <tr>
+    <td><img src="pigeonWest.jpg"/></td>
+    <td><img src="pigeonCenter.jpg"/></td>
+    <td><img src="pigeonEast.jpg"/></td>
+  </tr>
+  <tr>
+    <td><img src="pigeonSouthWest.jpg"/></td>
+    <td><img src="pigeonSouth.jpg"/></td>
+    <td><img src="pigeonSouthEast.jpg"/></td>
+  </tr>
+</table>
+Please see <a href="example-text.html">Text Example</a> for an example of how to position text on the photo.
+
+Related
+-------
+<a href="#PXN8.tools.overlay
+">PXN8.tools.overlay()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.whiten">PXN8.tools.whiten()</a></h1>
+Whitens off-color teeth.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* geometry : An object containing *top*, *left*, *width* and *height* coordinates. (usually obtained from the current user selection). If no parameter is supplied, then the current selected area will be used.
+
+Related
+-------
+<a href="#PXN8.tools.fixredeye
+">PXN8.tools.fixredeye()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.fixredeye">PXN8.tools.fixredeye()</a></h1>
+Removes 'red-eye' from the specified area.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* geometry : An object containing *top*, *left*, *width* and *height* coordinates. (usually obtained from the current user selection)
+
+
+Examples
+--------
+
+    PXN8.tools.fixredeye({top: 40, left: 60, width: 75, height: 75});
+
+Alternatively the *geometry* parameter can instead be an Array of geometry objects.
+
+    PXN8.tools.fixredeye([{top: 40, left: 60, width: 75, height: 75},
+                         {top: 50, left: 200, width: 80, height: 94}]);
+
+You must supply one or more rectangles to which the redeye fix will be applied.
+The rectangles should be approximately centered on the eye.
+
+Related
+-------
+<a href="#PXN8.tools.whiten
+">PXN8.tools.whiten()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.resize">PXN8.tools.resize()</a></h1>
+Resize an image to the specified width and height.
+
+Parameters
+----------
+* width : The new desired width of the image.
+* height: The new desired height of the image.
+
+
+<h1 class=""><a name="PXN8.tools.roundedCorners">PXN8.tools.roundedCorners()</a></h1>
+Add rounded corners to the image.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* color : The color of the corners.
+* radius : The radius of the rounded corners.
+
+Examples
+--------
+
+    PXN8.tools.roundedCorners('#ffffff',32);
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225rounded.jpg"/></td></tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.tools.sepia">PXN8.tools.sepia()</a></h1>
+Add a sepia-tone effect to the image.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* color : the color of the 'tint' to use when applying the effect. ('#a28a65' seems to be a good sepia color).
+
+Examples
+--------
+
+    PXN8.tools.sepia('#a28a65');
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225sepia.jpg"/></td></tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.tools.grayscale
+">PXN8.tools.grayscale()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.grayscale">PXN8.tools.grayscale()</a></h1>
+Make the image grayscale (black & white).
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Examples
+--------
+    PXN8.tools.grayscale();
+
+<table>
+<tr><td>Before</td><td>After</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225grayscale.jpg"/></td></tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.tools.sepia
+">PXN8.tools.sepia()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.charcoal">PXN8.tools.charcoal()</a></h1>
+Create a charcoal drawing from an image.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* radius : (A value between 1 and 8). Defines how acute the effect will be.
+
+Examples
+--------
+
+<table>
+<tr><td>Before</td><td>radius = 2</td><td>radius = 5</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225ch2.jpg"/></td><td><img src="pigeon300x225ch5.jpg"/></td></tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.tools.oilpaint
+">PXN8.tools.oilpaint()
+</a> 
+<h1 class=""><a name="PXN8.tools.oilpaint">PXN8.tools.oilpaint()</a></h1>
+Create an oil-painting from a photo.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* radius : (A value between 1 and 8). Defines how acute the effect will be.
+
+Examples
+--------
+
+<table>
+<tr><td>Before</td><td>radius = 2</td><td>radius = 5</td></tr>
+<tr><td><img src="pigeon300x225.jpg"/></td><td><img src="pigeon300x225oil2.jpg"/></td><td><img src="pigeon300x225oil5.jpg"/></td></tr>
+</table>
+
+Related
+-------
+<a href="#PXN8.tools.charcoal
+">PXN8.tools.charcoal()
+</a> 
+
+<h1 class=""><a name="PXN8.tools.fetch">PXN8.tools.fetch()</a></h1>
+Fetches an image either from a remote server or the server's own filesystem.
+This is not normally called directly by client code.
+
+
+<h1 class=""><a name="PXN8.tools.hi_res">PXN8.tools.hi_res()</a></h1>
+Apply all changes to the photo which were performed in the current editing session
+to a high-resolution version of the image. Please note that as with all editing operations, this does not overwrite the original hi-res photo.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* hires_image_details : An object which must have at least one of the following attributes...
+  * filepath : The path (relative to the pixenate directory) to the hi-res image. filepath will always be used if both url and filepath are provided. You must provide either the <em>filepath</em> or <em>url</em> parameter!
+  * url : A url to the hi-res image. You can use this instead of the filepath parameter.
+* callback : A function which will be called when changes to the hi-res image have been complete. The callback takes a single parameter <b>jsonResponse</b>. <b>jsonResponse.image</b> contains the url (relative to the pixenate directory) where the hi-res edited photo resides.
+
+Examples
+--------
+To save a hi-res version of your changes to the local client storage...
+
+    // A url for the hi-res version of the photo (this will never be displayed in the browser)
+    var hires_image = "http://pixenate.com/images/samples/hires/garinish.jpg";
+
+    //
+    // this function will be called instead of the default PXN8.save.toDisk() function
+    //
+    function hires_save(){
+        PXN8.tools.hi_res({url: hires_image}, on_hires_edit_complete);
+    }
+    //
+    // the following function will be called when all changes have been
+    // applied to the high-resolution photo
+    //
+    function on_hires_edit_complete(jsonResponse)
+    {
+
+        // grab the location of the hi-res photo
+        var hires_edited_image = jsonResponse.image;
+
+        // change the location to the new image
+        var newURL = PXN8.root + "/save.pl?image=" + hires_edited_image;
+
+        // open URL
+        document.location = newURL;
+    }
+
+    // change PXN8.save.toDisk to point at our new function
+    PXN8.save.toDisk = hires_save;
+
+
+<h1 class=""><a name="PXN8.tools.mask">PXN8.tools.mask()</a></h1>
+The 'mask' tool lets you apply a alpha-channel Mask to a photo. A mask is a grayscale image
+composed solely of colors, black, white and shades of gray. Dark areas of the mask will
+result in equvalent transparent areas in the photo, while white areas of the mask will result
+in opaque areas of the photo.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* filepath : The path (relative to the pixenate directory) to the mask image.
+* background_color : The background color to apply where the mask is not fully opaque. The default value is #00000000 (transparent).
+
+Examples
+--------
+Please see <a href="example-mask-1.html">example-mask-1</a> for a simple example of using the Mask tool.
+Refer to <a href="example-crop-face.html">Face copy-and-paste</a> for an example of how the <b>mask</b> tool can
+be used to copy and paste parts of a photo on top of itself.
+
+Related
+-------
+<a href="#PXN8.tools.crop">PXN8.tools.crop</a> <a href="#PXN8.overlay.start">PXN8.overlay.start</a> <a href="#PXN8.overlay.stop">PXN8.overlay.stop</a> <a href="#PXN8.ajax.submitScript
+">PXN8.ajax.submitScript
+</a> 
+
+<h1 class=""><a name="PXN8.tools.rearrange">PXN8.tools.rearrange()</a></h1>
+The Rearrange tool lets you move many parts of a photo around.
+<em>This tool is only available in Pixenate Premium edition.</em>
+
+Parameters
+----------
+* pieces: An array of objects. Each object specifies coordinates for the part of the photo and the displacement.
+          Each object must have the following properties...
+  * x : The leftmost point of the area to be moved
+  * y : The topmost point of the area to be moved
+  * width: The width of the area to be moved
+  * height: The height of the area to be moved
+  * dx: The difference along the X axis by which the area should be moved (- values are to the left, + values are to the right)
+  * dy: The difference along the Y axis by which teh area should be moved (- values are to the top, + values are to the bottom)
+
+Examples
+--------
+Please see <a href="example-rearrange.html">example-rearrange</a> for a simple example of using the Rearrange tool.
+
+Related
+-------
+<a href="#PXN8.tools.crop">PXN8.tools.crop</a> <a href="#PXN8.tools.mask
+">PXN8.tools.mask
+</a> 
+
+<h1 class=""><a name="PXN8.tools.transparent">PXN8.tools.transparent()</a></h1>
+Make a color within a photo transparent. PXN8.tools.transparent() can be called in 2 ways.
+You can provide x and y coordinates in which case the color at that point will be chosen and
+all pixels in the photo with the same color will be set to transparent.
+Or you can provide a color parameter.
+
+Parameters
+----------
+* o: An object with one or more of the following attributes...
+  * x : The x coordinate of the point at which the color will be chosen (optional)
+  * y : The y coordinate of the point at which the color will be chosen (optional)
+  * color: The color to set as transparent (optional)
+  * reduce: If this attribute is present, the image will be reduced to 256 colors
+
+Examples
+--------
+Please see <a href="example-transparent.html">example-transparent</a> for a simple example of using the Transparent tool.
+
+
+<h1 class="section"><a name="PixenateAJAXFunctions">Pixenate AJAX Functions</a></h1>
+Pixenate provides functions to create XMLHttpRequest Objects and to submit photo editing operations using custom JSON response handlers.
+
+<h1 class=""><a name="PXN8.ajax.createRequest">PXN8.ajax.createRequest</a></h1>
+Create a XMLHttpRequest Object.
+
+Returns
+-------
+A new XMLHttpRequest Object.
+
+
+<h1 class=""><a name="PXN8.ajax.submitScript">PXN8.ajax.submitScript</a></h1>
+Submit a series of image-manipulation commands to the server. This is the end-point
+through which all image manipulation commands are passed to the server.
+Normally you would not call this directly. However if you would like to make changes to
+a photo without changing the current working displayed photo, you can do so by calling this
+function and providing your own callback function. If you do so, then the current displayed image
+will not be updated.
+
+Parameters
+----------
+* script : An array containing a series of operations to be performed on the photo.
+* callback
+A function which will be called when the server has completed the supplied series of operations and returns with *JSON* response.
+The callback function should accept a single parameter of type object.
+The object supplied to the callback will have the following important properties...
+    * status : A string value that can be eiterh "OK" or "ERROR" (if an error occurred while the server was processing the script.
+    * errorMessage : A string value. Blank if no error occurred.
+    * image : A relative (to PXN8.root) path to the compressed (bandwidth-friendly) image. This will be empty if an error has occurred.
+    * uncompressed : A relative (to PXN8.root) path to the uncompressed (100% quality) image. This will be empty if an error has occurred.
+
+Example
+-------
+
+    var script = PXN8.getScript();
+    PXN8.ajax.submitScript(script,function(jsonResponse){
+        if (jsonResponse.status == "OK"){
+           var image = jsonResponse.image;
+           // do something with the image
+        }else{
+           alert(jsonResponse.errorMessage);
+        }
+    });
+
+<h1 class="section"><a name="SavingeditedPhotos">Saving edited Photos</a></h1>
+The following functions are used for saving the edited photo to the user's
+client-side storage or to the server's own storage on the web.
+
+
+<h1 class=""><a name="PXN8.save.toDisk">PXN8.save.toDisk()</a></h1>
+Save the photo to the user's client-side storage.
+
+
+<h1 class=""><a name="PXN8.save.toServer">PXN8.save.toServer()</a></h1>
+Save to server is a wrapper function. It in turn will call *pxn8_save_image()*
+which is a function which must be implemented by the customer.
+
+Related
+-------
+<a href="#PXN8.getUncompressedImage">PXN8.getUncompressedImage</a> <a href="#pxn8_save_image
+">pxn8_save_image
+</a> 
+
+<h1 class=""><a name="pxn8_save_image">pxn8_save_image()</a></h1>
+This function is not provided by Pixenate but must be implemented by the customer
+if you want to be able to save edited photos to your own webserver.
+
+Parameters
+----------
+
+* imagePath : A path to the image which should be saved or <em>false</em> if the image has not been changed.
+
+The imagePath parameter will be a path relative to the directory where pixenate is installed.
+
+For example the imagePath parameter might be *cache/03_04fbcedaf099feded02working.jpg*.
+If Pixenate is installed at /var/www/html/pixenate then the actual path to the file will be...
+
+    /var/www/html/pixenate/cache/03_04fbcedaf099feded02working.jpg
+
+... so to save the image to your webserver's filesystem or database you need to copy the image at the
+above path to your own permanent storage.
+You should provide a .PHP, .JSP, .ASP or CGI program to do just this.
+Your pxn8_save_image() function should call this CGI passing the *imagePath* value as a parameter
+to the server program.
+
+Examples
+--------
+
+    function pxn8_save_image( newImagePath ){
+       //
+       // newImagePath parameter will be something like...
+       //
+       // cache/03_04fbcedaf099feded02working.jpg
+       //
+       // ... this path is relative to where pixenate was installed
+
+       if (newImagePath != false){
+          document.location = "save.php?replacementImagePath=" + newImagePath;
+       }else{
+          alert("The image has not been modified");
+       }
+    }
+
+Related
+-------
+<a href="#PXN8.save.toServer">PXN8.save.toServer</a> <a href="#PXN8.getUncompressedImage
+">PXN8.getUncompressedImage
+</a> 
+
+<h1 class="section"><a name="Cross-Hairsfunctions">Cross-Hairs functions</a></h1>
+The following functions are related to setting and getting the cross-hairs image
+(by default a white cross which is displayed in the center of the selection area),
+and also enabling and disabling the cross-hairs.
+
+
+<h1 class=""><a name="PXN8.crosshairs.setEnabled">PXN8.crosshairs.setEnabled()</a></h1>
+Enables or disables the display of the cross-hairs image at the center of the
+selected area.
+
+Parameters
+----------
+
+* enabled : A boolean (true or false) indicating whether or not cross-hairs should be displayed.
+
+Related
+-------
+<a href="#PXN8.crosshairs.isEnabled
+">PXN8.crosshairs.isEnabled()
+</a> 
+
+<h1 class=""><a name="PXN8.crosshairs.isEnabled">PXN8.crosshairs.isEnabled()</a></h1>
+Returns a boolean value indicating whether or not the crosshairs are displayed in the selected area.
+
+Returns
+-------
+*true* if the crosshairs are displayed in selections. *false* otherwise.
+
+Related
+-------
+<a href="#PXN8.crosshairs.setEnabled
+">PXN8.crosshairs.setEnabled()
+</a> 
+
+<h1 class=""><a name="PXN8.crosshairs.getImage">PXN8.crosshairs.getImage()</a></h1>
+Get the Image URL currently used for displaying the cross-hairs at the center
+of the selected area.
+
+Returns
+-------
+A URL to the image used as the cross-hairs image. The URL returned will be an
+absolute URL including the domain name and full URL path.
+
+Related
+-------
+<a href="#PXN8.crosshairs.setImage
+">PXN8.crosshairs.setImage()
+</a> 
+
+<h1 class=""><a name="PXN8.crosshairs.setImage">PXN8.crosshairs.setImage()</a></h1>
+You can change the cross-hairs image to suit your own tastes.
+
+Parameters
+----------
+* imageURL : A URL to the image which should be displayed in the center of the selection area.
+
+Related
+-------
+<a href="#PXN8.crosshairs.getImage
+">PXN8.crosshairs.getImage()
+</a> 
+
+<h1 class="section"><a name="PreviewFunctions">Preview Functions</a></h1>
+Pixenate allows you to display a "preview pane" on your page where you can see
+a preview of what the currently active tool (lomo, colors, etc) will look like.
+Ideally, the preview pane should only show a small section of the entire image.
+The user can click and drag inside the preview pane to show obscured parts of the image.
+
+<h1 class=""><a name="PXN8.preview.initialize">PXN8.preview.initialize()</a></h1>
+Multiple Preview panes can be displayed at the same time so each distinct preview
+pane must be associated with it's own preview state object. The preview state object
+just contains information about the state of the preview pane : the relative position of
+the background image and other information specific to that particular preview pane.
+When you initialize a preview pane, you must provide an Element Id.
+
+Parameters
+----------
+* ElementId : The ID attribute of the HTML Element (a DIV ideally) in which the preview will be displayed.
+
+Returns
+-------
+An object which contains the state information for preview-related data for the supplied Element.
+This object should be later passed to the PXN8.preview.show() and PXN8.preview.hide() functions.
+
+Examples
+--------
+The following code will create a preview pane on the page. And will initialize the Preview pane
+with a 'colors' operation...
+
+    <div id="colors_preview" style="width: 120px; height: 120px;"></div>
+    <script type="text/javascript">
+       var colors_peek = PXN8.preview.initialize("colors_preview");
+       PXN8.preview.show(colors_peek, {operation: "colors", brightness: 150, saturation: 150});
+    </script>
+
+<img src="pigeon300x225preview.jpg"/>
+
+Related
+-------
+<a href="#PXN8.preview.show">PXN8.preview.show()</a> <a href="#PXN8.preview.hide">PXN8.preview.hide()</a> <a href="#OPERATIONS
+">OPERATIONS
+</a> 
+
+<h1 class=""><a name="PXN8.preview.show">PXN8.preview.show()</a></h1>
+Shows the preview pane.
+
+Parameters
+----------
+* previewStateObject : The object which was returned from PXN8.preview.initialize()
+* operation : An operation state object. This parameter is *optional* .
+
+The operation parameter can be a single *operation* object (as described in <a href="#OPERATIONS">OPERATIONS</a>
+or an array of operation objects.
+
+Example
+-------
+The following code creates two buttons to increase and decrease the saturation of the photo
+and show the change in a preview pane...
+
+
+    <div id="colors_preview" style="width: 120px; height: 120px;"></div>
+    <script type="text/javascript">
+       //
+       // declare a global variable 'colors_peek' to be used by buttons too.
+       //
+       colors_peek = PXN8.preview.initialize("colors_preview");
+       saturation = 100;
+
+       PXN8.preview.show(colors_peek);
+
+       function increase_saturation(){
+          saturation += 20;
+          //
+          // Update the preview pane.
+          //
+          PXN8.preview.show(colors_peek,{"operation": "colors", "saturation": saturation});
+       }
+
+       function decrease_saturation(){
+          saturation -= 20;
+          //
+          // Update the preview pane.
+          //
+          PXN8.preview.show(colors_peek,{"operation": "colors", "saturation": saturation});
+       }
+    </script>
+
+    <button onclick="increase_saturation()">+</button>
+    <button onclick="decrease_saturation()">-</button>
+
+<img src="pigeon300x225previewshow.jpg"/>
+
+The following code demonstrates previewing a combined operation (Saturation and Interlace combined)...
+
+    PXN8.preview.show(colors_peek,
+		                [{"operation": "colors", "saturation": saturation},
+                       {"operation": "interlace", opacity: 50,color: '#ffffff'}
+ 		                ]);
+
+Related
+-------
+<a href="#PXN8.preview.initialize">PXN8.preview.initialize()</a> <a href="#PXN8.preview.show">PXN8.preview.show()</a> <a href="#OPERATIONS
+">OPERATIONS
+</a> 
+
+<h1 class=""><a name="PXN8.preview.hide">PXN8.preview.hide()</a></h1>
+Hide (and clear) the preview pane. When you're finished with Preview Pane,
+you should call this method to clean up.
+
+Parameters
+----------
+* previewStateObject : The object which was returned from the call to PXN8.preview.initialize()
+
+Examples
+--------
+Please refer to the <a href="example-preview.html">Preview Example</a>.
+
+Related
+-------
+<a href="#PXN8.preview.show">PXN8.preview.show()</a> <a href="#PXN8.preview.initialize">PXN8.preview.initialize()</a> <a href="#OPERATIONS
+">OPERATIONS
+</a> 
+
+<h1 class="section"><a name="SelectionAreaResizing">Selection Area Resizing</a></h1>
+The behaviour of the selection area can be modified using a single function
+which turns on or off the resize handles which appear at the sides and corners of
+the selected area.
+
+<h1 class=""><a name="PXN8.resize.enable">PXN8.resize.enable()</a></h1>
+Enable or disable the resize handles which appear at the corners and sides of the selected
+area.
+
+Parameters
+----------
+* handles : An array of handles to enable or disable.
+* enabled : A boolean specifying whether to enable or disable the supplied handles.
+
+Examples
+--------
+To disable (hide) all of the handles...
+
+    PXN8.resize.enable(["n","s","e","w","nw","ne","sw","se"],false);
+
+To enable the side handles...
+
+    PXN8.resize.enable(["n","s","e","w"],true);
+
+<img src="pigeon300x225resizehandles.jpg"/>
+
+
+<h1 class="section"><a name="DOMmanipulationutilityFunctions">DOM manipulation utility Functions</a></h1>
+Pixenate uses a number of the following DOM manipulation functions which can
+be used independently of Pixenate.
+
+<h1 class=""><a name="PXN8.dom.cl">PXN8.dom.cl()</a></h1>
+Remove all child nodes from the specified element. This method repeated calls
+Element.removeChild(Element.firstChild) until there are no children left.
+
+Parameters
+----------
+* element : A HTML Element or the element's id attribute value.
+
+Returns
+-------
+element. The element which was passed in.
+
+Examples
+--------
+    var el = PXN8.dom.cl(document.getElementById("myElement"));
+    // this is equivalent to...
+    var el = PXN8.dom.cl("myElement");
+
+Related
+-------
+<a href="#PXN8.dom.ac">PXN8.dom.ac</a> <a href="#PXN8.dom.ce">PXN8.dom.ce</a> <a href="#PXN8.dom.id
+">PXN8.dom.id
+</a> 
+
+<h1 class=""><a name="PXN8.dom.tx">PXN8.dom.tx()</a></h1>
+A convenience function which is shorthand for document.createTextNode().
+
+Parameters
+----------
+* string : The text from which to create a new TextNode.
+
+Returns
+-------
+The newly created TextNode object.
+
+Example
+-------
+     var tn = PXN8.dom.tx("Hello World");
+     document.body.appendChild(tn);
+
+Related
+-------
+<a href="#PXN8.dom.ac">PXN8.dom.ac</a> <a href="#PXN8.dom.ce
+">PXN8.dom.ce
+</a> 
+
+<h1 class=""><a name="PXN8.dom.id">PXN8.dom.id()</a></h1>
+A Convenience function which is shorthand for document.getElementById()
+
+Parameters
+----------
+* string : The id attribute of the element to return.
+
+Returns
+-------
+
+The DOM Element object which has the matching id attribute. If no match is found
+then *null* is returned instead.
+
+Example
+-------
+    example: var el = PXN8.dom.id("myElementId");
+
+
+<h1 class=""><a name="PXN8.dom.ce">PXN8.dom.ce()</a></h1>
+
+Description
+-----------
+A convenience function which is shorthand for document.createElement(). This function also
+allows you to set attributes for the element.
+
+Parameters
+----------
+* nodeType
+The nodename of the type of element you want to create, for example,
+if you want to create an *img* element then the nodename will be 'img'.
+
+* attributes (optional)
+An object whose properties are the attribute/value pairs for the new element.
+
+Returns
+-------
+The newly created DOM Element object.
+
+Example
+-------
+     // create an image with src attribute = "myimage.jpg" and a 4 pixel border.
+     var img = PXN8.dom.ce("img", { src: "myimage.jpg" border: 4});
+
+Related
+-------
+<a href="#PXN8.dom.ac
+">PXN8.dom.ac
+</a> 
+
+<h1 class=""><a name="PXN8.dom.css">PXN8.dom.css()</a></h1>
+A convenience function for specifying multiple CSS properties for an element
+
+Parameters
+----------
+* elt
+The element to which the css properties will be applied
+* attrs
+The attributes (CSS properties) to apply
+
+Returns
+-------
+The element
+
+Example
+-------
+    // make the #palette DIV's background blue and it's font size 18px
+    PXN8.dom.css("palette", { backgroundColor: "blue", fontSize: "18px" });
+
+Related
+-------
+<a href="#PXN8.dom.ce
+">PXN8.dom.ce
+</a> 
+
+<h1 class=""><a name="PXN8.dom.ac">PXN8.dom.ac()</a></h1>
+A convenience function which is shorthand for Element.appendChild().
+
+Parameters
+----------
+* parent
+The parent element to which the child element will be appended.
+* child
+The child element to append.
+
+Returns
+-------
+The newly appended *child* DOM Element object.
+
+Example
+-------
+    var address = document.getElementById("address");
+    var user = document.getElementById("user");
+    PXN8.dom.ac(user,address);
+    // the 'address' is now a child element of the 'user' element
+
+Related
+-------
+<a href="#PXN8.dom.ce
+">PXN8.dom.ce
+</a> 
+
+<h1 class=""><a name="PXN8.dom.eb">PXN8.dom.eb()</a></h1>
+Get the Bounds (size and coordinates) of an element on the page.
+
+Parameters
+----------
+* element : An Element Object or the element's id attribute.
+
+Returns
+-------
+The element bounds for an element. Bounds are in the form of an object with the following
+properties... *x*, *y*, *width*, *height*
+
+Example
+-------
+     var bounds = PXN8.dom.eb("myElementId");
+     // bounds = {x: 48, y: 105, width: 200, height: 120}
+
+Related
+-------
+<a href="#PXN8.dom.ep">PXN8.dom.ep</a> <a href="#PXN8.dom.cursorPos">PXN8.dom.cursorPos</a> <a href="#PXN8.dom.windowSize
+">PXN8.dom.windowSize
+</a> 
+
+<h1 class=""><a name="PXN8.dom.ep">PXN8.dom.ep()</a></h1>
+Given an element, calculate it's absolute position relative to the BODY element.
+
+Parameters
+----------
+* element : An Element object or it's id attribute.
+
+Returns
+-------
+An object with attributes x and y representing the
+coordinates of the top left corner of the element
+
+Example
+-------
+     var pos = PXN8.dom.ep("myElementId");
+     // pos = { x: 48, y: 105 }
+Related
+-------
+<a href="#PXN8.dom.eb">PXN8.dom.eb</a> <a href="#PXN8.dom.cursorPos
+">PXN8.dom.cursorPos
+</a> 
+
+<h1 class=""><a name="PXN8.dom.windowSize">PXN8.dom.windowSize()</a></h1>
+Calculate the size of the browser window (it's outer width & height).
+
+Returns
+-------
+An object with 'height' and 'width' properties.
+
+Example
+-------
+     var winSz = PXN8.dom.windowSize();
+     // winSz = { height: 768, width: 1002}
+
+Related
+-------
+<a href="#PXN8.dom.eb">PXN8.dom.eb</a> <a href="#PXN8.dom.cursorPos">PXN8.dom.cursorPos</a> <a href="#PXN8.dom.ep
+">PXN8.dom.ep
+</a> 
+
+<h1 class=""><a name="PXN8.dom.opacity">PXN8.dom.opacity()</a></h1>
+Sets the opacity of a given element.
+
+Parameters
+----------
+* element : The elment object or it's id attribute.
+* value : The opacity expressed as a number between 0 and 1.0.
+
+Example
+-------
+    PXN8.dom.opacity("myElementId",0.5);
+    // sets opacity of the 'myElementId' element to 50%
+
+
+<h1 class=""><a name="PXN8.dom.clz">PXN8.dom.clz()</a></h1>
+Return an array of elements with the supplied classname
+
+Parameters
+----------
+* className : A string containing the name of the class.
+
+Returns
+-------
+An array of Element objects with a matching *class* attribute.
+
+Example
+-------
+    <span class="finance">Loan: $40,000</span>
+    <span class="address">8092 Wolverdale drive</span>
+    <span class="finance">Repayments: $800</span>
+    <script type="text/javascript">
+     var allFinanceElements = PXN8.dom.clz("finance");
+     // allFinanceElements = [SpanElement{8092 Wolverdale drive}, SpanElement{Repayments: $800}]
+    </script>
+
+Related
+-------
+<a href="#PXN8.dom.addClass">PXN8.dom.addClass</a> <a href="#PXN8.dom.removeClass
+">PXN8.dom.removeClass
+</a> 
+
+<h1 class=""><a name="PXN8.dom.removeClass">PXN8.dom.removeClass()</a></h1>
+Removes a class from the element's className (or 'class' attribute).
+
+Parameters
+----------
+* element : An element or it's attribute id, from which you want to remove the class.
+
+* className : The name of the class to remove.
+
+Example
+-------
+
+     // before
+     // <span id="myElementId" class="finance private">Repayments: $800</span>
+     PXN8.dom.removeClass("myElementId","private");
+     // after
+     // <span id="myElementId" class="finance">Repayments: $800</span>
+Related
+-------
+<a href="#PXN8.dom.addClass">PXN8.dom.addClass</a> <a href="#PXN8.dom.clz
+">PXN8.dom.clz
+</a> 
+
+<h1 class=""><a name="PXN8.dom.addClass">PXN8.dom.addClass()</a></h1>
+Add a new class to the element's className (or *class* attribute).
+
+Parameters
+----------
+
+* element : The element or it's id attribute.
+* className : The name of the class to add to this element.
+
+Example
+-------
+Before...
+    <div class="panel">...</div>
+Javascript...
+    PXN8.dom.addClass("myElementId","dragable");
+After...
+    <div class="panel dragable">...</div>
+
+Related
+-------
+<a href="#PXN8.dom.removeClass">PXN8.dom.removeClass</a> <a href="#PXN8.dom.clz
+">PXN8.dom.clz
+</a> 
+
+<h1 class=""><a name="PXN8.dom.isClass">PXN8.dom.isClass()</a></h1>
+Does the element's className contain the supplied classname ?
+
+Parameters
+----------
+
+* element : The element object or it's id attribute.
+* className : The name of the class for which to check.
+
+Returns
+-------
+*true* or *false* .
+
+Related
+-------
+<a href="#PXN8.dom.addClass">PXN8.dom.addClass</a> <a href="#PXN8.dom.removeClass
+">PXN8.dom.removeClass
+</a> 
+
+<h1 class=""><a name="PXN8.dom.computedStyle">PXN8.dom.computedStyle()</a></h1>
+Returns the style of an element based on it's external stylesheet, and any inline styles.
+
+Parameters
+----------
+* elementId : The id of the element whose style must be computed
+
+Returns
+-------
+A CSSStyleDeclaration object.
+
+
+<h1 class=""><a name="PXN8.dom.cursorPos">PXN8.dom.cursorPos()</a></h1>
+Return the current adjusted cursor position.
+
+Parameters
+-----------
+
+* event : The event (a MouseEvent) from which to obtain the cursor position.
+
+Returns
+-------
+An object with *height* and *width* parameters.
+
+Related
+-------
+<a href="#PXN8.dom.ep">PXN8.dom.ep</a> <a href="#PXN8.dom.eb
+">PXN8.dom.eb
+</a> 
+
+<h1 class=""><a name="PXN8.dom.addLoadEvent">PXN8.dom.addLoadEvent()</a></h1>
+Add a callback to the window's onload event. This is a convenience function which enables
+multiple functions to be called when the *window.onload* event is fired.
+
+Parameters
+----------
+* function : The callback function to be called when the window has loaded.
+
+Example
+-------
+    PXN8.dom.addLoadEvent(function(){
+        alert("The window has loaded");
+    });
+
+
+<h1 class="section"><a name="DOMEventhandlingWrapperfunctions">DOM Event handling Wrapper functions</a></h1>
+The following section details some DOM-related event-handling functions used by
+Pixenate.
+
+
+<h1 class=""><a name="PXN8.event.addListener">PXN8.event.addListener()</a></h1>
+A cross-browser way to add event listeners - works with Safari, Internet Explorer and Firefox.
+
+Parameters
+----------
+* element : The element (or the ID of the element) to which the event listener will be added.
+* eventType : The event type string e.g. "mouseup","mousedown","click","keypress" etc.
+* eventHandler :  The function which will be called when the event fires.
+
+Returns
+-------
+The callback function which was supplied as an argument.
+
+Examples
+--------
+    var onButtonClick = PXN8.event.addListener(document.getElement("myButton"),"click",function(event){
+       event = event || window.event;
+       alert("You clicked the button!");
+    });
+
+Related
+-------
+<a href="#PXN8.event.removeListener
+">PXN8.event.removeListener()
+</a> 
+
+<h1 class=""><a name="PXN8.event.removeListener">PXN8.event.removeListener()</a></h1>
+A cross-browser way to remove event listeners - works with Safari, Internet Explorer and Firefox.
+
+Parameters
+----------
+* element : The element (or the ID of the element) from which the event listener will be removed.
+* eventType : The event type string e.g. "mouseup","mousedown","click","keypress" etc.
+* eventHandler : The callback to be removed (must be a named function or a function reference - see PXN8.event.addListener)
+
+Examples
+--------
+To remove a named function from the list of listeners for an event on a particular element...
+
+    PXN8.event.removeListener(document.getElementById("myButton"),"click",onButtonClick);
+
+Related
+-------
+<a href="#PXN8.event.addListener
+">PXN8.event.addListener()
+</a> 
+
+<h1 class="section"><a name="OverlayHelperFunctions">Overlay Helper Functions</a></h1>
+Pixenate provides 2 functions to simplify UI programming for overlaying photos.
+PXN8.overlay.start() puts the editor in *overlay* mode. In this mode, every time
+the user makes or changes a selected area of the image, an overlay image will
+be placed on top of the selected area. The overlay image will be resized to fit the selected
+area. This function provides a handy way for users to *preview* what the the overlay will
+look like when it is applied.
+PXN8.overlay.stop() makes the editor exit *overlay* mode.
+
+
+<h1 class=""><a name="PXN8.overlay.start">PXN8.overlay.start()</a></h1>
+PXN8.overlay.start() puts the editor into *overlay* mode. In this mode, an overlay image
+appears superimposed on top of the photo whenever the selection is changed. This function
+is provided as a convenience function to let users preview  the effects of the
+<a href="#pxn8_tools_overlay">PXN8.tools.overlay()</a> function before applying it.
+Please note that PXN8.overlay.start() does not change the photo. You still need to call PXN8.tools.overlay()
+to *apply* the overlay.
+
+Parameters
+----------
+* overlayURL : A url to the image to use as an overlay. This URL will be used to construct a new image so it should be an Image URL.
+* dimensions : An object with *top*, *left*, *width* and *height* properties used to position the overlay image. The dimensions are relative to the top left corner of the <a href="#pxn8_canvas">pxn8_canvas</a> div.
+
+Examples
+--------
+Please see the <a href="example-speech-bubbles.html">Speech bubbles</a> Example.
+
+Related
+-------
+<a href="#PXN8.overlay.stop
+">PXN8.overlay.stop()
+</a> 
+
+<h1 class=""><a name="PXN8.overlay.stop">PXN8.overlay.stop()</a></h1>
+Makes the editor exit *overlay* mode. You should call this function when the user applies or cancels
+an overlay operation.
+
+Examples
+--------
+Please see the <a href="example-speech-bubbles.html">Speech bubbles</a> Example.
+
+Related
+-------
+<a href="#PXN8.overlay.start
+">PXN8.overlay.start()
+</a> 
+
+<h1 class="section"><a name="ImageMagickBridgefunctions">ImageMagick Bridge functions</a></h1>
+Using the ImageMagick plugin, it is possible to call imagemagick functions from
+javascript.
+This can prove useful if you want to extend the features available in Pixenate without
+writing server-side Pixenate plugins in Perl.
+For complex functions, you should probably consider coding a server-side Perl plugin but for basic
+functions, you can now code a client-side javascript plugin.
+The following table shows how you might write the Fill-Flash plugin using only Javascript. On the left hand side is
+listed the javascript code to perform a fill-flash. This code uses the PXN8.ImageMagick API to call ImageMagick manipulation routines via javascript.
+On the right hand side is shown the equivalent code implemented as a perl server-side plugin.
+
+<table>
+  <tr>
+    <th>Javascript (client side)</th>
+    <th>Perl (server side) Equivalent</th>
+  </tr>
+ <tr>
+ <td valign="top"><pre>
+
+
+
+function fill_flash(opacity)
+{
+   var image = PXN8.ImageMagick.start();
+
+   var brighter = image.Clone();
+
+   if (!opacity){
+      opacity = 50;
+   }
+
+   image.Method("Composite",{"image": brighter,
+                             "compose": "Screen",
+                             "opacity": opacity + "%"});
+
+   PXN8.ImageMagick.end(image);
+}
+</pre></td>
+
+<td valign="top"><pre>
+use strict;
+use Sxoop::PXN8 ':all';
+
+sub fill_flash
+{
+  my ($image, $params) = @_;
+
+  my $brighter = $image->Clone();
+
+  my $opacity = 50;
+  if (exists $params->{opacity}){
+      $opacity = $params->{opacity};
+  }
+  my $imrc = $image->Composite(image   => $brighter,
+                               compose => "Screen",
+                               opacity => $opacity . "%");
+  if (is_imagick_error($imrc))
+  {
+      die "FillFlash failed: $imrc";
+  }
+  return $image;
+}
+AddOperation('fill_flash', \&fill_flash);
+1;
+</pre></td>
+</tr>
+</table>
+
+
+<h1 class=""><a name="PXN8.ImageMagick">PXN8.ImageMagick</a></h1>
+PXN8.ImageMagick is the object used as a proxy for the server-side Image::Magick class.
+PXN8.ImageMagick is a <a href="http://en.wikipedia.org/wiki/Mock_object">Mock Object</a>. Methods invoked on this object are not implemented
+in the client in realtime - the methods are invoked on the server when the PXN8.ImageMagick.end() method is called.
+
+You construct a new PXN8.ImageMagick object like so...
+
+var myImage = new PXN8.ImageMagick();
+
+... However, it is more common to simply use the default PXN8.ImageMagick() object returned by the global PXN8.ImageMagick.start() method.
+
+The PXN8.ImageMagick object has just 4 methods.
+
+* Method : Use this to invoke image manipulation routines on the image. For a full list of methods available you should consult the ImageMagick website. <a href="http://imagemagick.org/script/perl-magick.php#manipulate">http://imagemagick.org/script/perl-magick.php#manipulate</a>.
+** Method takes 2 parameters, the name of the Method (e.g. "Crop", "Rotate", "Draw" etc) and the parameters for the method. Please bear in mind that PXN8.ImageMagick is a mock object - the <em>Method</em> method lets you use the full array of ImageMagick manipulation routines.
+
+* Clone : This works exactly like the Clone function in ImageMagick. It creates a deep copy of an existing image.
+
+* Append : This will append all images side by side.
+
+* push : pushes an image on to the image stack. (equivalent to perl code : push (@$image1, $image2) ;)
+
+In addition, there are 2 static functions belonging to the PXN8.ImageMagick class.
+
+* PXN8.ImageMagick.start() : This returns an object which is a reference to the current image. (see example of use above)
+
+* PXN8.ImageMagick.end(image, updateFlag) : This commits all of the ImageMagick operations to the server and indicates which of the images to send to the editor. There is an optional <em>updateFlag</em> which indicates whether or not the operation should be committed or simply returned. It might be useful to simply return the operation if you would like to include it as one of a batch of operations (see PXN8.tools.updateImage() ).
+
+Example
+-------
+
+The following snippet of code will create a reflection at the bottom of the current image.
+
+    //
+    // start an editing session using PXN8.ImageMagick
+    //
+    var image = PXN8.ImageMagick.start();
+
+    var reflectionHeight = 100;
+    var imageWidth = PXN8.getImageSize().width;
+
+    //
+    // clone the image and flip the clone
+    //
+    var flipped = image.Clone();
+    flipped.Method("Flip");
+
+    //
+    // create a white background for the reflection to fade to.
+    //
+    var white = new PXN8.ImageMagick();
+    white.Method("Set",{size: imageWidth + "x" + reflectionHeight});
+    white.Method("Read", "xc:white");
+
+    //
+    // create a gradient mask to apply to the flipped image
+    //
+    var mask = new PXN8.ImageMagick();
+    mask.Method("Set", {size: imageWidth + "x" + reflectionHeight});
+    mask.Method("Read", "gradient:#000000-#FFFFFF");
+    mask.Method("Set", {matte: false});
+
+	 //
+    // apply the mask
+    //
+    white.Method("Composite",{image: mask, compose: "CopyOpacity"});
+
+    //
+    // superimpose the faded white on top of the flipped image
+    //
+    flipped.Method("Composite",{image: white, compose: "Over", x:0, y:0});
+
+    //
+    // crop the flipped image
+    //
+    flipped.Method("Crop",{x:0,y:0,width: imageWidth, height: reflectionHeight});
+
+    //
+    // push the flipped image on to the original
+    //
+    image.push(flipped);
+
+    //
+    // append the images
+    //
+    var reflection = image.Append(false);
+
+    //
+    // Commit the operations to the server
+    //
+    PXN8.ImageMagick.end(reflection);
+
+You can see the example code in action <a href="example-imagemagick.html">here</a>.
+
+An example of how to create a fake-polaroid effect using Pixenate's ImageMagick bridge is <a href="example-imagemagick2.html">available here</a>.
+
+An example of adding a grey border to make a rectangular image square is in <a href="example-imagemagick3.html">Example #3</a>.
+
+A more advanced example of using PXN8.ImageMagick to create a clone tool that uses free-hand selection can be found <a href="example-clone.html">here</a>.
+
+
+<h1 class=""><a name="PXN8.ImageMagick.maskFromPaths">PXN8.ImageMagick.maskFromPaths</a></h1>
+This utility function will return a PXN8.ImageMagick() image object which is a
+mask constructed (white on black) from the supplied paths. If you want to reverse the mask
+then call the ImageMagick "Negate" method on the returned object.
+This function can be used in conjunction with PXN8.freehand.* functions to create a mask from a path.
+This can be very useful for creating freehand masks, e.g. for more fine-grained application of tools such as
+Red-Eye and teeth-whitening.
+
+Parameters
+----------
+
+* size  : An object with 'width' and 'height' properties (for example the object returned by PXN8.getImageSize() )
+* paths : An array of PXN8.freehand.Path objects
+
+Returns
+-------
+A PXN8.ImageMagick() object which is a white-on-black mask constructed from the supplied paths.
+
+Examples
+--------
+See <a href="example-advanced-redeye.html">Advanced Red-Eye Removal</a>.
+
+Related
+-------
+<a href="#PXN8.freehand.Path">PXN8.freehand.Path()</a> <a href="#PXN8.freehand.start">PXN8.freehand.start()</a> <a href="#PXN8.freehand.end">PXN8.freehand.end()</a> <a href="#PXN8.ImageMagick.start">PXN8.ImageMagick.start()</a> <a href="#PXN8.ImageMagick.end
+">PXN8.ImageMagick.end()
+</a> 
+
+<h1 class="section"><a name="FreehanddrawingFunctions">Freehand drawing Functions</a></h1>
+Pixenate allows you to do freehand drawing on top of an image. This is
+achieved by first calling PXN8.freehand.start() to put the editor in a
+state ready for drawing. Once the editor is in this state, the user
+can draw freehand lines of any color and width by moving the pointer
+while the mouse button is held down.
+The color can be set using the PXN8.freehand.color property. The width
+of the line can be set using the PXN8.freehand.width property.
+
+<blockquote>N.B. PXN8.freehand is a relatively new feature of
+Pixneate. It depends on Raphael javascript libraries.</blockquote>
+
+
+<h1 class=""><a name="PXN8.freehand.color">PXN8.freehand.color</a></h1>
+Set this property to change the default color that a new PXN8.freehand.Path object will use,
+when created in freehand mode. Color should be a hex string. Default value is "red"
+
+Examples
+--------
+   PXN8.freehand.color = "#00ff00"; // green
+
+
+<h1 class=""><a name="PXN8.freehand.opacity">PXN8.freehand.opacity</a></h1>
+Set this property to change the default opacity that a new PXN8.freehand.Path object will use,
+when created in freehand mode. Default value is 0.
+
+Examples
+--------
+   PXN8.freehand.opacity = ; // green
+
+
+<h1 class=""><a name="PXN8.freehand.width">PXN8.freehand.width</a></h1>
+Set this property to change the default brush width that a new PXN8.freehand.Path object will use,
+when created in freehand mode. Width should be numeric.
+
+Examples
+--------
+   PXN8.freehand.width = 12; // a brush 12x12 pixels.
+
+
+<h1 class=""><a name="PXN8.freehand.start">PXN8.freehand.start()</a></h1>
+Line drawing in Pixenate is achieved by passing an array of
+PXN8.freehand.Path objects to the PXN8.tools.freehand() function. The
+easiest way to construct an array of Path objects is using the
+PXN8.freehand.start() / PXN8.freehand.end() pair of functions. What
+these functions do is place the editor in a special mode where the
+user can draw freehand lines using the mouse (Each line in a freehand
+drawing is equivalent to 1 PXN8.freehand.Path object so a freehand
+drawing can be thought of as an array of PXN8.freehand.Path objects).
+
+Related
+-------
+<a href="#PXN8.freehand.end">PXN8.freehand.end</a> <a href="#PXN8.tools.freehand
+">PXN8.tools.freehand
+</a> 
+Examples
+--------
+<a href="example-freehand.html">Freehand Drawing Example</a>
+
+<h1 class=""><a name="PXN8.freehand.end">PXN8.freehand.end()</a></h1>
+This function takes the editor out of freehand drawing mode and back
+to its standard editing mode. All previous settings are restored.
+
+Related
+-------
+<a href="#PXN8.freehand.start">PXN8.freehand.start</a> <a href="#PXN8.tools.freehand
+">PXN8.tools.freehand
+</a> 
+Examples
+--------
+<a href="example-freehand.html">Freehand Drawing Example</a>
+
+<h1 class=""><a name="PXN8.freehand.undo">PXN8.freehand.undo()</a></h1>
+A function for fine-grained undo of individual paths within a freehand drawing.
+This function will remove the last path created in freehand mode.
+
+
+<h1 class=""><a name="PXN8.freehand.Path">PXN8.freehand.Path()</a></h1>
+A PXN8.freehand.Path() object contains all of the information and
+methods for drawing a Path ( a series of lines ) both on the client
+(using Raphael JS library) and on the server (using Pixenate /
+ImageMagick).
+
+Paramaters
+----------
+* width : The brush width (should be numeric) in pixels.
+* color : The stroke color (should be hex strig - e.g. "#ff0000" for red).
+* x     : The x coordinate for the start of the path
+* y     : The y coordinate for the start of the path
+
+Returns
+-------
+A new PXN8.freehand.Path object.
+
+Examples
+--------
+
+    //
+    // create a square 50 x 50 starting at point 100, 10 (100 from
+    // left, 10 from top)
+    //
+    var myPath = new PXN8.freehand.Path(2,"#ff0000", 100, 10);
+    myPath.lineTo(150, 10);
+    myPath.lineTo(150, 60);
+    myPath.lineTo(100, 60);
+    myPath.lineTo(100, 10);
+
+	 //
+    // bake the path into the image
+	 //
+    PXN8.tools.freehand([myPath]);
+
+
+
+<h1 class=""><a name="PXN8.freehand.Path.lineTo">PXN8.freehand.Path.lineTo()</a></h1>
+
+The lineTo() method is used to plot a new point on the path to which a
+line will be drawn.
+
+Parameters
+----------
+* x     : The x coordinate for the next point of the path
+* y     : The y coordinate for the next point of the path
+
+
+<h1 class=""><a name="PXN8.tools.freehand">PXN8.tools.freehand()</a></h1>
+
+Allows freehand drawing on top of an image.
+
+Parameters
+----------
+* paths : An array of PXN8.freehand.Path objects.
+
+Examples
+--------
+
+    //
+    // create a square 50 x 50 starting at point 100, 10 (100 from
+    // left, 10 from top)
+    //
+    var myPath = new PXN8.freehand.Path(2,"#ff0000", 100, 10);
+    myPath.lineTo(150, 10);
+    myPath.lineTo(150, 60);
+    myPath.lineTo(100, 60);
+    myPath.lineTo(100, 10);
+
+    //
+    // bake the path into the image
+    //
+    PXN8.tools.freehand([myPath]);
+
+See also: <a href="example-freehand.html">Freehand Drawing Example</a>
+
+
+Related
+-------
+<a href="#PXN8.freehand.Path">PXN8.freehand.Path</a> <a href="#PXN8.freehand.start">PXN8.freehand.start</a> <a href="#PXN8.freehand.end
+">PXN8.freehand.end
+</a> 
+
+<h1 class="section"><a name="OPERATIONS">OPERATIONS</a></h1>
+This section is only applicable if you would like to know more about using Preview Panels or combining multiple photo operations into a single user operation.
+Every change which can be made to a photo is performed using 'operations'. Operations are Javascript objects which are of the following form...
+
+    {operation: "operation-name", ...}
+
+... where "operation-name" is a string which is one of the following...
+
+1. "enhance"
+2. "normalize"
+3. "instant_fix" (deprecated)
+4. "rotate"
+5. "blur"
+6. "colors"
+7. "crop"
+8. "filter"
+9. "interlace"
+10. "lomo"
+11. "fill_flash"
+12. "overlay"
+13. "add_text"
+14. "whiten"
+15. "fixredeye"
+16. "resize"
+17. "roundcorners"
+18. "grayscale"
+19. "charcoal"
+20. "oilpaint"
+21. "unsharpmask"
+22. "fetch"
+23. "mask"
+24. "rearrange"
+25. "imagemagick"
+
+For example, to rotate an image thru 90° you could do the following...
+
+    var rotate90 = {operation: "rotate", angle: 90};
+    PXN8.tools.updateImage( [ rotate90 ] );
+
+... or simply call...
+
+   PXN8.tools.rotate({angle: 90});
+
+In fact using the PXN8.tools.* functions is the recommended approach for simple operations. Where knowledge of the above operation names becomes important is in the following scenarios...
+
+1. You want to use the Preview panel to preview an operation OR...
+2. You want to combine two or more operations into a single user operation - for example - to allow users to crop and add rounded corners with just one user command.
+
+If you want to combine two or more operations into a single atomic user operation please use <a href="#PXN8.tools.startTransaction">PXN8.tools.startTransaction()</a> and <a href="#PXN8.tools.endTransaction">PXN8.tools.endTransaction()</a>.
+
+<h1 class="section"><a name="ELEMENTS">ELEMENTS</a></h1>
+Pixenate uses a number of special HTML elements. Please note that not all of these elements need to be included on your photo editing page. In fact the only element which is absolutely required is the *pxn8_canvas* element which can be simply included like this...
+
+    <div id="pxn8_canvas"></div>
+
+All of the elements described below are nested inside of the top-level *pxn8_canvas* element...
+
+<img src="pigeon300x225_elements.jpg"/>
+
+<h1 class=""><a name="pxn8_canvas">pxn8_canvas</a></h1>
+This element must appear on the web-page. It is the container for the photo and the selection area.
+
+    <div id="pxn8_canvas"></div>
+
+This DIV can be styled however you wish. It is recommend however that the padding style property is unchanged. If no position style property is specified, it will default to relative. If no float style property is specified, it will default to left.
+
+<h1 class=""><a name="pxn8_image">pxn8_image</a></h1>
+This is the &lt;img&gt; tag used to display the photo being edited. This tag does not need to be included on the web-page as it will be added automatically during PXN8.initialize().
+
+<h1 class=""><a name="pxn8_timer">pxn8_timer</a></h1>
+This is a DIV which appears whenever the photo is being updated. The *pxn8_timer* div is (by default) appended to the *pxn8_canvas* div and you can style this element however you wish. E.g. to make the update message appear at the top of the photo, add the following CSS rule ...
+
+    #pxn8_timer { position: absolute; top: 0px; left: 0px; }
+
+This div does not need to be declared in the HTML as it will be automatically added by Pixenate&trade;. If not declared in HTML, the pxn8_timer div will be nested inside the pxn8_canvas div.
+
+<h1 class=""><a name="pxn8_warning">pxn8_warning</a></h1>
+This is a DIV which appears whenever the user tries to 'undo' when there are no operations left to undo or when the user tries to 'redo' when there are no operations left to redo. You can style this div however you wish...
+
+    #pxn8_warning { position: absolute; top: 0px; left: 0px; }
+
+This div does not need to be declared in the HTML as it will be automatically added by Pixenate&trade;. If not declared in HTML, the pxn8_warning div will be nested inside the pxn8_canvas div.
+
+<h1 class=""><a name="pxn8_select_rect">pxn8_select_rect</a></h1>
+This is the selection rectangle which appears around the selected area. This div does not need to be declared in the HTML as it will be automatically added by Pixenate&trade;. 
+
+<h1 class=""><a name="pxn8_scroller">pxn8_scroller</a></h1>
+This is an optional wrapper <em>DIV</em> element which should surround the pxn8_canvas element if you want to constrain the size of the Canvas. See the <a href="Customization-Guide.html#constraining_canvas">Constraining Canvas size</a> section in the Customization Guide for more details.
+

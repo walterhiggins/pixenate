@@ -1,0 +1,400 @@
+[%!include "prehtml.template";%]<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+
+
+  <!-- Javascript Dependencies -->
+[%if ($pg->{target} eq "hosted"){%]
+  <script type="text/javascript" src="http://pixenate.com/h/js"></script>
+[%}else{%]
+  <script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+[%}%]
+  <script type="text/javascript" src="guernica.js"></script>
+  <script type="text/javascript" src="slider.js"></script>
+
+  <link media="all" title="" rel="stylesheet" href="guernica.css" type="text/css" />
+</head>
+<body>
+[%!include "body_inc.template";%]
+
+<h1>MyCompany Photo Editor <a href="http://pixenate.com"><img border="0" src="/pixenate/images/branding/poweredbypixenate_white_84x36.gif"/></a></h1>
+<div id="pallette">
+   <a id="basic_fixes_link" onclick="tabto(this,'basic_fixes');return false;" class="tab selected">Basic Fixes</a><a id="tuning_link" onclick="tabto(this,'tuning');return false;" class="tab">Tuning</a><a id="effects_link" onclick="tabto(this,'effects');return false;" class="tab">Effects</a><div id="panel_container">
+
+      <div id="basic_fixes">
+         <button onclick="show_panel('crop_panel')"><img src="images/crop.gif"/>Crop...</button><br/>
+         <button onclick="show_panel('straighten_panel');PXN8.tools.spiritlevel_mode.start(function(){cancel_panel('basic_fixes_link','basic_fixes');});"><img src="images/straighten.gif"/>Straighten...</button><br/>
+         <button onclick="show_panel('rotate_panel');"><img src="images/rotate.gif"/>Rotate</button><br/>
+         <button onclick="show_panel('redeye_panel');redeye_start()"><img src="images/redeye.gif"/>Red Eye...</button><br/>
+         <button onclick="init_flashfill_panel()"><img src="images/flash.gif"/>Fill Flash</button><br/>
+      </div>
+
+      <div id="tuning">
+         <button onclick="PXN8.tools.normalize()"><img src="images/wand.gif"/>Normalize</button><br/>
+         <button onclick="PXN8.tools.enhance()"><img src="images/wand.gif"/>Enhance</button><br/>
+         <button onclick="init_color_panel()"><img src="images/colorwheel.gif"/>Colors</button><br/>
+      </div>
+
+      <div id="effects">
+         <button onclick="PXN8.tools.grayscale()">Black &amp; White</button><br/>
+         <button onclick="init_unsharpmask_panel()">Sharpen</button><br/>
+         <button onclick="init_sepia_panel()">Sepia-tone</button><br/>
+         <button onclick="init_oilpaint_panel()">Oil Painting</button><br/>
+         <button onclick="init_charcoal_panel()">Charcoal Drawing</button><br/>
+         <button onclick="init_tint_panel()">Graduated Tint</button><br/>
+      </div>
+
+<!-- ======================================================================== -->
+<!-- STRAIGHTEN CONFIG PANEL                                                  -->
+<!-- ======================================================================== -->
+      <div id="straighten_panel" class="panel">
+         <h4>Straighten Photo</h4>
+         <p>First ,place a flag along the horizon on the left side of the photo, by
+         clicking anywhere along left side horizon.</p>
+         <p>Then place a flag on the right side of the horizon by
+         clicking anywhere along the right side horizon.</p>
+         <button onclick="PXN8.tools.spiritlevel_mode.end();cancel_panel('basic_fixes_link','basic_fixes')" >Cancel <img src="images/cancel.gif"/> </button>
+      </div>  
+
+<!-- ======================================================================== -->
+<!-- FILLFLASH CONFIG PANEL                                                  -->
+<!-- ======================================================================== -->
+
+      <div id="fillflash_panel" class="panel">
+      <h4>Add Fill-Flash</h4>
+      <p>Click and Drag the slider to the right. You can preview changes in the preview pane below.</p>
+      
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+      <div id="fillflash_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+      </div>
+      <div align="center">
+        <div id="fillflash_preview" style="text-align: right; margin: 16px; width: 160px; height: 160px;"></div>
+      </div>
+      <button id="fillflash_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('basic_fixes_link','basic_fixes')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div><!-- end of fillflash_panel -->
+      
+<!-- ======================================================================== -->
+<!-- CROP PANEL                                                  -->
+<!-- ======================================================================== -->
+      <div id="crop_panel" class="panel">
+         <h4>Crop Photo</h4>
+         <p>Select a dimension below and then click and drag on the  image to select the portion of the image you wish to crop.</p>
+         <form id="crop_form" name="crop_form">
+           <input onclick="PXN8.selectByRatio('4x6')" type="radio" name="dimension" value="4x6"/> 4 x 6 
+           <input onclick="PXN8.selectByRatio('5x7')" type="radio" name="dimension" value="5x7"/> 5 x7 <br/>
+           <input  onclick="PXN8.selectByRatio('8x10')" type="radio" name="dimension" value="8x10"/>8 x 10 
+           <input type="radio" onclick="PXN8.selectByRatio('free')" checked name="dimension" value="free"/> Manual <br/>
+         </form>
+         <button onclick="PXN8.rotateSelection()">Rotate</button>&nbsp;<button onclick="PXN8.tools.preview_crop()">Preview</button><br/>
+         <button onclick="PXN8.unselect()">Reset</button><br/>
+         <button onclick="crop()">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('basic_fixes_link','basic_fixes')" >Cancel <img src="images/cancel.gif"/> </button>
+      </div>
+
+<!-- ======================================================================== -->
+<!-- ROTATE PANEL                                                             -->
+<!-- ======================================================================== -->
+      <div id="rotate_panel" class="panel">
+         <button onclick="PXN8.tools.rotate({angle: 270})">Rotate 270&deg;  &larr;</button>&nbsp;<button onclick="PXN8.tools.rotate({angle: 90})">Rotate 90&deg; &rarr;</button><br/>
+         <button onclick="PXN8.tools.rotate({fliphz: 'true'})">Mirror &harr;</button> <button onclick="PXN8.tools.rotate({flipvt: 'true'})">Flip </button><br/>
+         <button onclick="cancel_panel('basic_fixes_link','basic_fixes')" >Done</button>
+      </div>
+
+<!-- ======================================================================== -->
+<!-- REDEYE PANEL                                                             -->
+<!-- ======================================================================== -->
+      <div id="redeye_panel" class="panel">
+         <h4>Redeye Repair</h4>
+         <p>Click, hold and drag the mouse around each eye separately to select it. 
+            A selection box appears over the area. 
+            Release the mouse to complete your selection.
+            The photo is displayed with the red-eye removed.
+         </p>
+         <button onclick="reset_redeye()">Reset</button><br/>
+         <button onclick="redeye_stop();cancel_panel('basic_fixes_link','basic_fixes')"> Apply <img src="images/apply.gif"/> </button>
+         <button onclick="cancel_redeye()">Cancel <img src="images/cancel.gif"/> </button>
+      </div>
+
+<!-- ======================================================================== -->
+<!-- COLOR PANEL                                                              -->
+<!-- ======================================================================== -->
+
+      <div id="color_panel" class="panel">
+      <h4>Color Configuration</h4>
+      <p>Click and Drag the sliders to change the values. You can preview changes in the preview pane below.</p>
+      
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Brightness</h5>
+      <div id="brightness_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Saturation</h5>
+      <div id="saturation_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Hue</h5>
+      <div id="hue_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Contrast</h5>
+      <div id="contrast_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+      </div>
+      <div align="center">
+        <div id="color_preview" style="text-align: right; margin: 16px; width: 160px; height: 160px;"></div>
+      </div>
+      <button id="color_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('tuning_link','tuning')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div><!-- end of color_panel -->
+      
+<!-- ======================================================================== -->
+<!-- SEPIA PANEL                                                              -->
+<!-- ======================================================================== -->
+
+      <div id="sepia_panel" class="panel">
+      <h4>Sepia Configuration</h4>
+      <p>Click and Drag the sliders to choose a color. You can preview changes in the preview pane below.</p>
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Red <span id="sepia_red_value"></span></h5>
+      <div id="sepia_red_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Green <span id="sepia_green_value"></span></h5>
+      <div id="sepia_green_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Blue <span id="sepia_blue_value"></span></h5>
+      <div id="sepia_blue_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+      </div>
+
+          
+      <div align="center">
+          <div id="sepia_color" style="width: 120px; height: 40px;"></div>
+        <div id="sepia_preview" style="text-align: right; margin: 16px; width: 160px; height: 160px;"></div>
+      </div>
+      <button id="sepia_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('effects_link','effects')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div>          
+
+<!-- ======================================================================== -->
+<!-- OILPAINT PANEL                                                           -->
+<!-- ======================================================================== -->
+
+      <div id="oilpaint_panel" class="panel">
+      <h4>Oilpaint Configuration</h4>
+      <p>Click and Drag the sliders to change the Brush radius. You can preview changes in the preview pane below.</p>
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Radius</h5>
+      <div id="oilpaint_radius_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+
+      </div>
+
+          
+      <div align="center">
+        <div id="oilpaint_preview" style="text-align: right; margin: 16px; width: 160px; height: 160px;"></div>
+      </div>
+      <button id="oilpaint_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('effects_link','effects')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div>          
+
+<!-- ======================================================================== -->
+<!-- UNSHARPMASK PANEL                                                        -->
+<!-- ======================================================================== -->
+
+      <div id="unsharpmask_panel" class="panel">
+      <h4>Unsharpmask Configuration</h4>
+      <p>Click and Drag the sliders to change the UnsharpMask parameters. You can preview changes in the preview pane below.</p>
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Radius</h5>
+      <div id="unsharpmask_radius_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+          <h5>Sigma</h5>
+      <div id="unsharpmask_sigma_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+          <h5>Amount</h5>
+      <div id="unsharpmask_amount_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+          <h5>Threshold</h5>
+      <div id="unsharpmask_threshold_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+      </div>
+
+          
+      <div align="center">
+        <div id="unsharpmask_preview" style="text-align: right; margin: 16px; width: 220px; height: 220px;"></div>
+      </div>
+      <button id="unsharpmask_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('effects_link','effects')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div>          
+
+<!-- ======================================================================== -->
+<!-- CHARCOAL PANEL                                                           -->
+<!-- ======================================================================== -->
+
+      <div id="charcoal_panel" class="panel">
+      <h4>Charcoal Configuration</h4>
+      <p>Click and Drag the sliders to change the pencil radius. You can preview changes in the preview pane below.</p>
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Radius</h5>
+      <div id="charcoal_radius_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+
+      </div>
+
+          
+      <div align="center">
+        <div id="charcoal_preview" style="text-align: right; margin: 16px; width: 160px; height: 160px;"></div>
+      </div>
+      <button id="charcoal_apply">Apply <img src="images/apply.gif"/> </button>&nbsp;<button onclick="cancel_panel('effects_link','effects')" >Cancel <img src="images/cancel.gif"/> </button>
+
+      </div>          
+
+<!-- ======================================================================== -->
+<!-- TINT/FILTER PANEL                                                        -->
+<!-- ======================================================================== -->
+
+      <div id="tint_panel" class="panel">
+      <h4>Tint Configuration</h4>
+      <p>Use the sliders to choose the Tint color then click on the point in the photo where the Tint should fade. A graduated tint will be overlayed running from the top of the photo to the point where you clicked.</p>
+
+      <div align="left" style="padding: 8px 0px 8px 24px; "><!-- IE6 containing div must be left-aligned for relative positioned child -->
+          <h5>Red <span id="tint_red_value"></span></h5>
+      <div id="tint_red_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Green <span id="tint_green_value"></span></h5>
+      <div id="tint_green_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Blue <span id="tint_blue_value"></span></h5>
+      <div id="tint_blue_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+          <h5>Opacity <span id="tint_opacity_value"></span></h5>
+      <div id="tint_opacity_slide" style="position: relative;">
+        <!-- first image is the slide -->
+        <img  src="images/slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/knob.gif"/>
+      </div><br/>
+
+      </div>
+
+      <div align="center">
+          <div id="tint_color" style="width: 120px; height: 40px;"></div>
+      </div>
+      <button id="cancel_tint">Cancel <img src="images/cancel.gif"/> </button>
+
+      </div>          
+
+<!-- ======================================================================== -->
+<!-- UNDO & REDO BUTTONS                                                      -->
+<!-- ======================================================================== -->
+
+      <div id="undoredo">
+         <button onclick="PXN8.tools.undo()" id="undo_btn" disabled>Undo</button>
+         <button onclick="PXN8.tools.redo()" id="redo_btn" disabled>Redo</button><br/>
+         
+      </div>
+     
+
+   </div><!-- end of panel_container -->
+</div><!-- end of pallette -->
+
+<div id="canvas_container">
+   <div id="photo_info">
+
+     <div id="zoom_slide" style="position: relative;padding: 4px;">
+        <!-- first image is the slide -->
+        <img  src="images/zoom_slide.gif"/>
+        <!-- second image is the knob -->
+        <img src="images/zoom_knob.gif"/>
+     </div>
+
+     <div style="margin-left: 160px; position: relative;">
+      <b>size:</b><span id="pxn8_image_size"></span> &raquo; 
+      <b>selection:</b><span id="pxn8_selection_size"></span>
+      <b>zoom:</b><span id="pxn8_zoom"></span>
+     </div>
+   </div><!-- end of photo_info -->
+
+   <div id="pxn8_canvas"></div> 
+</div><!-- end of canvas_container -->
+<br/>
+</body>
+</html>
+[%!include "posthtml.template";%]

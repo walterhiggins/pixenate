@@ -1,0 +1,20 @@
+[%if ($pg->{language} eq "pl"){%]
+
+HTML
+
+eval $perlcode;
+if ($@)
+{
+	 print "<html><body><pre>";
+	 my $error = "$@\n\n";
+	 my @lines = split "\n", $perlcode;
+	 foreach (0..$#lines){
+		  $error .= "$_: $lines[$_]\n";
+	 }
+	 print "$error";
+	 print "</pre></body></html>";
+
+}
+
+
+[%}%]

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<typemap>
+
+  <type
+	  format="otf"
+	  name="ComicBook"
+	  fullname="Comic Book"
+	  family="ComicBook"
+	  glyphs="./pixenate/fonts/Qlassik_TB.otf"
+	  />
+
+  <type
+	  format="otf"
+	  name="ComicBookBold"
+	  fullname="Comic Book Bold"
+	  family="ComicBookBold"
+	  glyphs="./pixenate/fonts/QlassikBold_TB.otf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="TinCushion"
+	  fullname="Tin Cushion"
+	  family="TinCushion"
+	  glyphs="./pixenate/fonts/tincush.ttf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="HandWritten"
+	  fullname="Adine Kirnberg Script"
+	  family="HandWritten"
+	  glyphs="./pixenate/fonts/AdineKirnberg-Script.ttf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="HeavyScript"
+	  fullname="BeachmanScript"
+	  family="HeavyScript"
+	  glyphs="./pixenate/fonts/AdineKirnberg-Script.ttf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="OrnateScript"
+	  fullname="Chopin Script"
+	  family="OrnateScript"
+	  glyphs="./pixenate/fonts/CHOPS___.ttf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="Comic-Strip"
+	  fullname="Comic-Strip"
+	  family="Comic-Strip"
+	  glyphs="./pixenate/fonts/comswfte.ttf"
+	  />
+
+  <type
+	  format="ttf"
+	  name="Comic-Book-Commando"
+	  fullname="Comic-Book-Commando"
+	  family="Comic-Book-Commando"
+	  glyphs="./pixenate/fonts/comic6.ttf"
+	  />
+  
+</typemap>

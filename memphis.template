@@ -1,0 +1,180 @@
+<div id="toolArea">
+
+<fieldset>
+  <legend align="center">Zoom</legend>
+  <button type="button" id="zoomin" onclick="myzoomin()">In</button>
+  <button type="button" id="zoomout" onclick="myzoomout()">Out</button>
+  <button type="button" id="fitcanvas" onclick="myfitcanvas()">Fit Canvas</button>
+</fieldset>
+
+<fieldset>
+  <legend align="center">Cropping</legend>
+  <button type="button" id="selectnone" onclick="PXN8.unselect()" disabled>Select None</button>
+  <button type="button" id="crop" onclick="PXN8.tools.crop(PXN8.getSelection())" disabled>Crop</button>
+</fieldset>
+
+<fieldset>
+  <legend align="center">Shrink by</legend>
+  <button type="button" onclick="myshrink(0.90)">10%</button>
+  <button type="button" onclick="myshrink(0.75);">25%</button>
+  <button type="button" onclick="myshrink(0.50);">50%</button>
+</fieldset>
+
+<fieldset>
+  <legend align="center">Shape</legend>
+  <button type="button" onclick="myconfigresizepanel()">Resize to...</button>
+  <button type="button" onclick="PXN8.tools.rotate({angle: 90})">Rotate</button>
+</fieldset>
+
+<fieldset id="resizepanel" style="display: none;">
+  <legend align="center">Resize</legend>
+  <form onsubmit="return false;">
+  <table>
+   <tr>
+      <td><input onclick="preserveRatio(this);" type="checkbox" checked id="preserve"  value="true"/></td>
+      <td>maintain aspect ratio</td>
+   </tr>
+   <tr>
+      <td>width:</td>
+      <td><input onfocus="this.select()" 
+                 onblur="changeDim('width')" 
+                 class="pxn8_small_field" 
+                 type="text" 
+                 id="resizeWidth" 
+                 name="resizeWidth"/></td>
+   </tr>
+   <tr>
+      <td>height:</td>
+      <td><input onfocus="this.select()" 
+                 onblur="changeDim('height')" 
+                 class="pxn8_small_field" 
+                 type="text" 
+                 id="resizeHeight" 
+                 name="resizeHeight"/></td>
+   </tr>
+   <tr>
+     <td><button type="button" onclick="myresize(this,event)">Apply</button></td>
+     <td><button type="button" onclick="hidepanel('resizepanel')">Cancel</button></td>
+   </tr>
+  </table>
+</form>
+</fieldset>
+
+<div>
+<table cellspacing="2" width="100%">
+<tr>
+<td>
+<fieldset>
+  <legend align="center">Bright</legend>
+  <table width="100%">
+    <tr>
+      <td><button type="button" onclick="mycolors('brightness',110)">+</button></td>
+      <td><button type="button" onclick="mycolors('brightness',90)">&nbsp;-&nbsp;</button></td>
+    </tr>
+  </table>
+</fieldset>
+</td>
+<td>
+<fieldset>
+  <legend align="center">Contrast</legend>
+  <table width="100%" >
+    <tr>
+      <td><button type="button" onclick="mycolors('contrast',1)">+</button></td>
+      <td><button type="button" onclick="mycolors('contrast',-1)">&nbsp;-&nbsp;</button></td>
+    </tr>
+  </table>
+</td>
+</tr>
+</table>
+</div>
+
+<fieldset id="edits">
+  <legend align="center">Edits</legend>
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><button type="button" id="undo" onclick="myundo()" disabled>Undo</button></td>
+      <td><button type="button" id="undoall" onclick="myundoall()" disabled>Undo All</button></td>
+      <td><button type="button" id="redo" onclick="myredo()" disabled>Redo</button></td>
+	 </tr>
+  </table>
+</fieldset>  
+
+<fieldset>
+  <legend align="center">File</legend>
+  <button type="button" onclick="openUploadDlg()">Upload Photo...</button><br/>
+  <button type="button" id="save" onclick="PXN8.save.toDisk()" disabled>Save</button>
+  <button type="button" onclick="history.go(-1);">Cancel</button>
+</fieldset>
+
+<div style="text-align:center;"><a href="http://pixenate.com"><img border="0" src="../../images/poweredbypixenate100x45.gif"/></a></div>
+</div> <!-- end of toolArea -->
+
+
+<div id="canvas_container">
+<div>
+<table class="infotable">
+  <tr>
+    <td valign="top" class="infolabel">Selection:</td>
+    <td id="pxn8_selection_size"> ----,---- </td>
+    <td valign="top" class="infolabel">Size:</td>
+    <td id="pxn8_image_size"> ----,---- </td>
+    <td valign="top" class="infolabel">Zoom:</td>
+    <td id="pxn8_zoom"> 100% </td>
+    <td valign="top" class="infolabel">Position:</td>
+    <td id="pxn8_mouse_pos"> ----,---- </td>
+  </tr>
+</table>
+</div>
+
+<!-- 
+     This is an example of a relatively positioned canvas .
+     Other elements can appear below or to the right of the canvas.
+-->
+<div id="pxn8_scroller" style="position:relative;border: 3px solid #999999;width: 600px; height: 400px; overflow: auto;">
+  <div style="" id="pxn8_canvas">
+  </div><!-- end of canvas -->
+</div>
+
+<!-- for hi-res mode -->
+<div id="hiResStatus"></div>
+
+<!-- logging is optional 
+<div id="pxn8_log">
+</div>
+-->
+
+</div> <!-- end of canvas_container -->
+
+<div id="uploadArea" style="display:none; ">
+<fieldset style="width: 240px;">
+<legend align="center">Upload Photo</legend>
+[%if ($pg->{target} eq "hosted") {%]
+<form action="http://pixenate.com/pixenate/upload.pl" 
+[% } else { %]
+<form action="/pixenate/upload.pl" 
+[% } %]
+      method="POST" id="uploadForm"
+      enctype="multipart/form-data"
+      onsubmit="return submit_upload_form(this);">
+<input type="hidden" name="pxn8_root" value="/pixenate"/>
+<input type="hidden" name="next_page" value="/pixenate/themes/[% print $pg->{theme};%]/index.[% print ($pg->{language} eq "htpl" ? "pl" : $pg->{language}) ; %]"/>
+<input type="hidden" name="image_param_name" value="image" />
+<table>
+<tr>
+  <td colspan="2"><input type="file" name="filename" id="filename" ></td>
+</tr>
+<tr>
+  <!-- 
+	    The following code will display an "Upload in progress" message when the user clicks upload but 
+	    will only work with Firefox and Internet Explorer but Not Safari.
+	    Submitting multipart forms in Safari is not possible using Javascript.
+		 
+	
+	    <td><a onclick="closeUploadDlg();uploadImage();return true;"><img src="images/upload.gif" border="0"/></a></td> 
+   -->
+  <td><input type="submit" value="Upload Photo" /></td>
+  <td><button type="button" onclick="closeUploadDlg()">Cancel</button></td>
+</table>
+</form>
+</fieldset>
+</div><!-- uploadArea -->

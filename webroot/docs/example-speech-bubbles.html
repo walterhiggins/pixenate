@@ -1,0 +1,175 @@
+<html>
+<head>
+<style type="text/css">
+* { font-size: 16px;font-family: Tahoma, Verdana, Arial, sans-serif;}
+#bubbles img { cursor: pointer ; }
+#bubbles img:hover { background-color: steelblue; }
+
+</style>
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+
+  <script type="text/javascript">
+
+	 function change_bubble_type(value){
+        bubble_type = value;
+        var selection = PXN8.getSelection();
+        //
+        // enter 'overlay' mode
+        // in this mode, every time the user selects an area of the photo,
+        // the overlay image is super-imposed on top so the user knows  where the 
+        // overlay will appear once the overlay operation is applied.
+        //
+        PXN8.overlay.start(PXN8.root + "/images/overlays/" + bubble_direction + "_" + bubble_type + "_bubble.gif",
+                           {width:150,height:100, top:selection.top, left: selection.left });
+
+	 }
+    function change_bubble_direction(value)
+    {
+        bubble_direction = value;
+        var selection = PXN8.getSelection();
+        //
+        // enter 'overlay' mode
+        // in this mode, every time the user selects an area of the photo,
+        // the overlay image is super-imposed on top so the user knows  where the 
+        // overlay will appear once the overlay operation is applied.
+        //
+        PXN8.overlay.start(PXN8.root + "/images/overlays/" + bubble_direction + "_" + bubble_type + "_bubble.gif",
+                           {width:150,height:100, top:selection.top, left: selection.left });
+    }
+
+    //
+    // where is the speech bubble coming from ?
+    //
+    var bubble_direction = "left";
+	 var bubble_type = "speech";
+
+    function change_bubble(t,d)
+    {
+        bubble_type = t;
+        bubble_direction = d;
+        var selection = PXN8.getSelection();
+        //
+        // enter 'overlay' mode
+        // in this mode, every time the user selects an area of the photo,
+        // the overlay image is super-imposed on top so the user knows  where the 
+        // overlay will appear once the overlay operation is applied.
+            //
+        PXN8.overlay.start(PXN8.root + "/images/overlays/" + bubble_direction + "_" + bubble_type + "_bubble.gif",
+                           {width:150,height:100, top:selection.top, left: selection.left });
+    }
+
+    function show_bubble_config()
+    {
+        document.getElementById("bubble_config").style.display = "block";
+        var selection = PXN8.getSelection();
+        //
+        // enter 'overlay' mode
+        // in this mode, every time the user selects an area of the photo,
+        // the overlay image is super-imposed on top so the user knows  where the 
+        // overlay will appear once the overlay operation is applied.
+        //
+        PXN8.overlay.start(PXN8.root + "/images/overlays/" + bubble_direction + "_" + bubble_type + "_bubble.gif",
+                           {width:150,height:100, top: selection.top, left: selection.left});
+    }
+
+    function hide_bubble_config()
+    {
+        document.getElementById("bubble_config").style.display = "none";
+        PXN8.overlay.stop();
+        PXN8.unselect();
+
+    }
+
+    function add_bubble_to_photo()
+    {
+        //
+        // construct an overlay operation object
+        //
+        var overlayOp = PXN8.getSelection();
+        overlayOp.filepath = "images/overlays/" + bubble_direction + "_" + bubble_type + "_bubble.gif";
+        overlayOp.tile = "false";
+        overlayOp.operation = "overlay";
+	     overlayOp.opacity = document.getElementById("opacity").value;
+
+        // 
+        // construct a text operation object
+        //
+        var zoom = PXN8.zoom.value();
+        var theImage = PXN8.dom.id("pxn8_image");
+        
+        var iw = theImage.width / zoom;
+        var ih = theImage.height / zoom;
+        
+	 
+        var cix = iw / 2;  // center of image (x)
+        var ciy = ih / 2;  // center of image (y)
+
+        var sel = PXN8.getSelection();
+        
+        var csx = sel.left + (sel.width /2) ; // center of selection (x)
+        var csy = sel.top + (sel.height /2 ); // center of selection (y)
+
+        var ox = csx - cix;
+        var oy = csy - ciy;
+
+        var textOp = {};
+        textOp.y = oy;
+        textOp.x = ox;
+        textOp.gravity = "Center";
+        textOp.operation = "add_text";
+        textOp.font = "Arial";
+        textOp.text = document.getElementById("bubble_text").value;
+
+        //
+        // Overlay the speech bubble then add text on top
+        //
+        PXN8.tools.updateImage([overlayOp,textOp]);
+
+        //
+        // exit overlay mode after the image has changed
+        //
+        PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+                PXN8.overlay.stop();
+                PXN8.unselect();
+        });
+    }
+
+  </script>
+</head>
+
+<body>
+
+  <!-- The canvas -->
+  <div id="pxn8_canvas"></div>
+
+  <button onclick="show_bubble_config();return false;">Add Text Bubble...</button>
+  <button onclick="PXN8.tools.undo();return false;">Undo</button>
+  <button onclick="PXN8.tools.redo();return false;">Redo</button>
+
+  <div id="bubble_config" style="display: none;">
+    <table id="bubbles">
+       <tr>
+         <td><img src="/pixenate/images/overlays/right_speech_bubble.gif" width="90" height="60" onclick="change_bubble('speech','right')"/></td>
+         <td><img src="/pixenate/images/overlays/left_speech_bubble.gif" width="90" height="60" onclick="change_bubble('speech','left')"/></td>
+       </tr>
+       <tr>
+         <td><img src="/pixenate/images/overlays/right_thought_bubble.gif" width="90" height="60" onclick="change_bubble('thought','right')"/></td>
+         <td><img src="/pixenate/images/overlays/left_thought_bubble.gif" width="90" height="60" onclick="change_bubble('thought','left')"/></td>
+       </tr>
+    </table>
+    <form onsubmit="return false;">
+		<label for="opacity">Opacity:</label><input id="opacity" type="text" name="opacity" value="100"/><br/>
+      <textarea name="bubble_text" id="bubble_text" rows="3" cols="25">Add Your Text Here.</textarea>
+      <br/>
+      <button onclick="add_bubble_to_photo();return false;">Apply</button>
+      <button onclick="hide_bubble_config();return false;">Done</button>
+    </form>
+  </div>
+
+
+  <script type="text/javascript">
+    PXN8.initialize("pigeon.jpg");
+  </script>
+
+</body>
+</html>

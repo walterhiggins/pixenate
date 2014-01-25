@@ -1,0 +1,58 @@
+<html>
+  <head>
+	 <script type="text/javascript" src="../javascript/pxn8_all.js"></script>
+	 </head>
+<body>
+
+<!-- Declare and initialize the canvas -->
+<div id="pxn8_canvas"></div>
+<script type="text/javascript">
+PXN8.initialize("pigeon300x225.jpg");
+</script>
+
+
+
+<button onclick="open_saturation_tool_panel()">Change Saturation</button>
+
+<div id="saturation_tool_panel" style="display: none; padding: 8px; overflow: auto; border: 1px solid white;">
+<h4>Preview</h4>
+<p>Click and drag on the preview pane to see hidden parts of the photo</p>
+<div id="colors_preview" style="border: 3px solid #ccc; width: 120px; height: 120px; color:white;"></div>
+<button onclick="increase_saturation()">+ Saturation</button>
+<button onclick="decrease_saturation()">- Saturation</button>
+<br/>
+<button onclick="close_saturation_tool_panel();PXN8.tools.colors({'saturation': saturation})">Apply</button>
+<button onclick="close_saturation_tool_panel()">Cancel</button>
+</div>
+
+<script type="text/javascript">
+
+function open_saturation_tool_panel(){
+    PXN8.dom.id("saturation_tool_panel").style.display = "block";
+    colors_peek = PXN8.preview.initialize("colors_preview");
+    PXN8.preview.show(colors_peek);
+}
+function close_saturation_tool_panel(){
+    PXN8.dom.id("saturation_tool_panel").style.display = "none";
+    PXN8.preview.hide(colors_peek);
+}
+
+
+saturation = 100;
+
+function increase_saturation(){
+    saturation += 25;
+    PXN8.preview.show(colors_peek,{"operation": "colors", "saturation": saturation});
+}
+
+function decrease_saturation(){
+    saturation -= 25;
+    PXN8.preview.show(colors_peek,{"operation": "colors", "saturation": saturation});
+}
+</script>
+
+
+
+
+</body>
+</html>

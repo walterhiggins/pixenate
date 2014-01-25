@@ -1,0 +1,86 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+ li { float: left; list-style: none; margin: 8px; font-size: 300%;}
+ p { font-family: Tahoma; font-size: 150%;}
+</style>
+</head>
+<body>
+<div id="pxn8_canvas"></div>
+
+<br style="clear:both;"/>
+
+<button onclick="run();return false;">Run</button>
+
+<script type="text/javascript">
+PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+
+function run()
+{
+
+    //
+    // start an editing session using PXN8.ImageMagick
+    //
+    var image = PXN8.ImageMagick.start();
+
+    var reflectionHeight = 100;
+    var imageWidth = PXN8.getImageSize().width;
+
+    //
+    // clone the image and flip the clone
+    //
+    var flipped = image.Clone();
+    flipped.Method("Flip");
+
+    //
+    // create a white background for the reflection to fade to.
+    //
+    var white = new PXN8.ImageMagick();
+    white.Method("Set",{size: imageWidth + "x" + reflectionHeight});
+    white.Method("Read", "xc:white");
+
+    //
+    // create a gradient mask to apply to the flipped image
+    //
+    var mask = new PXN8.ImageMagick();
+    mask.Method("Set", {size: imageWidth + "x" + reflectionHeight});
+    mask.Method("Read", "gradient:#000000-#FFFFFF");
+    mask.Method("Set", {matte: false});
+
+	 //
+    // apply the mask
+    //
+    white.Method("Composite",{image: mask, compose: "CopyOpacity"});
+
+    //
+    // superimpose the faded white on top of the flipped image
+    //
+    flipped.Method("Composite",{image: white, compose: "Over", x:0, y:0});
+
+    //
+    // crop the flipped image
+    //
+    flipped.Method("Crop",{x:0,y:0,width: imageWidth, height: reflectionHeight});
+
+    //
+    // push the flipped image on to the original
+    //
+    image.push(flipped);
+
+    //
+    // append the images
+    //
+    var reflection = image.Append(false);
+
+    //
+    // Commit the operations to the server
+    //
+    PXN8.ImageMagick.end(reflection);
+
+}
+
+
+</script>
+</body>
+</html>

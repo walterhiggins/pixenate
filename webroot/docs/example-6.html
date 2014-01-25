@@ -1,0 +1,263 @@
+<html>
+<head>
+  <link media="screen" title="Default Style" rel="stylesheet" href="example-6.css" type="text/css"/>
+  <!-- Dependencies -->
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+  <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+  <script type="text/javascript" src="clone.js"></script>
+  <script type="text/javascript">
+  //
+  // When the document has loaded...
+  //
+  PXN8.dom.addLoadEvent(function(){
+    //
+    // ...Initialize Pixenate
+    // 
+    PXN8.initialize("shrug.jpg");
+
+  });
+  </script>
+</head>
+<body>
+  <div id="toolbar">
+	 <button onclick="PXN8.tools.undo()">Undo</button><button 
+				onclick="PXN8.tools.redo()">Redo</button>&nbsp;
+    <button onclick="PXN8.tools.rotate({'angle': 90})">Rotate 90&deg;</button><button 
+				onclick="PXN8.tools.rotate({'angle': 270})">Rotate 270&deg;</button><button
+				onclick="PXN8.tools.rotate({'fliphz': true})">Flip Horizontally</button><button
+				onclick="PXN8.tools.rotate({'flipvt': true})">Flip Vertically</button>&nbsp;
+    <br/>          
+    <button onclick="PXN8.zoom.zoomIn()">Zoom +</button><button
+				onclick="PXN8.zoom.zoomOut()">Zoom -</button>&nbsp;
+	 <button onclick="doRedeye()">Fix Red-Eye</button><button
+				onclick="doWhiten()">Whiten Teeth</button><button
+            onclick="PXN8.tools.enhance()">Enhance</button><button
+            onclick="PXN8.tools.normalize()">Normalize</button>
+    <script type="text/javascript">
+          PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,function(){
+             var zoom = PXN8.zoom.value();
+             var zoom_info_element = document.getElementById("zoom_info");
+             zoom_info_element.innerHTML = "Zoom: " + (zoom* 100) + " %";
+          });
+          function doRedeye(){
+             var selection = PXN8.getSelection();
+             if (selection.width > 0){
+                PXN8.tools.fixredeye(selection);
+             }else{
+                alert('You must first select an area to fix');
+             }
+          }
+          function doWhiten(){
+             var selection = PXN8.getSelection();
+             if (selection.width > 0){
+                PXN8.tools.whiten(selection);
+             }else{
+                alert('You must first select an area to whiten');
+             }
+          }
+    </script>
+    <br/>
+    <label for="Select">Select Area:</label>
+	 <select name="selection" id="selection" onchange="doSelection(this.value)">
+      <option selected value="none">None</option>
+      <option value="all">All</option>
+      <option value="1x1">Square</option>
+      <option value="6x4">6 x 4</option>
+      <option value="11x8">11 x 8</option>
+    </select>
+    <script type="text/javascript">
+          function doSelection(str){
+             // reset aspect ratio selection
+             PXN8.selectByRatio("free");
+
+             if (str == "none"){
+                PXN8.unselect();
+                return;
+             }
+             if (str == "all"){
+                PXN8.selectAll();
+                return;
+             }
+             PXN8.selectByRatio(str);
+          }
+    </script>
+	 <button onclick="doCrop()">Crop</button>&nbsp;
+	 <button onclick="start_copy()">Clone...</button>&nbsp;
+    <script type="text/javascript">
+          function doCrop(){
+             var selection = PXN8.getSelection();
+             if (selection.width > 0){
+                PXN8.tools.crop(selection);
+             }else{
+                alert('You must first select an area to crop');
+             }
+          }
+    </script>
+    <button onclick="PXN8.save.toDisk()">Download...</button>
+  </div><!-- end of toolbar -->
+
+  <div id="copy_panel" class="panel">
+    <p>
+      Click on the image to plot points around the part of the
+      photo you want to clone. Then click 'Copy'.</p>
+    <button onclick="copy();">Copy</button>
+    <button onclick="end_copy();">Cancel</button>
+	 
+  </div>
+  <div id="paste_panel" class="panel">
+    <p>Move the cloned part of the photo to where you would like
+      to copy it. Then click 'Paste'.</p>
+    <button onclick="paste();">Paste</button>
+    <button onclick="end_paste();">Done</button>
+  </div>
+  
+  <div style="float: left; overflow: hidden;">
+	 <!-- an information area -->
+	 <div id="information_area">
+		<img id="hourglass" src="../images/countdown4.gif"	style="display: none;"/>
+		<span id="selection_info"></span>
+		<span style="border-left: 1px solid #dddddd; padding-left: 4px; " id="zoom_info"></span>
+	 </div>
+	 <!-- The Pixenate Canvas: Photo will be displayed here -->
+	 <div id="pxn8_canvas"></div>
+	 
+  </div>
+  
+  <div id="resize_handle"></div>
+
+  <script type="text/javascript">
+  /**
+   * Stop IE flickering due to background image refresh whenever the resize-handle
+   * changes position.
+   */
+  try {
+      document.execCommand('BackgroundImageCache', false, true);
+  } catch(e) {}
+
+  /**
+   * change the position of the resize handle
+   */
+  function move_resize_handle()
+  {
+     var rsz = PXN8.dom.id("resize_handle");
+     var img = PXN8.dom.id("pxn8_image");
+     var imgRect = PXN8.dom.eb("pxn8_image");
+     rsz.style.top = imgRect.y + imgRect.height - 24;
+     rsz.style.left = imgRect.x + imgRect.width - 24;
+  }
+
+  PXN8.listener.add(PXN8.ON_IMAGE_LOAD,move_resize_handle);
+  PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,move_resize_handle);
+
+  var rsz = PXN8.dom.id("resize_handle");
+  var resizing = false;
+  var startPos = {};
+
+  var keepAspectRatio = false;
+  //
+  //  Show a 'Hold down Shift Key to maintain aspect ratio' message the first time the 
+  //  user mouseovers the resize handle
+  //
+  var firstMouseOver = true;
+
+  var startDims = {};
+
+  var start_resize = function(event){
+      event = event || window.event;
+
+      if (PXN8.isUpdating()){ return ; }
+      
+      if (resizing){ stop_resize(event); return; }
+
+      if (typeof event.shiftKey != "undefined"){
+          //
+          // is the user holding down the shift key ?
+          //
+          keepAspectRatio = event.shiftKey;
+      }
+      startPos = PXN8.dom.cursorPos(event);
+      startDims = PXN8.dom.eb("pxn8_image");
+      resizing = true;      
+  };
+
+  var move_outline = function(event){
+     event = event || window.event;
+
+     if (!resizing){ 
+         var source = null;
+         if (event.srcElement){ source = event.srcElement;
+         }else{source = event.target;}
+         
+         if (source.id == "resize_handle" && firstMouseOver){
+             
+             PXN8.show.alert("Hold down the shift key to maintain aspect ratio",3000);
+             firstMouseOver = false;
+             
+         }
+         return; 
+     }
+     var newPos = PXN8.dom.cursorPos(event);
+     var img= PXN8.dom.id("pxn8_image");
+
+     var deltaX = newPos.x - startPos.x;
+     var deltaY = newPos.y - startPos.y;
+
+     if (keepAspectRatio){
+         // 
+         // is the original aspect ratio being enforced ?
+         //
+         deltaY = Math.round((deltaX  * startDims.height ) / startDims.width);
+     }
+     img.width = img.width + (deltaX);
+     img.height = img.height + (deltaY);
+
+     move_resize_handle();   
+
+     startPos = newPos;
+
+  };
+
+  var stop_resize = function(event){
+      event = event || window.event;
+
+      if (!resizing) { return ; }
+
+      resizing = false;
+
+      var img = PXN8.dom.id("pxn8_image");
+      
+      if (img.width == startDims.width && 
+          img.height ==startDims.height){
+          return;
+      }
+      var realW = img.width / PXN8.zoom.value();
+      var realH = img.height / PXN8.zoom.value();
+      
+      PXN8.tools.resize(realW,realH);
+  };
+
+  PXN8.event.addListener(rsz,"mousedown",start_resize);
+  PXN8.event.addListener(rsz,"mousemove",move_outline);
+  PXN8.event.addListener(rsz,"mouseup",stop_resize);
+  PXN8.event.addListener(rsz,"mouseout",move_outline);
+  PXN8.event.addListener(document,"mousemove",move_outline);
+  PXN8.event.addListener(document,"mousedown",move_outline);
+  PXN8.event.addListener(document,"mouseup",stop_resize);
+  </script>
+
+  <script type="text/javascript">
+  PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,function(){
+     var selection = PXN8.getSelection();
+     var selection_info_element = document.getElementById("selection_info");
+     selection_info_element.innerHTML = "Selection : " + selection.top + "," +
+         selection.left + " " + selection.width + " x " + selection.height;
+  });
+  PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,function(){
+     var zoom = PXN8.zoom.value();
+     var zoom_info_element = document.getElementById("zoom_info");
+     zoom_info_element.innerHTML = "Zoom: " + (zoom* 100) + " %";
+  });
+  </script>
+
+</body>
+</html>

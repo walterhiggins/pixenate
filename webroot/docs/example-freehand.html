@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+    <script type="text/javascript" src="/pixenate/javascript/3rdparty/raphael-uncompressed.js"></script>
+  </head>
+  <body>
+    <div id="container">
+
+      <div id="toolbar">
+        <button onclick="PXN8.zoom.zoomIn()">Zoom +</button>
+        <button onclick="PXN8.zoom.zoomOut()">Zoom -</button>
+        <button onclick="PXN8.tools.undo()">Undo</button>
+        <button onclick="PXN8.tools.redo()">Redo</button>
+        <button onclick="start_freehand_mode()">Freehand Drawing</button>
+        <button onclick="PXN8.tools.crop()">Crop</button>
+        <button onclick="PXN8.tools.rotate()">Rotate</button>
+        <button onclick="PXN8.save.toDisk()">Save</button>
+      </div>
+
+      <div id="freehand_palette" style="display: none;">
+        <h3>Freehand Drawing</h3>
+		  <p>Click and drag to draw on the photo. Click 'Apply' or
+		  'Cancel' when done.</p>
+        <label for="brush_width">Brush Width:</label>
+        <select name="brush_width" id="brush_width" onchange="PXN8.freehand.width = this.value;">
+          <option value="1">1</option>
+          <option value="3">3</option>
+          <option value="9">9</option>
+          <option value="16">16</option>
+        </select>
+        
+        <label for="brush_color">Color:</label>
+        <select name="brush_color" id="brush_color" onchange="PXN8.freehand.color = this.value;">
+          <option value="#ff0000">Red</option>
+          <option value="#ffff00">Yellow</option>
+          <option value="#00ff00">Green</option>
+          <option value="#0000ff">Blue</option>
+          <option value="#000000">Black</option>
+          <option value="#ffffff">White</option>
+          <option value="#808080">Gray</option>
+        </select>
+        
+        <button onclick="PXN8.freehand.undo()">Undo last line</button>
+        <button onclick="apply_freehand()">Apply</button>
+        <button onclick="end_freehand_mode()">Cancel</button>
+      </div> <!-- end freehand palette -->
+      
+      <div id="pxn8_canvas"></div>
+
+    </div><!-- end of container -->
+
+<script type="text/javascript">
+
+PXN8.ajax.useXHR = true;
+
+function start_freehand_mode()
+{
+   var palette = document.getElementById("freehand_palette");
+   palette.style.display = "block";
+   PXN8.freehand.start();
+}
+
+function end_freehand_mode()
+{
+   var palette = document.getElementById("freehand_palette");
+   palette.style.display = "none";
+   PXN8.freehand.end();
+}
+
+function apply_freehand(){
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+         end_freehand_mode();
+    });
+    PXN8.tools.freehand();
+}
+
+PXN8.dom.addLoadEvent(function(){
+   PXN8.initialize("/pixenate/images/samples/garinish.jpg");
+});
+</script>
+  </body>
+</html>

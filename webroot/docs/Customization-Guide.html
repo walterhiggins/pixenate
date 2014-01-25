@@ -1,0 +1,1294 @@
+<html>
+<head>
+<link rel="stylesheet" href="docs.css" type="text/css" />
+  <script type="text/javascript" src="showcode.js"></script>
+</head>
+<body>
+<h1>Pixenate&trade; Customization Guide</h1>
+
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#getting_started">Getting Started</a>
+    <ol>
+      <li><a href="#anatomy_simple">Anatomy of a simple Photo editor</a></li>
+      <li><a href="#saving_to_storage">Saving the photo to the client's storage</a></li>
+      <li><a href="#fleshing_out">Fleshing it out...</a></li>
+      <li><a href="#zoom_select">More bells & whistles: Zooming and Selecting</a></li>
+      <li><a href="#interactive_resize">Interactively Resizing the Photo.</a></li>
+      <li><a href="#advanced_cloning">Advanced Techniques: Cloning.</a></li>
+      <li><a href="#constraining_canvas">Constraining the size of the Canvas.</a></li>
+      <li><a href="#saving_to_server">Saving the photo permanently to
+      the server gallery.</a>
+		  <ul>
+			 <li><a href="#saving_to_server_licensed">Licensed edition.</a></li>
+			 <li><a href="#saving_to_server_hosted">Hosted edition.</a></li>
+		  </ul>
+		</li>
+
+      <li><a href="#custom_operations">Creating new operations by combining existing operations.</a></li>
+      <li><a href="#uploading_redirection">Uploading Photos and Redirection using the upload.pl CGI script provided.</a></li>
+    </ol>
+</li>
+<li><a href="API-Reference.html">API Reference Guide</a></li>
+</ul>
+
+<a name="getting_started"><h2>Getting Started</h2></a>
+
+<p>Pixenate&trade; is a customizable photo editor which comes with a
+set of example <em>themes</em> which you can copy and modify to suit
+your own website's identity. The sample themes are available in the <em>themes</em> subdirectory. </p>
+
+<p>Pixenate&trade; also comes with a Javascript Library which you can
+  use to build your own custom photo editor from scratch.
+In this section I am going to show you how to create a simple photo
+editor with some bare-bones functionality. The goal is to illustrate
+how to use the Pixenate&trade; Javascript library and also how to
+customize the appearance of the editor using <abbr title="Cascading
+Style Sheets">CSS</abbr>.</p>
+
+<a name="anatomy_simple"><h3>Anatomy of a simple Photo editor</h3></a>
+
+<p>Let's begin by creating a very simple photo editor - one that does
+just one thing; Rotate photos.</p>
+<p><img src="screenshot_1.jpg" /></p>
+<p>When the user clicks the <em>Rotate 90&deg;</em> button, the photo
+will be rotated through 90&deg;...</p>
+<p><img src="screenshot_2.jpg" /></p>
+<p>The user can repeatedly click the <em>Rotate 90&deg;</em> button
+and the photo will rotate another 90&deg;...
+<p><img src="screenshot_3.jpg" /></p>
+<p>You can see that in each screenshot the photo has been rotated
+progressively. Each operation is applied to the photo incrementally.
+Here is the source code for this simple photo editor...</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_1');">view plain</a></td><td><a class="view_plain" href="example-1.html">see example</a></td></tr></table>
+<textarea class="code" id="code_1" readonly>
+<html>
+  <head>
+    <!-- Dependencies (Premium & Basic Edition)-->
+    <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+    <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+  </head>
+  <body>
+    <button onclick="PXN8.tools.rotate( {'angle': 90} )">Rotate 90&deg;</button>
+
+    <!-- The Pixenate Canvas: Photo will be displayed here -->
+    <div id="pxn8_canvas"></div>
+
+    <script type="text/javascript">
+      PXN8.initialize("shrug.jpg"); // Initialize Pixenate when pxn8_canvas is ready
+    </script>
+  </body>
+</html>
+</textarea>
+<p>You can see this example photo editor in action by <a
+href="example-1.html">clicking here</a>.</p>
+<p>Lines 4 to 5 are all of the Pixenate&trade; javascript source
+files which must be included in the &lt;head&gt; section of your web
+page. Pixenate is designed for easy translation, so all of the English
+  text used by the Pixenate Javascript library is defined in
+  pxn8_strings_en.js. If you wish to translate Pixenate into other
+  languages, create translations for all of the constants defined in
+  pxn8_strings_en.js and save them to your own language file
+  (e.g. pxn8_strings_es.js for Spanish) and include that file
+  instead.</p>
+
+<p>Line 8 is a button whose <em>onclick</em> handler will call
+<a href="API-Reference.html#pxn8_tools_rotate">PXN8.tools.rotate()</a>. PXN8.tools.rotate() is a Pixenate
+javascript function which rotates the photo. It takes a Javascript
+Object as a parameter - the object in this case is an Object Literal ...
+<pre>
+ {'angle': 90}
+</pre>
+... with an 'angle' property whose value is 90. The
+<a href="API-Reference.html#pxn8_tools_rotate">PXN8.tools.rotate()</a> function's single parameter can have any
+combination of the following properties...
+<ol>
+  <li><em>angle</em> : A numeric value between 1 and 359</li>
+  <li><em>flipvt</em> : A boolean value indicating whether to flip the
+  photo vertically (mirror vertically)</li>
+  <li><em>fliphz</em> : A boolean value indicating whether to flip the
+  photo horizontally (mirror horizontally)</li>
+</ol>
+The <a href="API-Reference.html#pxn8_tools_rotate">PXN8.tools.rotate()</a> function is described in more detail in
+<a href="API-Reference.html">Pixenate&trade; API Reference</a>.
+</p>
+
+<p>Line 11 is very important. This is where the <a href="API-Reference.html#pxn8_canvas">pxn8_canvas</a>
+DIV is defined. To create a Pixenate&trade; Editor, your web page must
+have a DIV with an id of <em>pxn8_canvas</em>. <a href="API-Reference.html#pxn8_initialize">PXN8.intialize()</a> and
+many other Pixenate functions use the <em>pxn8_canvas</em> DIV to
+manipulate the photo. <em>pxn8_canvas</em> is a special DIV used by
+Pixenate and <b>must appear in all Pixenate editor pages</b>.</p>
+
+<p>Lines 13 to 15 are required to initialize the Pixenate&trade;
+editor. This block of javascript should appear <em>after</em> the
+  pxn8_canvas DIV has been
+  declared. <a href="API-Reference.html#pxn8_initialize">PXN8.initialize()</a>
+  can take a single string parameter which is a relative URL of the
+  image to edit.</p>
+
+<p>This is a trivially simple example Photo editor. A photo editor
+  which only allowed you to rotate a photo wouldn't be much good, but
+  it does illustrate the bare minimum you need to integrate Pixenate
+  into your website...</p>
+<ol>
+ <li>Include the pxn8_all.js javascript source file in your page.</li>
+ <li>Add buttons or other UI controls to perform operations on the
+ photo using Pixenate's Javascript API.</li>
+ <li>Add the pxn8_canvas DIV element to your page.</li>
+ <li>Call PXN8.initialize() to start the Pixenate Javascript API.</li>
+</ol>
+<p>In the next sections we'll expand on this simple
+  editor and explore more of Pixente's customization features.</p>
+
+<a name="saving_to_storage"><h3>Saving the photo to the client's storage</h3></a>
+
+<p>So far our simple photo editor doesn't do a whole lot. The user can
+rotate the photo and - if they're savvy enough - can save the photo to
+local storage by right-clicking on the photo and selecting <em>'Save
+Image As...'</em> (in Firefox) or 'Save Picture As...' (in Internet
+Explorer).</p>
+<p>Fortunately, Pixenate&trade; provides an easy way to save photos to
+the client's local storage using the <a href="API-Reference.html#pxn8_save_todisk">PXN8.save.toDisk()</a>
+function...
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_2');">view plain</a></td><td><a class="view_plain" href="example-2.html">see example</a></td></tr></table>
+<textarea readonly class="code" id="code_2">
+<html>
+<head>
+<!-- Dependencies (Premium & Basic Editions) -->
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+
+<script type="text/javascript">
+  //
+  // When the document has loaded...
+  //
+  PXN8.dom.addLoadEvent(function(){
+    //
+    // ...Initialize Pixenate
+    // 
+    PXN8.initialize("shrug.jpg");
+
+  });
+</script>
+</head>
+<body>
+
+  <button onclick="PXN8.tools.rotate({'angle': 90})">Rotate 90&deg;</button>
+  <button onclick="PXN8.save.toDisk()">Download...</button>
+  <!-- The Pixenate Canvas: Photo will be displayed here -->
+  <div id="pxn8_canvas"></div>
+
+</body>
+</html></textarea>
+<p>Here I've introduced an additional line. Line 23 is an additional <em>button</em>
+which will call <a href="API-Reference.html#pxn8_save_todisk">PXN8.save.toDisk()</a> when clicked. If the user
+clicks the 'Download...' button without first having modified the
+photo, a message will appear briefly beneath the photo 'You have not
+modified the photo!'. The <a href="API-Reference.html#pxn8_save_todisk">PXN8.save.toDisk()</a> function will only save
+modified photos.</p>
+<p>The message which appears beneath the photo is another special DIV
+used by Pixenate&trade;. This DIV is for warnings and information and
+it appears whenever the user changes a photo or performs an operation
+which was not appropriate. This DIV (which does not need to be defined
+manually - it is added automatically to the page by Pixenate&trade;)
+has an id of 'pxn8_warning' and it can be styled to suit your own
+tastes by adding something like the following to your page's
+<em>&lt;head&gt;</em> section...</p>
+<a class="view_plain" href="#" onclick="return showCode('code_3');">view plain</a>
+<textarea readonly class="code" id="code_3">
+<style type="text/css">
+#pxn8_warning { 
+  position: absolute; top: 0px; left: 0px;
+  background-color: maroon; color: white; 
+  padding: 6px; font-family: Arial; 
+}
+#pxn8_canvas {overflow: hidden;} // stop padding from overflowing canvas
+</style>
+</textarea>
+<p>Here is the result of the styled <em>pxn8_warning</em> div...</p>
+<p><img src="screenshot_4.jpg" /></p>
+<p>When you click the <em>Rotate 90&deg;</em> button a mesage will
+appear at the bottom of the photo...
+<pre>Updating Image. Please wait...</pre>
+The text of this message can be changed by modifying the
+<em>PXN8.strings.UPDATING</em> constant which is defined in the
+<em>pxn8_strings_en.js</em> file. 
+<blockquote>If you want to translate
+Pixenate&trade; then you should create your own pxn8_strings_**.js
+file e.g. pxn8_strings_es.js for spanish, pxn8_strings_ko.js for
+korean, etc. and replace all of the PXN8.strings.* constants with
+suitable values.</blockquote>
+As well as changing the content of the message, you can change how it
+is displayed by styling the special <em>pxn8_timer</em> DIV which is
+displayed whenever the photo is updating. For example, to style the
+<em>pxn8_timer</em> so that a countdown animated gif is displayed at
+the top of the photo, add the following to your web page's
+<em>&lt;head&gt;</em> section...</p>
+
+<a class="view_plain" href="#" onclick="return showCode('code_4');">view plain</a>
+<textarea readonly class="code" id="code_4">
+<style type="text/css">
+#pxn8_timer {
+ position: absolute; top: 0px; left: 0px;
+ padding: 6px 0px 6px 28px; font-family: Arial; 
+ background: white url(/pixenate/images/countdown.gif) 6px 2px no-repeat;
+ opacity: 0.7;
+ filter: "alpha(opacity: 70)";
+} 
+</style>
+</textarea>
+
+<p><img src="screenshot_5.jpg" /></p>
+
+<p>Once the photo is updated and the user clicks the 'Download...'
+button, a request is made to the <em>save.pl</em> script on the server
+and the photo is downloaded as an attachment.</p>
+<blockquote><b>N.B.</b> The photo which is downloaded via the
+<a href="API-Reference.html#pxn8_save_todisk">PXN8.save.toDisk()</a> function <em>is not the same</em> as the photo
+which is downloaded when the user right-clicks on the photo and
+selects 'Save Picture As...' from the context-menu. This is because
+the photo in the browser is a 85% quality replica of what is stored on
+the server. Calling <a href="API-Reference.html#pxn8_save_todisk">PXN8.save.toDisk()</a> will always retrieve the
+full 100% quality version of the photo.</blockquote>
+</p>
+
+<a name="fleshing_out"><h3>Fleshing it out...</h3></a>
+<p>Now let's add a few more buttons and styling...</p>
+<p><img src="screenshot_6.jpg"/></p>
+
+<blockquote>To make the buttons appear flush next to each other in
+Firefox, you must place the closing &lt;/button> tag right next to the
+following opening &lt;button> tag. Internet Explorer ignores whitespace
+between a sequence of <em>&lt;button></em> tags but Firefox does not.</blockquote>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_5');">view plain</a></td><td><a class="view_plain" href="example-3.html">see example</a></td></tr></table>
+<textarea class="code" id="code_5" readonly>
+<html>
+<head>
+<style type="text/css">
+#pxn8_warning { 
+  position: absolute; top: 0px; left: 0px;
+  background-color: maroon; color: white; 
+  padding: 6px; font-family: Arial; 
+}
+#pxn8_canvas {overflow: hidden;}
+#pxn8_timer {
+  position: absolute; top: 0px; left: 0px;
+  padding: 6px 0px 6px 28px; font-family: Arial; 
+  background: white url(/pixenate/images/countdown.gif) 6px 2px no-repeat;
+  opacity: 0.7;
+  filter: "alpha(opacity: 70)";
+} 
+#toolbar { margin: 4px 0px 4px 0px; 
+  padding: 4px; 
+  border: 1px solid #cccccc; 
+  background-color: #f0f0f0;
+}
+button { font-size: 11px; }
+</style>
+<!-- Dependencies (Premium & Hosted Edition) -->
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+<script type="text/javascript">
+  //
+  // When the document has loaded...
+  //
+  PXN8.dom.addLoadEvent(function(){
+    //
+    // ...Initialize Pixenate
+    // 
+    PXN8.initialize("shrug.jpg");
+
+  });
+</script>
+</head>
+<body>
+  <div id="toolbar">
+  <button onclick="PXN8.tools.undo()">Undo</button><button 
+          onclick="PXN8.tools.redo()">Redo</button>&nbsp;
+  <button onclick="PXN8.tools.rotate({'angle': 90})">Rotate 90&deg;</button><button 
+          onclick="PXN8.tools.rotate({'angle': 270})">Rotate 270&deg;</button><button
+          onclick="PXN8.tools.rotate({'fliphz': true})">Flip Horizontally</button><button
+          onclick="PXN8.tools.rotate({'flipvt': true})">Flip Vertically</button>&nbsp;
+  <button onclick="doCrop()">Crop</button>&nbsp;
+  <script type="text/javascript">
+    function doCrop(){
+      var selection = PXN8.getSelection();
+      if (selection.width > 0){
+         PXN8.tools.crop(selection);
+      }else{
+         alert('You must first select an area to crop');
+      }
+    }
+  </script>
+  <button onclick="PXN8.save.toDisk()">Download...</button>
+  </div><!-- end of toolbar -->
+  <!-- The Pixenate Canvas: Photo will be displayed here -->
+  <div id="pxn8_canvas"></div>
+
+</body>
+</html>
+</textarea>
+<p>Lines 3 to 22 contain some additional styling definitions. Lines 49
+to 58 are of particular interest. The <a href="API-Reference.html#pxn8_tools_crop">PXN8.tools.crop()</a>
+function takes as its single argument and object with the following
+properties...
+<ol>
+  <li><em>top</em> : The top-most coordinate of the rectangle to crop to.</li>
+  <li><em>left</em> : The left-most coordinate of the rectangle to crop to.</li>
+  <li><em>width</em> : The width of the rectangle to crop to.</li>
+  <li><em>height</em> : The height of the rectangle to crop to.</li>
+</ol>
+... it just so happens that the <a href="API-Reference.html#pxn8_getselection">PXN8.getSelection()</a> returns
+an object which also has these properties so I can call ...
+<pre>PXN8.tools.crop(PXN8.getSelection());</pre>
+... to automatically crop the photo to the current selected area. What
+the in-page <em>doCrop()</em> function (lines 50 to 57) does is check
+that the user has actually selected an area and if not alerts them. If
+an area is selected (checked by testing the <em>width</em> is greater
+than zero) then <a href="API-Reference.html#pxn8_tools_crop">PXN8.tools.crop()</a> is called.
+</p>
+<p>One thing it would be nice to see is information about the current selected area
+(it's top,left, width and height) as it is selected. To do this I'm
+going to add a DIV to the page and a Pixenate&trade; Listener
+function.</p>
+<p><img src="screenshot_7.jpg" /></p>
+<p>Here is the relevant source...</p>
+<a class="view_plain" href="#" onclick="return showCode('code_6');">view plain</a>
+<textarea class="code" id="code_6" readonly>
+<div style="float: left; overflow: hidden;">
+  <!-- an information area -->
+  <div id="information_area"><span id="selection_info"></span></div>
+  <!-- The Pixenate Canvas: Photo will be displayed here -->
+  <div id="pxn8_canvas"></div>
+</div>
+<script type="text/javascript">
+PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,function(){
+  var selection = PXN8.getSelection();
+  var selection_info_element = document.getElementById("selection_info");
+  selection_info_element.innerHTML = "Selection : " + selection.top +
+    "," + selection.left + " " + selection.width + " x " + selection.height;
+});
+</script>
+</textarea>
+<p>... Line 1 is an additional styled bounding DIV added around both
+the new Informational area and the canvas. The styling prevents the
+informational area from exceeding the length of the canvas'
+width. Lines 8 to 13 are where I define and add a new listener for the
+<a href="API-Reference.html#pxn8_onselection_change">PXN8.ON_SELECTION_CHANGE</a> event. The function supplied as a
+parameter to the <a href="API-Reference.html#pxn8_listener_add">PXN8.listener.add()</a> function will be invoked
+by Pixenate&trade; every time the selected area is modified (either
+resized or moved). The <em>&lt;script></em> block above could also
+have been defined like this...</p>
+<a class="view_plain" href="#" onclick="return showCode('code_7');">view plain</a>
+<textarea class="code" id="code_7" readonly>
+<script type="text/javascript">
+function updateSelectionInfo(){
+  var selection = PXN8.getSelection();
+  var selection_info_element = document.getElementById("selection_info");
+  selection_info_element.innerHTML = "Selection : " + 
+    selection.top + "," +  selection.left + " " + 
+    selection.width + " x " + selection.height;
+}
+PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,updateSelectionInfo);
+</script>
+</textarea>
+<p>In this case the function supplied to <a href="API-Reference.html#pxn8_listener_add">PXN8.listener.add()</a> is not an
+anonymous function (as in the previous example) but a named
+function. Which approach you take to defining and adding listener
+functions in entirely up to you. All of the Pixenate&trade; listeners
+are described in the <a href="API-Reference.html">Pixenate&trade; API Reference</a>.</p>
+
+<a name="zoom_select"><h3>More bells & whistles: Zooming and Selecting</h3></a>
+<p><img src="screenshot_8.jpg" /></p>
+<p>In the above screenshot you can see some additional buttons for
+enhancing, normalizing, fixing redeye, etc. At the bottom-left of the
+toolbar, there are <em>Zoom +</em> and <em>Zoom -</em> buttons for
+zooming in and out of the photo. What these buttons do is make the
+photo larger (zooming in) or smaller (zooming out). </p>
+<a class="view_plain" href="#" onclick="return showCode('code_8');">view plain</a>
+<textarea readonly class="code" id="code_8">
+<button onclick="PXN8.zoom.zoomIn()">Zoom +</button><button
+        onclick="PXN8.zoom.zoomOut()">Zoom -</button>
+<script type="text/javascript">
+  PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,function(){
+    var zoom = PXN8.zoom.value();
+    var zoom_info_element = document.getElementById("zoom_info");
+    zoom_info_element.innerHTML = "Zoom: " + (zoom* 100) + " %";
+  });
+</script>
+</textarea>
+<p>Next to the selection area, I've added a new Zoom information area
+which display the current zoom magnification. To do this I added a new
+DIV with an id='<em>zoom_info</em>' and added a listener for the
+PXN8.ON_ZOOM_CHANGE event. Here you can see calls to functions in the
+<em>PXN8.zoom</em> module. For a
+full list of PXN8.zoom functions please refer to the <a href="API-Reference.html">Pixenate&trade; API Reference</a>.</p>
+Another addition to the page is the drop-down combobox at the far
+right which is used for making selections. This combobox will make
+calls to Pixenate&trade;'s PXN8.select* family of functions whenever a
+change is made...
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_9');">view plain</a>
+</td><td><a class="view_plain" href="example-4.html">see example</a></td></tr></table>
+<textarea class="code" id="code_9">
+<label for="Select">Select Area:</label>
+<select name="selection" 
+        id="selection" 
+        onchange="doSelection(this.value)">
+  <option selected value="none">None</option>
+  <option value="all">All</option>
+  <option value="1x1">Square</option>
+  <option value="6x4">6 x 4</option>
+  <option value="11x8">11 x 8</option>
+</select>
+<script type="text/javascript">
+  function doSelection(str){
+    // reset aspect ratio selection
+    PXN8.selectByRatio("free");
+    if (str == "none"){
+      PXN8.unselect();
+      return;
+    }
+    if (str == "all"){
+      PXN8.selectAll();
+      return;
+    }
+    PXN8.selectByRatio(str);
+}
+</script>
+</textarea>
+
+<p>Line 4 declares <em>doSelection()</em> as the combo-box's
+<em>onchange</em> handler. Lines 12 to 24 are the doSlection()
+function body. This combobox lets the user pick from a selection of pre-defined
+aspect ratios - very handy if your users want to crop the photo prior
+to printing. Each of the <a
+href="API-Reference.html#pxn8_selectbyratio">PXN8.selectByRatio()</a>, <a
+href="API-Reference.html#pxn8_unselect">PXN8.unselect()</a> and <a
+href="API-Reference.html#pxn8_selectall">PXN8.selectAll()</a> functions are explained in
+<a href="API-Reference.html">Pixenate&trade; API Reference</a>.</p>
+
+<a name="interactive_resize"><h3>Interactively Resizing the Photo.</h3></a>
+
+<p><img src="screenshot_9.jpg" /></p>
+
+<p>So far we haven't had to write too much event-handling code. One
+thing that would be nice is the ability to resize the photo but to do
+so interactively - i.e. by stretching the photo in the browser using
+a mouse 'drag' operation and calling <a href="API-Reference.html#pxn8_tools_resize">PXN8.tools.resize()</a> when the
+mouse drag is complete. </p>
+
+<p>To do this, I've added a new DIV to the page (the resize
+handle that appears at the bottom right of the photo) and some
+javascript code to handle mousedown, mousemove and mouseup events...</p>
+
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_10');">view plain</a>
+</td><td><a class="view_plain" href="example-5.html">see example</a></td></tr></table>
+<textarea class="code" id="code_10">
+  <div id="resize_handle"></div>
+
+  <script type="text/javascript">
+  /**
+   * Stop IE flickering due to background image refresh whenever the resize-handle
+   * changes position.
+   */
+  try {
+      document.execCommand('BackgroundImageCache', false, true);
+  } catch(e) {}
+
+  /**
+   * change the position of the resize handle
+   */
+  function move_resize_handle()
+  {
+     var rsz = PXN8.dom.id("resize_handle");
+     var img = PXN8.dom.id("pxn8_image");
+     var imgRect = PXN8.dom.eb("pxn8_image");
+     rsz.style.top = imgRect.y + imgRect.height - 24;
+     rsz.style.left = imgRect.x + imgRect.width - 24;
+  }
+
+  PXN8.listener.add(PXN8.ON_IMAGE_LOAD,move_resize_handle);
+  PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,move_resize_handle);
+
+  var rsz = PXN8.dom.id("resize_handle");
+  var resizing = false;
+  var startPos = {};
+
+  var keepAspectRatio = false;
+  //
+  //  Show a 'Hold down Shift Key to maintain aspect ratio' message the first time the 
+  //  user mouseovers the resize handle
+  //
+  var firstMouseOver = true;
+
+  var startDims = {};
+
+  var start_resize = function(event){
+      event = event || window.event;
+
+      if (PXN8.isUpdating()){ return ; }
+      
+      if (resizing){ stop_resize(event); return; }
+
+      if (typeof event.shiftKey != "undefined"){
+          //
+          // is the user holding down the shift key ?
+          //
+          keepAspectRatio = event.shiftKey;
+      }
+      startPos = PXN8.dom.cursorPos(event);
+      startDims = PXN8.dom.eb("pxn8_image");
+      resizing = true;      
+  };
+
+  var move_outline = function(event){
+     event = event || window.event;
+
+     if (!resizing){ 
+         var source = null;
+         if (event.srcElement){ source = event.srcElement;
+         }else{source = event.target;}
+         
+         if (source.id == "resize_handle" && firstMouseOver){
+             
+             PXN8.show.alert("Hold down the shift key to maintain aspect ratio",3000);
+             firstMouseOver = false;
+             
+         }
+         return; 
+     }
+     var newPos = PXN8.dom.cursorPos(event);
+     var img= PXN8.dom.id("pxn8_image");
+
+     var deltaX = newPos.x - startPos.x;
+     var deltaY = newPos.y - startPos.y;
+
+     if (keepAspectRatio){
+         // 
+         // is the original aspect ratio being enforced ?
+         //
+         deltaY = Math.round((deltaX  * startDims.height ) / startDims.width);
+     }
+     img.width = img.width + (deltaX);
+     img.height = img.height + (deltaY);
+
+     move_resize_handle();   
+
+     startPos = newPos;
+
+  };
+
+  var stop_resize = function(event){
+      event = event || window.event;
+
+      if (!resizing) { return ; }
+
+      resizing = false;
+
+      var img = PXN8.dom.id("pxn8_image");
+      
+      if (img.width == startDims.width && 
+          img.height ==startDims.height){
+          return;
+      }
+      var realW = img.width / PXN8.zoom.value();
+      var realH = img.height / PXN8.zoom.value();
+      
+      PXN8.tools.resize(realW,realH);
+  };
+
+  PXN8.event.addListener(rsz,"mousedown",start_resize);
+  PXN8.event.addListener(rsz,"mousemove",move_outline);
+  PXN8.event.addListener(rsz,"mouseup",stop_resize);
+  PXN8.event.addListener(rsz,"mouseout",move_outline);
+  PXN8.event.addListener(document,"mousemove",move_outline);
+  PXN8.event.addListener(document,"mousedown",move_outline);
+  PXN8.event.addListener(document,"mouseup",stop_resize);
+  </script>
+</textarea>
+<p>Much of the above code concerns positioning the resize-handle
+whenever the user moves the pointer, and changing the &lt;img>'s
+<em>width</em> and <em>height</em> attributes accordingly.
+<blockquote>N.B. Changing the IMG tag's width and height attributes in
+the browser is obviously not the same as resizing the actual photo but
+it does give the user at least some degree of feedback.</blockquote>
+The key line of code above is line 111 in the <em>stop_resize</em>
+function, which calls <a
+href="API-Reference.html#pxn8_tools_resize">PXN8.tools.resize()</a> to perform the
+resize operation.
+The following style is applied to the <em>resize_handle</em> DIV to
+give it it's appearance...
+<a class="view_plain" href="#" onclick="return showCode('code_11');">view plain</a>
+<textarea class="code" id="code_11">
+  #resize_handle { 
+    background: url(resize_handle.gif) top left;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    z-index: 99999;
+    cursor: move;
+    }
+</textarea>
+
+<!-- ************************************************************************ 
+	  ADVANCED TECHNIQUES : CLONING 
+     ************************************************************************  -->
+<a name="advanced_cloning"><h3>Advanced Techniques: Cloning</h3></a>
+<p>Pixenate is a web-based photo editor which uses a combination of
+  Javascript, CSS and HTML (otherwise known as AJAX) to provide an interactive user
+  interface. Many desktop-based photo editing applications offer a
+  way for the user to do freehand selections - that is - select any
+  arbitrary shaped area on the photo and copy and paste the selected
+  area. It is possible, using AJAX, to plot an outline of a cut-out by
+  allowing the user to click on the edges of the area they would like
+  to copy and paste or cut out entirely. This is achieved by prompting
+  the user to click on the edges of the area to be cut out. When the
+  user clicks on the photo, a tiny marker is left on the canvas, so
+  the user can plot a rough outline.  
+</p>
+<p><img src="screenshot_11.jpg"/></p>
+<p>Once the user has completed plotting the cut-out, the next step is
+  to create an Alpha mask of that cutout. This can be achieve by using
+  ImageMagick's API which is exposed via the <a href="API-Reference.html#PXN8.ImageMagick">PXN8.ImageMagick
+  object</a>. The mask is then applied to the image to create an
+  irregular-shaped Crop. The irregular-shaped crop can then either be
+  pasted elsewhere on the photo (cloning) or used as-is. In this
+  example, I will assume the user wants to clone part of the photo and
+  paste it elsewhere on the same photo. 
+</p>
+<p>Step 1 is to provide a mechanism whereby the user can start the
+  process of cloning. This is provided via a <em>Clone</em> button
+  which will allow the user to begin plotting points.</p>
+<p>Step 2 is to provide a way for the user to plot points on the
+  photo. By default, when the user clicks on a part of the photo, it
+  is assumed that they are starting a selection operation. I need to
+  prohibit this default behaviour so that I can draw a marker at the
+  clicked point instead and store that point in an array. I do this by
+  calling <em>PXN8.select.enable(false);</em> This disables the
+  default selection behaviour so that the user cannot select part of
+  the photo. Then I add an event listener so that every time the user
+  clicks on the photo, a new point is stored and a marker drawn
+  (see <em>add_point(event)</em> )
+</p>
+<p>It's also important that the points which are drawn on top of the
+  photo are redrawn whenever the photo is zoomed in or out. This is
+  achieved with <em>PXN8.listener.add(PXN8.ON_ZOOM_CHANGE,
+  redraw_points);</em>.
+</p>
+<p>When the user has completed plotting the points, clicking 'Copy'
+  will call the <em>copy()</em> function (listed below). The copy()
+  function doesn't update the current image but instead uses the
+  changed image as an Overlay which can then be pasted elsewhere on
+  the photo. This is achieved by calling PXN8.ajax.submitScript()
+  rather than PXN8.tools.updateImage(). 
+</p>
+<p>PXN8.tools.updateImage(operations) will always update the current image by
+  applying the operations to the current
+  image. PXN8.ajax.submitScript(operations,callback) however, will not
+  update the current image, instead it is given a callback function
+  which is invoked when all of the operations have been applied. That
+  callback function can then do anything with the JSON response it is
+  given. (see <a href="API-Reference.html#PXN8.ajax.submitScript">PXN8.ajax.submitScript()</a>
+  in the API Reference for more details).
+</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_23');">view plain</a></td><td><a class="view_plain" href="example-6.html">see example</a></td></tr></table>
+<textarea class="code" id="code_23">
+//
+// clone.js : All of the javascript functions related to cloning
+//
+// cloning is the copy and pasting of arbitrarily shaped areas of the photo.
+//
+var points = new Array();
+//
+// show the copy panel and prompt the user to plot points on the photo which will be used
+// to create a cut-out
+//
+function start_copy()
+{
+    PXN8.select.enable(false,true); // the 2nd parameter forces a PXN8.unselect()
+    points = [];
+    redraw_points();
+    PXN8.event.addListener("pxn8_canvas","click",add_point);
+    document.getElementById("copy_panel").style.display = "block";
+}
+function end_copy()
+{
+    PXN8.select.enable(true);
+    points = [];
+    redraw_points();
+    PXN8.event.removeListener("pxn8_canvas","click",add_point);
+    document.getElementById("copy_panel").style.display = "none";
+}
+function start_paste(jsonResponse)
+{
+    hourglass.style.display = "none";
+    document.getElementById("paste_panel").style.display = "block";
+    start_paste.overlay = PXN8.server + PXN8.root + "/" + jsonResponse.image;
+    start_paste.overlay_path = jsonResponse.image;
+    PXN8.select.enable(true);
+    PXN8.overlay.start(start_paste.overlay, {top: 0, left: 0, width: (copy.r-copy.l), height: (copy.b - copy.t)});
+}
+function end_paste()
+{
+    PXN8.overlay.stop();
+    document.getElementById("paste_panel").style.display = "none";
+    PXN8.unselect();
+}
+function paste ()
+{
+    var params = PXN8.getSelection();
+    params.filepath = start_paste.overlay_path;
+    params.position = "front";
+    PXN8.tools.overlay(params);
+
+    var hourglass = document.getElementById("hourglass");
+    hourglass.style.display = "block";
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+       PXN8.overlay.start(start_paste.overlay,params);
+       hourglass.style.display = "none";
+
+    });
+}
+function add_point(event)
+{
+
+    var x = event.x || event.layerX;
+    var y = event.y || event.layerY;
+
+    var zoom = PXN8.zoom.value();
+    var point = {x: x / zoom, y: y / zoom};
+    points.push(point);
+
+    draw_point(point);
+}
+function redraw_points()
+{
+    var canvas = document.getElementById("pxn8_canvas");
+    var images = canvas.getElementsByTagName("img");
+    var forRemoval = [];
+
+    for (var i = 0;i < images.length; i++){
+        if (images[i].className == "point"){
+            forRemoval.push(images[i]);
+        }
+    }
+    for (i = 0;i < forRemoval.length; i++){
+        canvas.removeChild(forRemoval[i]);
+    }
+
+    for (i = 0;i < points.length; i++){
+        draw_point(points[i]);
+    }
+}
+//
+// important - the plotted points must be redrawn when the user zooms in or out.
+//
+PXN8.listener.add(PXN8.ON_ZOOM_CHANGE, redraw_points);
+
+function draw_point(p)
+{
+    var d = PXN8.dom;
+    var zoom = PXN8.zoom.value();
+
+    var pointImg = d.ce("img",{src: PXN8.server + PXN8.root +
+                               "/images/pxn8_xhairs_white.gif", className: "point"});
+    pointImg.style.position = "absolute";
+    pointImg.style.top = (p.y * zoom) - 4 + "px";
+    pointImg.style.left = (p.x * zoom) - 4 + "px";
+    d.ac("pxn8_canvas",pointImg);
+}
+/**
+ * copy() uses PXN8.ImageMagick objects to create a cut-out alpha mask of the plotted area and then
+ * applies that mask to the photo. The image returned by the operation will not be used
+ * to update the current image but instead will be used as the input to a subsequent PXN8.tools.overlay() operation.
+ */
+function copy()
+{
+    var image = PXN8.ImageMagick.start();
+    var mask = new PXN8.ImageMagick();
+    var sz = PXN8.getImageSize();
+
+    var hourglass = document.getElementById("hourglass");
+    hourglass.style.display = "block";
+
+
+    mask.Set ({size: sz.width + "x" + sz.height});
+    mask.Read("xc: #000000");
+
+    var pointStr = "";
+    copy.l = sz.width;
+    copy.r = 0;
+    copy.t = sz.height;
+    copy.b = 0;
+
+    for (var i = 0;i < points.length; i++){
+        pointStr += points[i].x + "," + points[i].y + " ";
+        if (points[i].x < copy.l){
+            copy.l = points[i].x;
+        }
+        if (points[i].x > copy.r){
+            copy.r = points[i].x;
+        }
+        if (points[i].y < copy.t){
+            copy.t = points[i].y;
+        }
+        if (points[i].y > copy.b){
+            copy.b = points[i].y;
+        }
+    }
+
+    mask.Draw( { primitive: "polyline", points: pointStr, fill: "#ffffff"});
+    mask.Set({matte: 'false'});
+
+    var bg = new PXN8.ImageMagick();
+    bg.Set({size: sz.width + "x" + sz.height});
+
+    // the 00 (transparent) alpha part is essential.
+
+    bg.Read("xc: #0000ff00");
+    bg.Set({matte: 'false'});
+    bg.Transparent ({color: "#0000ff"});
+    bg.Composite ( {image: image, mask: mask});
+    bg.Crop({x: copy.l, y: copy.t, width: (copy.r - copy.l), height: (copy.b - copy.t)});
+    //
+    // passing false as the 2nd optional parameter means the operation will not be committed to the server.
+    //
+    var imagickOp = PXN8.ImageMagick.end( bg, false);
+    //
+    // the extension must be set to .png because there will be
+    // transparency in the image
+    //							  
+    imagickOp.__extension = ".png";
+    //
+    // get entire list of operations that have been performed to date
+    //
+    var script = PXN8.getScript();
+
+    script.push(imagickOp);
+    //
+    // Submit the script but don't update the current image with the changed image
+    // instead use the changed image for pasting on top of the current image.
+    //
+    PXN8.ajax.submitScript(script,start_paste);
+
+    end_copy();
+
+}
+</textarea>
+<!-- ************************************************************************ 
+	  CONSTRAINING THE SIZE OF THE CANVAS 
+     ************************************************************************  -->
+
+<a name="constraining_canvas"><h3>Constraining the Canvas Size</h3></a>
+<p>
+You might wish to constrain the size of the canvas area which pixenate
+uses for photo-editing. This is a good idea if screen real estate is
+limited or if you would simply like to have greater control over the
+layout of the editor page. You can see an example of a constrained
+canvas area in the <a href="../themes/memphis/">Memphis theme</a>. The
+screenshot below illustrates how the photo being edited will appear
+within a constrained (fixed size) canvas...
+</p>
+<p><img src="screenshot_10.jpg"/></p>
+<p>
+In the above example the image being edited is 640 x 480 pixels but
+the canvas is sized to just 600 x 400 pixels so that the image is
+clipped in the view pane. To achieve this, you must wrap the Pixenate
+canvas, inside a <em>div</em> with an id of 'pxn8_scroller'. 
+</p>
+<p>
+<textarea class="code" id="code_22">
+<div id="pxn8_scroller" style="border: 3px solid #999999; width: 600px; height: 400px; overflow: auto;">
+  <div style=" position: relative; top:0px; left: 0px; float: left;" id="pxn8_canvas">
+  </div><!-- end of canvas -->
+</div>
+</textarea>
+</p>
+<p>It is very important that the surrounding div has an id
+  of <em>pxn8_scroller</em> as this is a special element recognized by
+  the Pixenate javascript library.</p>
+
+<a name="saving_to_server"><h3>Saving the photo permanently to the server gallery</h3></a>
+
+<a name="saving_to_server_licensed"><h4>Licensed Edition</h4></a>
+
+<p>If you purchased Pixenate software for install on your own
+  webserver, then Pixenate stores the working image in a subdirectory
+  called 'cache'. 
+</p>
+<p>For example... If you are using Pixenate with Microsoft's Internet
+  Information Server and you are using the default IIS configuration
+  you should have installed Pixenate in ...
+</p>
+<pre> c:\inetpub\wwwroot </pre>
+<p>... which means there will now be a <b>pixenate</b> subdirectory in
+  that directory. Within the pixenate subdirectory there will be
+  a <b>cache</b> subdirectory ...</p>
+<pre> c:\inetpub\wwwroot\pixenate\cache </pre>
+<p>... this is where working images used by Pixenate are stored. 
+The javascript code for saving images permanently to the server is 
+roughly the same regardless of whether you use PHP, ASP or JSP. The
+ following javascript code is recommended...</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_15');">view plain</a></td></tr></table>
+<textarea class="code" id="code_15">
+   <!-- you can use a button or your own custom 'save' button/image -->
+   <button onclick="PXN8.save.toServer()">Save Changes</button>
+
+   <script type="text/javascript">
+   function pxn8_save_image(){
+       //
+	    // this function is called by PXN8.save.toServer();
+	    //
+       var workingImageURL = PXN8.root + "/" + PXN8.getUncompressedImage();
+
+	    // 
+       // YOU NEED TO PROVIDE YOUR OWN CGI OR .ASP, .PHP or .JSP process to save the photo permanently !!!
+	    // 
+	    var cgi = "/saveEditedPhoto.asp" ; // this is only for the sake of example.
+
+	    document.location =  cgi + "?imageURL=" + workingImageURL;
+
+       return true;
+   }
+   </script>
+</textarea>
+<p>
+<b>The <i>saveEditedPhoto.asp</i>, <i>saveEditedPhoto.jsp</i>
+  or <i>saveEditedPhoto.php</i> (or whatever you decide to call your
+  cgi program) should be implemented for your specific website</b>.
+</p>
+<p>
+For example the following ASP code will save the supplied working
+image url to a more permanent location ...
+</p>
+
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_18');">view plain</a></td></tr></table>
+<textarea class="code" id="code_18">
+   <%
+     dim fs, wwwRoot, imagePath, userDir, newFilename
+
+     set fs = Server.CreateObject("Scripting.FileSystemObject")
+     '
+     ' imageURL is passed as a cgi parameter (see above)
+     '
+     set imageURL = Request.QueryString("imageURL")
+
+	  imageURL = Replace(imageURL,"/","\")
+
+     '
+     ' change wwwRoot to match your configuration
+     '
+     wwwRoot = "C:\Inetpub\wwwroot"
+	  '
+     ' To get the path to the image, just prepend the wwwroot path to it.
+     '	
+     imagePath = wwwRoot & imageURL
+
+     '
+     ' you should change userDir to a directory where you can copy files
+     '
+     userDir = "c:\home\scratch\user024\pictures\"
+     '
+     ' You should newFilename to suit your own naming scheme
+     ' 
+     newFilename = "xyz.jpg" 
+     '
+     ' copy the file to the new location
+     '
+     fs.CopyFile imagePath, userDir & newFilename 
+
+     set fs = nothing
+   %>
+</textarea>
+
+<p>To save the file permanently using <em>PHP</em>, you would use code similar to the following...</p>
+
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_19');">view plain</a></td></tr></table>
+<textarea class="code" id="code_19">
+<?php
+ //
+ // $_GET['imageURL'] will look like this...
+ //
+ //   /pixenate/cache/fe09adcb.jpg
+ //
+ // The above path is relative to the webroot. If this PHP script is also at webroot then 
+ // prefixing a '.' will give the relative file path to the changed image.
+ // Just copy this file to a more permanent location
+ //
+ $source = '.' . $_GET['imageURL'];
+
+ // 
+ // for example only.
+ //
+ $destination = './pixenate/cgi-extra/gallery/1.jpg';
+
+ copy ( $source, $destination );
+
+?>
+<html>
+  <body>
+    Congratulations! Your photo has been saved permanently.<br/>
+	 <img src="/pixenate/cgi-extra/gallery/1.jpg"/>
+  </body>
+</html>
+</textarea>
+
+
+
+
+<a name="saving_to_server_hosted"><h4>Hosted Edition</h4></a>
+
+<p>In the hosted edition, the working image is not stored locally on
+  the customer website but on Sxoop Technologies' own servers. To save
+  the edited image permanently you must first retrieve the image from
+  the web and then store it on your own webserver's filesystem or
+  database. 
+</p>
+<p>The javascript code for saving images permanently to the server is
+  roughly the same regardless of whether you use PHP, ASP or JSP. The
+  following code is recommended...
+</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_16');">view plain</a></td></tr></table>
+<textarea class="code" id="code_16">
+   <!-- you can use a button or your own custom 'save' button/image -->
+   <button onclick="PXN8.save.toServer()">Save Changes</button>
+
+   <script type="text/javascript">
+   function pxn8_save_image(){
+       //
+	    // this function is called by PXN8.save.toServer();
+	    //
+       var workingImageURL = escape(PXN8.server + PXN8.root + "/" + PXN8.getUncompressedImage());
+
+	    // 
+       // YOU NEED TO PROVIDE YOUR OWN CGI OR .ASP, .PHP or .JSP process to save the photo permanently !!!
+	    // 
+	    var cgi = "saveEditedPhoto.jsp" ; // this is only for the sake of example.
+
+	    document.location =  cgi + "?remoteURL=" + workingImageURL;
+
+       return true;
+   }
+   </script>
+</textarea>
+<p>Because each customer stores photos differently we do not prescribe
+  where photos should be saved.</p>
+
+<a name="saving_remote_java"><h5>Saving Remote URLs using Java</h5></a>
+<p>The following snippet of java code demonstrates how you might save
+  the remote image to your own local file system...</p>
+ 
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_14');">view plain</a></td></tr></table>
+<textarea class="code" id="code_14">
+  ...
+  // Get the remote URL from the request...
+  String remoteURL = request.getParameter("remoteURL");
+
+  // open a connection to the URL...
+  java.net.URL url = new java.net.URL(remoteURL);
+  java.net.URLConnection connection = url.openConnection();
+
+  // read the contents at the URL...
+  java.io.InputStream is = connection.getInputStream();
+  byte[] contents = new byte[connection.getContentLength()];
+  int bytesRead = 0;
+  while (is.available() > 0){
+      bytesRead = bytesRead + is.read(contents,bytesRead,is.available());
+  }
+
+  // write the contents to a file 
+  String pathToPermanentPhotoLocation = "{YOUR_PHOTO_GALLERY_LOCATION_AND_FILENAME}";
+  java.io.FileOutputStream fos = new java.io.FileOutputStream(pathToPermanentPhotoLocation);
+  fos.write(contents);
+  fos.close();
+  ...
+</textarea>
+
+<a name="saving_remote_php"><h5>Saving Remote URLs using PHP</h5></a>
+<p>To save the remote file permanently using <em>PHP</em>, you would use code similar to the following...</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_20');">view plain</a></td></tr></table>
+<textarea class="code" id="code_20">
+&lt;?php
+// 
+// get contents of a remote url
+//
+function pixenate_get_remote_url($url){
+
+    $result = false;
+
+    if (function_exists('curl_init')){
+
+        $ch = curl_init($url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+    }else{
+        if (function_exists('file_get_contents')){
+            $allow_url_fopen = ini_get('allow_url_fopen');
+            if ($allow_url_fopen){
+                $result = file_get_contents($url);
+            }
+        }
+    }
+    return $result;
+}
+
+ //
+ // $_GET['imageURL'] will look like this...
+ //
+ //   http://pixenate.com/pixenate/cache/fe09adcb.jpg
+ //
+$imageContent = pixenate_get_remote_url($_GET['remoteURL']);
+
+$status = 'Unable to retrieve remote Images - Install CURL to remedy this.';
+
+if ($imageContent)
+{
+   //
+   // for example only.
+   //
+   $filename = './pixenate/cgi-extra/gallery/1.jpg';
+
+   if (!function_exists('file_put_contents')){
+      $f = fopen($filename,'w');
+      if ($f === false){
+          $err = 'Could not save file.';
+      }else{
+          fwrite($f,$imageContent);
+          fclose($f);
+      }
+   }else{
+      file_put_contents($filename, $imageContent);
+   }
+   $status = 'OK';
+}
+?>
+&lt;html>
+  &lt;body>
+    Congratulations! Your photo has been saved permanently.&lt;br/>
+    &lt;img src="/pixenate/cgi-extra/gallery/1.jpg"/>
+  &lt;/body>
+&lt;/html>
+</textarea>
+
+<a name="custom_operations"><h3>Creating new operations by combining existing operations</h3></a>
+<p>
+Imagine a scenario where you would like to offer users a quick-fix
+solution to the most common problems affecting a user's photos. Most
+photos don't have ideal color balance (this can be rectified by
+PXN8.tools.normalize() ), can probably be improved by
+PXN8.tools.enhance() and most likely are under-exposed (particularly
+true of photos taken indoors with camera-phones).
+</p>
+<p>You would like to offer your users a 'one-click' solution for these
+  most common problems. On clicking the 'quick-fix' button the
+  following operations should be performed...
+</p>
+
+<p>
+<ol>
+<li>PXN8.tools.normalize()</li>
+<li>PXN8.tools.enhance()</li>
+<li>PXN8.tools.fill_flash()</li>
+</ol>
+</p>
+
+<p>... yet it should appear to the user as if this is a single atomic
+  operation. To do so, three distinct operations must be combined into
+  one...</p>
+<table><tr><td><a class="view_plain" href="#" onclick="return showCode('code_17');">view plain</a></td></tr></table>
+<textarea class="code" id="code_17">
+function quickFix()
+{
+    //
+    // create an array of 3 operations
+    //
+    var fix = [ {operation: "normalize"}, 
+                {operation: "enhance"},
+                {operation: "fill_flash", opacity: 25} ];
+    //
+    // update the image with the array of additional operations
+    //
+    PXN8.tools.updateImage( fix );
+}
+
+ &lt;button onclick="quickFix()">Quick Fix&lt;/button>
+</textarea>
+<p>...Now when the user clicks the 'Quick Fix' button, the photo will
+  be normalized, enhanced and fill-flashed, although to the user it
+  will appear to be just one operation.</p>
+
+<p>As of version 1.3.2sp2, there is an even simpler way to accomplish
+  this task. Use <a href="API-Reference.html#PXN8.tools.startTransaction">PXN8.tools.startTransaction()</a> and
+  <a href="API-Reference.html#PXN8.tools.startTransaction">PXN8.tools.endTransaction()</a> to bookend the operations you would like
+  to combine into a single atomic user operation...</p>
+
+<textarea class="code" id="code_21">
+function quickFix()
+{
+    PXN8.tools.startTransaction();
+
+    PXN8.tools.normalize();
+    PXN8.tools.enhance();
+    PXN8.tools.fill_flash(25);
+
+    PXN8.tools.endTransaction();
+}
+
+ &lt;button onclick="quickFix()">Quick Fix&lt;/button>
+</textarea>
+
+
+
+<a name="uploading_redirection"><h3>Uploading Photos and Redirection using the upload.pl CGI script.</h3></a>
+<p>For convenience, Pixenate comes with a CGI script for uploading
+  photos. This script performs some basic checks to ensure that the
+  file is in fact an Image. It also saves the file to the 'cache'
+  folder, so photos uploaded using the upload.pl script will be
+  automatically deleted after a defined period (see config.ini). 
+</p>
+<p>Use of upload.pl to upload photos is not mandatory. You can use
+  your own upload tools. However if you would like to use the
+  upload.pl script and integrate it with your existing website the
+  following will be relevant to you.
+</p>
+<p>The upload.pl script provided uses HTTP redirection to bring the
+  user back to the page from which they started (or a page which you
+  define) when the upload is complete. Typically your page (from which
+  the upload was called) will have a number of parameters which were
+  passed into it and which you would like to preserve when the upload
+  has completed. For example, if your editor page has a <b>user</b>
+  parameter...</p>
+<p>http://YOURSITE/EditPhoto.php?image=dc003.jpg<i>&user=TomC</i></p>
+
+<p>... by default, when you upload a photo using the upload.pl
+  script, the script will redirect to the following URL when the
+  upload is complete...</p>
+<p>http://YOURSITE/EditPhoto.php?image=pixenate/cache/0ced9.jpg </p>
+
+<p>Notice that the <b>user</b> parameter has been dropped. To
+  preserve the user parameter you need to pass it into the upload.pl
+  script but prefix it with <i>_</i> (that's the underscore
+  character). Your form should look like this...
+</p>
+<pre>
+&lt;form action="pixenate/upload.pl" method="POST" enctype="multipart/form-data">
+  &lt;!-- parameters beginning with '_' (underscore) will be passed thru by upload.pl 
+       The underscore will be removed by upload.pl
+  -->
+  <b>&lt;input type="hidden" name="_user" value="TomC"/></b>
+  &lt;input type="hidden" name="pxn8_root" value="/pixenate"/>
+  &lt;input type="hidden" name="next_page" value="/EditPhoto.php"/>
+  &lt;input type="hidden" name="image_param_name" value="image"/>
+  &lt;input type="file" name="filename" />
+  &lt;input type="submit" value="Upload Photo"/>
+&lt;/form>
+</pre>
+<p>So when the above form is submitted, the script will upload the photo to the cache directory and the user will be redirected to the following URL...</p>
+<p>http://YOURSITE/EditPhoto.php?image=/pixenate/cache/dc09ef.jpg<b>&user=TomC</b></p>
+<p>This is how you pass parameters through the upload.pl script bundled with Pixenate. Use of upload.pl is not mandatory.</p>
+</body>
+
+
+</html>

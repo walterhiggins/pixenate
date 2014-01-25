@@ -1,0 +1,119 @@
+<html>
+<head>
+<script type="text/javascript" src="../javascript/pxn8_all.js"></script>
+
+<style type="text/css">
+* { font-family: Arial;}
+button { font-family: Arial; font-size: 12px; border-width: 1px; padding: 1px; margin: 2px;}
+#pxn8_timer { display: absolute; top: 50%; left: 0px;}
+</style>
+
+</head>
+
+<body>
+<h1>Copy-and-Paste heads and faces</h1>
+<p>This is a simple demonstration of how to use the new 'mask' plugin in Pixenate.
+  <ol>
+   <li>Select an area of the photo. You will see an oval outline appear within the selected area.</li>
+   <li>When you're happy that the oval outline is aligned with the area you want to crop, click 'Crop Head'.</li>
+   <li>Now you can move the head to a different part of the photo or even resize the head. When you are happy with the position and size, click the 'Place Here' button.</li>
+  </ol>
+</p>
+<button onclick="crop_head();">Crop Head</button>
+<button onclick="place_here()">Place Here</button>
+<button onclick="undo()">Undo</button>
+<button onclick="PXN8.tools.redo()">Redo</button>
+<button onclick="PXN8.save.toDisk()">Save to disk...</button>
+<div id="pxn8_canvas">
+</div>
+
+<script type="text/javascript">
+
+var overlay = null;
+var overlay_path = null;
+/**
+ * Cut out the selected area of the photo and use the cutout as an overlay
+ * so it can be placed elsewhere on the same photo
+ */
+function crop_head()
+{
+    var crop = PXN8.getSelection();
+    crop.operation = "crop";
+
+    var mask = PXN8.getSelection();
+    mask.operation = "mask";
+    mask.__extension = ".png";
+    mask.filepath = oval_mask;
+   
+    mask.background_color = "#00000000"; // transparent
+
+    var saved_selection = PXN8.getSelection();
+    var fetch = {operation: "fetch", url: PXN8.dom.id("pxn8_image").src };
+
+    PXN8.ajax.submitScript( 
+         [fetch,crop,mask],
+         //
+         // this function will be called when the image update is complete
+         //
+         function(jsonResponse)
+         {
+             // 
+             // use the image returned as an overlay on top of the photo
+             //
+             overlay = PXN8.server + PXN8.root + "/" + jsonResponse.image;
+             overlay_path = jsonResponse.image;
+             saved_selection.top = 0;
+             saved_selection.left = 0;
+             PXN8.overlay.start(overlay, saved_selection);
+         }
+    );
+}
+
+function undo()
+{
+   if (overlay_path != null){
+       overlay_path = null;
+       PXN8.overlay.start(oval_outline);
+   }else{ 
+      PXN8.tools.undo();
+   }
+}
+/**
+ * Overlay the cutout on top of the photo
+ */
+function place_here() 
+{
+    if (overlay_path == null){   
+       alert("Please select and crop an area first");
+       return;
+    }
+    var params = PXN8.getSelection();
+    params.filepath = overlay_path;
+    params.position = "front";
+    PXN8.tools.overlay(params);
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+       PXN8.overlay.start(oval_outline,params);
+       overlay= null;
+       overlay_path = null;
+    });
+
+}
+//
+// the outline must be a path relative to the current page
+//
+var oval_outline = "../images/overlays/oval_outline.gif";
+//
+// the mask must be a path relative to the pixenate directory 
+// 
+var oval_mask = "images/overlays/oval_mask.jpg";
+
+var image = "../images/samples/freud_and_friends.jpg";
+
+PXN8.initialize(image);
+
+PXN8.overlay.start(oval_outline,{width:100,height:100, top:0, left: 0});
+
+</script>
+
+</body>
+</html>

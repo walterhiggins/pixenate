@@ -1,0 +1,90 @@
+<html>
+<head>
+<script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+
+<style type="text/css">
+@import url(../../styles/pxn8_toolbar.css);  /* PXN8 toolbar presentation  */
+
+#thumbnails li{ 
+
+display: inline;
+list-style-type: none;
+padding-right: 20px;
+
+}
+</style>
+<script type="text/javascript">
+function change_image(url)
+{
+	if (PXN8.opNumber == 0 || 
+	    confirm("You have changed the current image - Are you sure you want to switch images ?")){
+	    PXN8.initialize(url);
+	}
+	return false;
+}
+</script>
+</head>
+<body>
+  <h1>Thumbnails Theme - A variation on the basic Toolbar Theme</h1>
+
+
+  <script type="text/javascript">
+
+function pxn8_save_image(){
+   //
+   // needs to be in a setTimeout call to work in IE
+   //
+   setTimeout(function(){
+       //
+       // where is the cache folder in relation to cgi-extra ?
+       //
+       var cache_relative_to_cgiextra = "../";
+       document.location = "/pixenate/cgi-extra/save_to_server.pl?image_to_save=" + 
+       cache_relative_to_cgiextra + PXN8.getUncompressedImage();
+   },25);
+
+}
+
+    PXN8.dom.addLoadEvent(function(){
+        PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+    });
+
+    PXN8.toolbar.crop_options = ["freehand","4x6","5x8","6x8","8x11"];
+
+    PXN8.toolbar.draw(['zoomin',
+                      'zoomout',
+                      'rotate',
+                      'crop',
+							 'instantFix',
+                      'fillflash',
+                      'undo',
+                      'redo',
+                      'undoall',
+                      'redoall',
+							 'save'
+                      ]);
+  </script>
+
+  <div  id="pxn8_canvas">
+    <!-- This is where the image will appear -->
+  </div>
+
+
+<div style="clear:both; margin-top: 12px;">
+ <p> You can swap the current image by clicking on any of the
+ thumbnails</p>
+<ol id="thumbnails">
+   <li><a href="javascript:void(0);"
+	onclick="return change_image('/pixenate/images/samples/greenleaves.jpg');">
+	<img src="/pixenate/images/samples/greenleaves.jpg" width="128" height="128" /></a></li>
+   <li><a href="javascript:void(0);"
+	onclick="return change_image('/pixenate/images/samples/elmleaves.jpg');">
+	<img src="/pixenate/images/samples/elmleaves.jpg" width="128" height="128" /></a></li>
+   <li><a href="javascript:void(0);"
+	onclick="return change_image('/pixenate/images/samples/hongkong.jpg');">
+	<img src="/pixenate/images/samples/hongkong.jpg" width="128" height="128" /></a></li>
+</ol>
+</div>
+
+</body>
+</html>

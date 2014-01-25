@@ -1,0 +1,114 @@
+body { 
+    margin: 8px; 
+    padding: 0px;
+}
+
+* { font-family: Arial; }
+
+p { font-size: 14px; }
+
+a, button { 
+    font-size: 14px; 
+    border-width: 1px; 
+}
+
+#photo_info { 
+    font-size: 12px; 
+    color: gray; 
+    padding: 4px; 
+}
+a.tab { 
+    text-decoration: none; 
+    cursor: pointer; 
+    background: #ccc url(images/trcornerwhite.gif) top right no-repeat; 
+    padding: 4px 4px 0px 4px; 
+    border-bottom: none; 
+    margin: 2px 2px 0px 2px;
+}
+a.selected { 
+    cursor: default; 
+    background-color: #f0f0f0; 
+    color: black;
+}
+
+a.disabled {
+    cursor: default;
+    color: darkgray;
+}
+
+#panel_container { 
+    background: #f0f0f0 ; 
+    color: black; 
+}
+
+#pallette { 
+    padding-top: 7px; 
+    float: left; 
+    width: 300px; 
+    color: white;
+}
+
+#canvas_container { 
+    margin: 8px; 
+    padding: 0px 12px 12px 12px; 
+    background: #f0f0f0 ;
+    float: left; 
+}
+
+#pxn8_timer { font-size: 14px; }
+
+#pxn8_warning { font-size: 14px; }
+
+#panel_container {
+    padding: 8px; 
+    margin: 0px 2px 2px 2px; 
+    text-align: center; 
+}
+
+#panel_container button { 
+    margin: 4px; 
+    width: 140px; 
+}
+
+div.panel button { 
+    width: 130px !important; 
+    vertical-align: center !important;
+}
+
+#tuning { display: none;}
+
+#effects { display: none;}
+
+button img { 
+    vertical-align: bottom; 
+    padding: 0px 8px 0px 8px;
+}
+
+#undoredo button { 
+    width: 130px !important; 
+    margin: 1px !important;
+}
+
+.panel { display: none; }
+
+span.pxn8_preview_update { 
+    padding: 2px; 
+    font-size: 14px; 
+    background-color: maroon; 
+    color: yellow;
+}
+
+h5 { 
+    padding: 4px; 
+    margin: 0px;
+}
+
+button { 
+    cursor: pointer; 
+    text-align: left;  
+    background: url(/pixenate/docs/gradient-silver.gif); 
+    //
+    // following line breaks in Safari so put at end of file
+    //
+    *_background: silver ; // IE 6.0 
+}

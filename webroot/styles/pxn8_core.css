@@ -1,0 +1,90 @@
+/* ------------------------------------------------------------------------
+ * 
+ * (c) Copyright 2005-2009 Sxoop Technologies Ltd. All rights reserved.
+ *
+ * ------------------------------------------------------------------------
+ *
+ * CORE PXN8 elements common to all themes
+ */
+
+/*
+ * The timer div appears when the user performs an operation on the image which
+ * requires server interaction. (A http request)
+ */
+
+#pxn8_timer, .warning
+{	
+    position: absolute;
+    font-family: Arial, Verdana;
+    font-size: 11px;
+    text-align: left;
+    color: black;
+    top: 0px;
+    left: 0px;
+    font-weight: bold;
+    background-color: white;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 32px;
+    filter: alpha(opacity: 80);
+    opacity: 0.80;
+    height: 2.0em;
+    width: 48.0em;
+}
+/*
+ * .pxn8_preview_update is the class of message which appears when 
+ * the preview pane is updating
+ *
+ */
+.pxn8_preview_update 
+{
+	font-family: Arial;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	background-color: teal;
+}
+
+#pxn8_timer 
+{
+    background: white url(/pixenate/images/countdown4.gif) 5px 5px no-repeat;
+}
+
+/*
+ * The select_rect is the div which is displayed when the user 
+ * clicks and drags over the image canvas.
+ */
+
+#pxn8_select_rect 
+{
+    background-color: white;
+    opacity: 0.0;
+    -moz-opacity: 0.0;
+    cursor: move;
+    font-size: 0px;
+    border: 1px dotted red;
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    display: block;
+    z-index: 1;
+    left: 0px;
+    top: 0px;
+    filter: alpha(opacity: 0);
+}
+/**
+ * A special optional hidden div that can be put on the editor page to preload 
+ * certain images used by Pixenate.
+ */
+#pxn8_preloaded_images 
+{
+	width: 0px;	
+	height: 0px;
+	display: inline;
+	background-image: url(/pixenate/images/bluepin.gif);
+	background-image: url(/pixenate/images/redpin.gif);
+	background-image: url(/pixenate/images/scale.gif);
+	background-image: url(/pixenate/images/collapsed.gif);
+   background-image: url(/pixenate/images/pxn8_xhairs_white.gif);
+   background-image: url(/pixenate/images/countdown4.gif)
+}

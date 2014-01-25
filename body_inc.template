@@ -1,0 +1,57 @@
+<script type="text/javascript">
+[%
+ my $imgDir = "webroot";
+ if ($pg->{target} eq "website"){
+	  $imgDir = "website-only";
+ }
+ my @samples = glob("$imgDir/images/samples/*.jpg");
+ if ($pg->{target} eq "website"){
+	  @samples = map { s/$imgDir/\/pixenate\//; "PXN8.server + '" . $_ . "'"} @samples;
+ }else{
+	  @samples = map { s/$imgDir/..\/../; "\"$_\"" } @samples;
+ }
+
+if ($pg->{target} eq "hosted"){
+  @samples = ('"http://pixenate.com/pixenate/images/samples/hongkong.jpg"');
+}
+%]
+var gSampleImages = new Array();
+[% foreach my $sample (@samples){ %]gSampleImages.push([%print $sample;%]);
+[% } %]
+var image = "";
+var pxn8_original_filename = "";
+
+[%if ($pg->{language} eq "php"){ %]
+image = "<?php $img = ""; if (isset($_GET["image"])){$img = $_GET["image"];} echo $img ?>";
+pxn8_original_filename = "<?php $img = ""; if (isset($_GET["originalFilename"])){$img = $_GET["originalFilename"];} echo $img ?>";
+[% } %]
+
+[%if ($pg->{language} eq "jsp"){ %]
+image = "<%=request.getParameter("image")!=null?request.getParameter("image"):""%>";
+pxn8_original_filename = "<%=request.getParameter("originalFilename")!=null?request.getParameter("originalFilename"):""%>";
+[% } %]
+
+[%if ($pg->{language} eq "asp"){ %]
+image = "<%=Request.QueryString("image") %>";
+pxn8_original_filename = "<%=Request.QueryString("originalFilename")%>";
+[% } %]
+
+[%if ($pg->{language} eq "pl"){ %]
+image = "[%% print $request->param("image") ne ""?$request->param('image') : "";%]";
+pxn8_original_filename = "[%% print $request->param("originalFilename") ne ""?$request->param('originalFilename') : "";%]";
+[% } %]
+
+if (image == ""){
+	var rnd = Math.floor(Math.random()*gSampleImages.length)
+	image = gSampleImages[rnd];	
+}
+PXN8.dom.addLoadEvent(function(){
+	PXN8.initialize(image);
+	/**
+    * HERE IS A GOOD PLACE TO ADD YOUR OWN ON_IMAGE_LOAD LISTENER
+    *
+	PXN8.listener.add(PXN8.ON_IMAGE_LOAD,function(){});
+   */
+});
+</script>
+

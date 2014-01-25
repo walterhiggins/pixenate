@@ -1,0 +1,900 @@
+<html>
+<head>
+<title>Pixenate Installation Guide</title>
+<link rel="stylesheet" href="docs.css" type="text/css" />
+  <script type="text/javascript" src="showcode.js"></script>
+</head>
+<body>
+<h1>Pixenate&trade; Installation Guide</h1>
+
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#started">Getting Started.</a></li>
+<li><a href="#prereq">Prerequisites.</a><br/>
+    <ul>
+	   <li><a href="#prereq_perl">Perl (version 5.8.6 or later).</a></li>
+	   <li><a href="#prereq_im">ImageMagick.</a><br/>
+		  <ul>
+		     <li><a href="#im_win">Installing ImageMagick on Windows.</a>
+				 <ul>
+					<li><a href="#troubleshoot_im_win">Troubleshooting ImageMagick Install on Windows</a></li>
+				 </ul>
+			  </li>
+			  <li><a href="#imagemagick_unix">Installing ImageMagick on Unix.</a><br/>
+				 <ul>
+					<li><a href="#imagemagick_linux_fonts">ImageMagick & Fonts on Linux</a></li>
+					<li><a href="#imagemagick_linux_fonts_none">What to do if ImageMagick has no Fonts</a></li>
+				 </ul>
+			  </li>
+		  </ul>
+		</li>
+	 </ul>
+</li>
+<li><a href="#configweb">Configuring the Webserver.</a><br/>
+   <ul>
+	  <li><a href="#apache">Apache.</a></li>
+	  <li><a href="#troubleshoot_modperl_iis6">Troubleshooting (mod_perl and IIS 6)</a></li>
+	  <li><a href="#iis">Internet Information Server.</a></li>
+	  <li><a href="#tomcat">Tomcat.</a></li>
+
+	</ul>
+ </li>
+<li><a href="#font_gen">Fonts for use by the <em>add_text</em> plugin.</a></li>
+<li><a href="#verify">Verifying the Installation is complete.</a></li>
+<li><a href="#post-install">Optional post-installation steps.</a></li>
+<li><a href="#appendix-a">Appendix A: Virtual Directories and Secure Sites (HTTPS).</a></li>
+<li><a href="#appendix-b">Appendix B: Installing bundled fonts.</a></li>
+</ul>
+
+
+<h2><a name="started">Getting Started</a></h2>
+<p>
+  When you purchased Pixenate&trade; you received an email with
+  details of how to download the Pixenate&trade;
+  software. Pixenate&trade; is distributed as a compressed archive file
+  with the suffix <code>.tar.gz</code>. On Windows&trade; the file can
+  be unzipped using either <a href="http://winzip.com">Winzip&reg;</a>,
+  <a href="http://www.7-zip.org/">7-Zip</a> or any of the many ZIP
+  utilities for Windows&trade;.
+  On unix&trade; based operating systems, the file can be decompressed
+  using the following command...
+
+  <pre>tar -xvzpf pixenate-*.tar.gz</pre>
+
+  Decompressing this file will create a new directory called
+  <code>pixenate</code> which contains all of the code and resources
+  required by Pixenate&trade;. We recommend installing Pixenate&trade;
+  directly under your <code>WEBROOT</code> directory. For example, if
+  your webserver is Microsoft's Internet Information Server your
+  <code>WEBROOT</code> will most likely be
+  <code>C:\inetpub\wwwroot</code> (the default value), in which case you
+  should unzip the Pixenate archive from within this directory. After the
+  Unzip operation is done, there will be a new directory
+  <code>C:\inetpub\wwwroot\pixenate</code>. Once this is done (assuming
+  that your WebServer is running), you should be able to access this
+  document from your own webserver by visiting the following URL...
+
+  <pre>http://YOUR_WEBSERVER_ADDRESS:YOUR_WEBSERVER_PORT/pixenate/docs/Installation-Guide.html</pre>
+
+  (replacing YOUR_WEBSERVER_ADDRESS and YOUR_WEBSERVER_PORT with
+  appropriate values).
+</p>
+
+<blockquote>
+  <b>A note on file permissions:</b> When the Pixenate
+  archive file is created, all of the file permissions are maintained
+  within the archive. It is strongly recommended that you decompress the
+  archive from within the directory where you wish the
+  <code>pixenate</code> directory to reside. On some operating systems,
+  the file permissions are not maintained when the uncompressed files
+  are later copied or moved to a different directory.
+</blockquote>
+
+<h2><a name="prereq">Prerequisites</a></h2>
+<p>
+  Before you can try out Pixenate&trade; on your own webserver, you
+  will need to install the following components on the webserver...
+  <ol>
+	 <li>The Perl Programming Language (version 5.8.6 or later).</li>
+	 <li>The ImageMagick Graphics programming Library.</li>
+  </ol>
+  If the output of the following command ...
+  <pre>
+	 perl -MImage::Magick -e " print 'OK' "
+  </pre>
+  ... is <code>OK</code> then both Perl and ImageMagick are already
+  present on your webserver and you can skip to <a href="#configuring_webservers">Configuring your webserver for use with Perl.</a>
+</p>
+
+
+<h3><a name="prereq_perl">Perl (version 5.8.6 or later)</a></h3>
+<p>
+  If your webserver is running on a Unix&trade; based OS such as
+  Linux, FreeBSD or Solaris, then you most likely already have Perl
+  installed on the machine.
+</p>
+<p>
+  If your Webserver is running on Windows&trade; then you can install
+  Perl for Windows
+  from <a href="http://www.activestate.com/Products/activeperl/">ActiveState.com</a>.
+</p>
+<p>
+  Pixenate&trade; requires some Perl Modules which may or may not be
+  present in the base Perl install. The <code>LWP::Simple</code> module
+  is a perl module for fetching web content and is used by
+  Pixenate&trade;. You can test to see if this module is already
+  installed by issuing the following command at a command prompt...
+
+  <pre>perl -MLWP::Simple -e 'print "OK"'</pre>
+
+  If the above command doesn't print "OK" then type the following
+  command to install the LWP::Simple module ...
+
+  <pre>perl -MCPAN -e "shell" install LWP::Simple</pre>
+
+  ... and follow the instructions at the command prompt.
+</p>
+
+<p>
+  <em>
+	 For Windows x64, we recommend installing Perl 5.8.7 for x86 (not
+	 x64). This is because there are currently (as of February 2008) no ActiveState imagemagick packages
+	 for the x64 platform. We also recommend installing ImageMagick 6.3.5
+	 for windows x64. This version of ImageMagick is available
+	 at <a href="http://sxoop.com/3rdparty">http://sxoop.com/3rdparty</a>.
+	 Perl 5.8.7 for Windows is available <a href="http://downloads.activestate.com/ActivePerl/">here</a>.
+  </em>
+</p>
+
+
+<h3><a name="prereq_im">ImageMagick</a></h3>
+
+<p>
+  ImageMagick is an open-source graphics programming library available
+  for Linux, FreeBSD, Solaris and Windows&trade;.
+</p>
+<p>
+  If your webserver is running on a Unix&trade; based Operating
+  system, then please <a href="#imagemagick_unix">skip the following	 Windows section.</a>
+</p>
+
+<h4><a name="im_win">Installing ImageMagick on Windows</a></h4>
+
+<p>
+  Pixenate&trade; uses the open-source ImageMagick graphics
+  library. Before installing Pixenate&trade;, make sure that ImageMagick
+  is first installed. To Install ImageMagick on Windows, you must first
+  download the installer from the following location...
+</p>
+
+<p>
+  <a href="http://www.imagemagick.org/script/binary-releases.php#windows">http://www.imagemagick.org/script/binary-releases.php#windows</a>
+</p>
+
+<p>
+  You will be presented with a number of options for downloading
+  (8-bit or 16-bit, static or DLL), Make sure to download the
+  Q16-windows-dll version of ImageMagick
+</p>
+<img src="installimagemagickwin32.jpg"/>
+<p>
+  When Installing ImageMagick on Windows, take care to ensure that the
+  PerlMagick option is checked during the Install Process. 
+</p>
+<blockquote>
+  <b>N.B.</b> Make sure that Perl is installed
+  <em>before</em> installing ImageMagick !
+</blockquote>
+<p>
+  <em>
+	 For Windows x64, we recommend installing Perl 5.8.7 for x86 (not
+	 x64). This is because there are currently (as of February 2008) no ActiveState imagemagick packages
+	 for the x64 platform. We also recommend installing ImageMagick 6.3.5
+	 for windows x64. This version of ImageMagick is available
+	 at <a href="http://sxoop.com/3rdparty">http://sxoop.com/3rdparty</a>.
+	 Perl 5.8.7 for Windows is available <a href="http://downloads.activestate.com/ActivePerl/">here</a>.
+  </em>
+</p>
+
+<h4><a name="troubleshoot_im_win">Troubleshooting ImageMagick / PerlMagick Installation on Windows</a></h4>
+
+<p>
+  In some rare cases, ImageMagick's Installation process may silently
+  fail to install PerlMagick (The perl binding for ImageMagick), in
+  which case the above command will fail.
+</p>
+<p>
+  To rectify this, open a command prompt and go to C:\Program Files\ImageMagick-N.N.N\PerlMagick\ 
+  and type ...
+
+  <pre>ppm install ImageMagick.ppd</pre> 
+
+  ...If errors are reported about mismatched Architecture/OS then type 
+
+  <pre>perl --version</pre>. 
+
+  This should output the architecture for which perl was built e.g. 
+  <pre>
+	 <em>This is perl, v5.10.0 built for MSWin32-x86-multi-thread</em>
+  </pre> 
+  Make a note of this output.
+  Now edit the Image-Magick.ppd file and change the <em>&lt;ARCHITECTURE NAME&gt;</em> entry so that it 
+  matches the perl output e.g.  
+  
+  <pre>
+	 <em>&lt;ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.10" /&gt;</em>
+  </pre>
+  Save the file and run ...
+
+  <pre>ppm install Image-Magick.ppd</pre> 
+  
+  The PerlMagick installation should run as normal.
+</p>
+
+
+<h4><a name="imagemagick_unix">Installing ImageMagick on Unix/Linux/FreeBSD</a></h4>
+<p>
+  The following instructions are for installing ImageMagick from
+  source on RedHat Fedora Core 3.
+</p>
+
+<ol>
+  <li>
+	 <h5>Install libjpeg-devel</h5>
+    <p>If not already installed, install libjpeg-devel which is
+		needed by ImageMagick...</p>
+	 <code>$ yum install libjpeg-devel</code>
+  </li>
+  <li>
+	 <h5>Install ImageMagick from Source</h5>
+
+	 <pre><em>$ </em>wget ftp://ftp.imagemagick.org/pub/ImageMagick/ImageMagick.tar.gz
+		<em>$ </em>gunzip -c ImageMagick.tar.gz | tar xvf -
+		<em>$ </em>cd ImageMagick-6.N.N 
+		<em>$ </em>./configure --with-perl=/usr/bin/perl
+		<em>$ </em>make
+		<em>$ </em>make install
+	 </pre>
+  </li>
+
+  <li>
+	 <h5>Ensure that the ImageMagick libraries will be picked up by the system.</h5>
+	 Edit <code>/etc/ld.so.conf</code> and add the following line to the end of the file
+	 <pre>/usr/local/lib/</pre>
+	 ....Then run the following command to update the library database...
+	 <pre>/sbin/ldconfig</pre>
+  </li>
+  
+  <li>
+	 <h5>Test that PerlMagick works...</h5>
+	 <pre>
+		<em>$ </em>perl -MImage::Magick -e " print 'OK' "
+	 </pre>
+	 If the output from this command is <code>OK</code> then all went well.
+	 <!--
+
+		  If instead you get an error saying the Image::Magick module can't be found then read 
+		  http://jim.mmdc.net/archives/2004/12/getting_imagema.html)
+		  
+		-->
+  </li>
+</ol>
+
+<h3><a name="imagemagick_linux_fonts">ImageMagick &amp; Fonts on Linux</a></h3>
+
+<p>
+  One of the fun effects Pixenate&trade; offers is the ability to add
+  Text to any photo. The choice of Font to use is limited to those fonts
+  which are installed on the server (which will not necessarily be the
+  same set of fonts available on each client computer).
+</p>
+<p>
+  You can view of list of the fonts available for use by ImageMagick
+  by typing the following command at a command prompt...
+</p>
+<pre>
+convert -list type
+</pre>
+
+<h3><a name="imagemagick_linux_fonts_none">What to do if ImageMagick has no Fonts</a></h3>
+<p>
+  If the output of the above command is empty then issue the
+  following commands to ensure that ImageMagick correctly picks up any TrueType & ATM (GhostScript) fonts installed on a linux box...
+  <ol>
+	 <li>up2date gs</li>
+	 <li>up2date ghostscript-fonts</li>
+	 <li>updatedb</li>
+  </ol>
+</p>
+<p> 
+  Anthony Thiessen, an open-source developer and contributor to the
+  ImageMagick open-source project has contributed the following script
+  for use by ImageMagick developers. This script will configure
+  ImageMagick so that it recognizes Fonts which have been installed on
+  the machine...
+</p>
+<pre><a href="imagick_type_gen.txt">imagick_type_gen.pl Source code</a></pre>
+
+<p>
+  Run the script, redirecting the output to
+  /usr/local/lib/ImageMagick-6.N.N/config/type.xml (that file should be
+  empty or just contain the DOCTYPE element. Once the script has
+  completed, run the following command...
+  <pre>
+	 convert -list type
+  </pre>
+  You should now see a list of installed fonts.
+</p>
+<p>
+  More information about ImageMagick and Fonts is available at the
+  following URL...
+</p>
+<code>
+  <a href="http://www.imagemagick.org/Usage/#font">http://www.imagemagick.org/Usage/#font</a>
+</code> 
+
+<h2><a name="configweb">Configuring the Webserver</a></h2>
+<p>
+  Pixenate&trade; requires that your webserver supports Perl. Pixenate&trade; has been tested with the following web servers...
+</p>
+<ol>
+  <li>Apache</li>
+  <li>Microsoft Internet Information Server (IIS)</li>
+  <li>Tomcat</li>
+</ol>
+
+<h3><a name="apache">Apache Configuration</a></h3>
+<p>
+  Please add the following line to your <code>httpd.conf</code> file...
+  <pre>
+	 AddHandler cgi-script .pl
+  </pre>
+  Find the &lt;Directory&gt; section for your webserver in the same
+  <code>httpd.conf</code> file and add the
+  following line...
+  <pre>
+	 Options ExecCGI
+  </pre>
+  ... and you're done. Restart Apache to enable the changes.
+  You can test that apache is correctly configured to support perl
+  by
+  visiting <a href="http://localhost/pixenate/cgi-extra/sanity_test.pl">http://localhost/pixenate/cgi-extra/sanity_test.pl</a>.
+  If you get an error when access this URL, ensure that the permissions
+  on sanity_test.pl (and any other .pl files in the pixenate directory) are
+  set to a+x . If you still get errors, try the following command (on
+  Unix systems only) ...
+  <pre>
+	 dos2unix pixenate/cgi-extra/sanity_test.pl
+  </pre>
+  ... This will ensure that unix-style linebreaks are present in the
+  script.
+  <em>
+	 If dos2unix fixes the error, run the dos2unix command on all of
+	 the perl scripts in the pixenate and pixenate/cgi-extra
+	 directories.
+  </em>
+</p>
+
+
+<h4><a name="troubleshoot_modperl_iis6">&nbsp;</a>Troubleshooting mod_perl 2.0 (and IIS 6 )</h4>
+
+<p>
+  If you are using Apache and mod_perl 2.0 and encounter problems
+  using Pixenate&trade; (specifically an 'Internal Server Error' being
+  reported each time you try to edit a photo) then please read on...
+</p>
+
+<p>
+  The problem is that, with any perl script running under mod_perl
+  2.0 (or IIS's perliis.dll) , the current working directory (the directory the script is
+  working from) is not the same as the directory in which the script
+  resides. This is a problem because Pixenate's server-side code assumes
+  that the working directory is the same directory in which the
+  script/code resides. What's more, Pixenate assumes that all of the
+  supporting modules will reside in a <code>lib</code> directory in the
+  working directory so chances are the script won't even compile when
+  invoked from Apache. 
+</p>
+
+<p>
+  Fortunately, the workaround is simple.
+</p>
+
+<p>
+  Near the top of pxn8.pl cgi script you will see the following
+  statement...
+  <pre>
+	 use lib "lib";
+  </pre>
+  If you encounter the following error when trying to edit images...
+  <pre>
+	 Unable to load server-side pixenate perl modules...
+  </pre>
+  ... the you should change the "lib" value (in quotes) to match the
+  full path name to where Pixenate's lib directory resides. On windows
+  this might be...
+  <pre>
+	 C:/InetPub/wwwroot/pixenate/lib
+  </pre>
+</p>
+
+<p>
+  Do the same thing for upload.pl and you're done.
+</p>
+
+<p>
+  If you're comfortable tweaking mod_perl's configuration, check out
+  the following alternative solution...
+</p>
+
+<pre><a href="http://www.mail-archive.com/modperl@apache.org/msg35378.html">http://www.mail-archive.com/modperl@apache.org/msg35378.html</a></pre>
+
+<h3><a name="iis">Microsoft IIS Configuration</a></h3>
+
+<p>
+  Here are some step-by-step instructions for configuring perl CGI for
+  Internet Information Server. There are detailed steps
+  on <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;245225">Microsoft's
+  support website</a>.
+</p>
+<p>
+  First, launch the IIS administration console
+</p>
+<p>
+  <img src="iisconfig1.gif" alt="Step # 1" />
+</p>
+<p>
+  right-click on the Web Server Icon and select 'properties'
+</p>
+<p>
+  <img src="iisconfig2.gif" alt="Step # 2" />
+</p>
+<p>
+  Click on the 'Home' tab then click the 'Configuration' button.
+</p>
+
+<p>
+  <img src="iisconfig3.gif" alt="Step # 3" />
+</p>
+<p>
+  Click the 'Mappings' tab then click the 'Add' button
+</p>
+<p>
+  <img src="iisconfig4.gif" alt="Step # 3" />
+</p>
+<p>
+  Add the mapping for perl as above and you're done.
+</p>
+
+<p>
+  <em>
+	 We strongly recommend restarting the WWW publishing service from
+	 the Services management console after you have configured perl for
+	 use with IIS and installed ImageMagick, because Pixenate perl scripts use
+	 ImageMagick and the entire WWW Publishing service must be restarted
+	 to recognize ImageMagick.
+  </em>
+</p>
+
+<h4>Troubleshooting IIS</h4>
+<p>
+  You may experience problems when attempting to perform operations
+  on a photo. If the server returns 'Permission denied' error while
+  attempting to edit a photo, it may be due to the fact that Pixenate
+  stores working images in the <em>pixenate/cache</em> folder and by
+  default IIS forbids CGI programs to write to any web-accessible
+  folder.
+</p>
+<p>
+  To remedy this problem please invoke the <em>CACLS</em> command at
+  a windows command prompt. First open a command prompt and type the
+  following...
+</p>
+<pre>CACLS C:\Inetpub\wwwroot\pixenate\cache</pre>
+
+<p>
+  ... This will display the current Access-Control-List for that
+  directory.
+  Now grant <em>WRITE</em> permissions <b>for that directory only</b> by
+  typing the following command...
+</p>
+
+<pre>CACLS C:\Inetpub\wwwroot\pixenate\cache /E /G [MACHINE_NAME]\IUSR_[MACHINE_NAME]:W</pre>
+
+<p>
+  ... replacing <em>[MACHINE_NAME]</em> with your own machine's
+  name. Note that this examples assumes that pixenate was unzipped/installed at
+  C:\Inetpub\wwwroot\ and also that IIS is running as
+  IUSR_[MACHINE_NAME] .
+</p>
+
+<p>
+  If you experience the above problem we also recommend
+  setting <em>WRITE</em> permissions on the <em>pixenate/log</em>
+  directory. (This is where daily pixenate logs are stored).
+</p>
+
+<pre>CACLS C:\Inetpub\wwwroot\pixenate\cache /E /G [MACHINE_NAME]\IUSR_[MACHINE_NAME]:W</pre>
+
+<p>
+  Another problem which may occur with IIS is when uploading photos
+  using the <em>upload.pl</em> script provided. Pixenate uses
+  the <em>CGI.pm</em> Perl module for file uploads. On Windows, this
+  module spools uploaded files to the <b>C:\Temp</b> directory. Please
+  make sure that this directory exists on your machine. If the directory
+  is not present or CGI cannot spool to a temporary file you will see
+  the following error message in the pxn8-*-*-*.log file (in the
+  pixenate/log directory)...
+</p>
+
+<pre>upload.pl> [error] CGI open of tmpfile: Permission denied</pre>
+
+<p>
+  If you see this message, create a <b>C:\Temp</b> directory to
+  remedy the problem.
+</p>
+
+
+<h3><a name="tomcat">Tomcat Configuration</a></h3>
+
+<p>
+  Here are instructions for configuring tomcat 5 and earlier to run perl programs.
+</p>
+<p>To run Pixenate on Tomcat 6, Sun App Server 8 or any J2EE server
+  which doesn't support CGI, <a href="J2EE-noCGIGuide.html">please follow these instructions</a>.
+</p>
+<p>
+  First you must edit your $TOMCAT_HOME/conf/web.xml file to enable the
+  CGI servlet. This may not be enabled by default. To do so add the
+  following text to your web.xml file...
+</p>
+
+<pre>
+    &lt;servlet>
+        &lt;servlet-name>cgi&lt;/servlet-name>
+        &lt;servlet-class>org.apache.catalina.servlets.CGIServlet&lt;/servlet-class>
+        &lt;init-param>
+          &lt;param-name>debug&lt;/param-name>
+          &lt;param-value>6&lt;/param-value>
+        &lt;/init-param>
+        &lt;init-param>
+          &lt;param-name>cgiPathPrefix&lt;/param-name>
+          &lt;param-value>.&lt;/param-value>
+        &lt;/init-param>
+        &lt;init-param>
+          &lt;param-name>passShellenvironment&lt;/param-name>
+          &lt;param-value>true&lt;/param-value>
+        &lt;/init-param>
+        &lt;load-on-startup>5&lt;/load-on-startup>
+    &lt;/servlet>
+    &lt;servlet-mapping>
+        &lt;servlet-name>cgi&lt;/servlet-name>
+        &lt;url-pattern>*.pl&lt;/url-pattern>
+    &lt;/servlet-mapping>
+</pre>
+Next you must rename the following file...
+
+<pre>$TOMCAT_HOME/server/lib/servlets-cgi.renametojar</pre>
+
+Change it's name to ...
+
+<pre>$TOMCAT_HOME/server/lib/servlets-cgi.jar</pre>
+
+Stop and restart tomcat and you're done.
+
+<h2><a name="font_gen">Fonts for use by the <em>add_text</em> plugin.</h2>
+
+<p>
+  Previous builds of Pixenate included a server-side CGI script called
+  <em>fonts.pl</em> located in the <em>pixenate/</em> directory.
+  This CGI script was used to generate a list of fonts which could be
+  used by <em>PXN8.tools.add_text()</em> and it was also used to generated sample
+  font images in the <em>pixenate/images/fonts/</em> directory.
+</p>
+
+<p>
+  This CGI script is no longer present as of version 1.3.2sp2. 
+</p>
+<p>
+  All references to /pixenate/fonts.pl in the sample themes have been
+  changed to refer to <em>/pixenate/javascript/pxn8_fonts.js</em> instead. By
+  default, this pxn8_fonts.js file contains no fonts. In order to create
+  a valid pxn8_fonts.js file you must run the new generate_fonts.pl perl
+  script from the command line after you have unzipped the pxn8.tar.gz
+  file. To execute the script you must have open a shell prompt on the
+  server and execute the following commands (using your own paths)...
+</p>
+
+<p>
+  On windows do the following...
+</p>
+
+<pre>
+C:\> cd C:\Inetpub\wwwroot\pixenate
+C:\> perl generate_fonts.pl
+</pre>
+
+<p>
+  On Unix do the following...
+</p>
+
+<pre>
+$ cd /usr/local/www/htdocs/pixenate
+$ perl generate_fonts.pl
+</pre>
+
+<p>
+  If you install more fonts at a later date and want those fonts to be
+  be recognized by Pixenate then you should run this script again.
+</p>
+
+<h2><a name="verify">Verifying the Installation is complete.</a></h2>
+
+<p>
+  You should verify that your webserver correctly handles perl
+  scripts by visiting
+  http://YOUR_WEBSERVER_ADDRESSS:YOUR_WEBSERVER_PORT/pixenate/pxn8.pl
+  . This should output a snippet of javascript code...
+</p>
+
+<pre>
+<code>
+{
+  "width" : -1,
+  "status" : "ERROR",
+  "opNumber" : 0,
+  "errorMessage" : "No script supplied",
+  "height" : -1,
+  "image" : "",
+  "uncompressed" : "",
+...
+</code>
+</pre>
+
+<p>
+  If instead of the above output, you see an 'Internal Server
+  Error' then you should do the following at the command prompt...
+</p>
+
+<p>
+  $ cd pixenate/<br/>
+  $ chmod a+x *.pl 
+</p>
+
+<p>
+  If you are still getting 'Internal Server Error' errors when
+  invoking either fonts.pl or pxn8.pl from the browser, then try
+  running each script from the command line. Your FTP client/server
+  may have inserted DOS-style linebreaks which may cause problems if
+  you are on a unix/linux platform. If you cannot run the scripts from
+  the command line then try the following...
+</p>
+
+<p>
+  $ cd pixenate/<br/>
+  $ dos2unix *.pl
+</p>
+
+<p>
+  Once you have decompressed the Pixenate archive into your
+  <code>WEBROOT</code> folder and installed Perl, ImageMagick and
+  configured your webserver, you can verify that everything is OK by
+  visiting one of the following URLs (depending on which webserver
+  environment you're using...
+</p>
+
+<table>
+  <tr>
+	 <td>PHP &raquo; </td>
+	 <td>http://YOUR_WEBSERVER_ADDRESS:YOUR_WEBSERVER_PORT/pixenate/themes/slick/index.php</td>
+  </tr>
+  <tr>
+	 <td>ASP &raquo; </td>
+	 <td>http://YOUR_WEBSERVER_ADDRESS:YOUR_WEBSERVER_PORT/pixenate/themes/slick/index.asp</td>
+  </tr>
+  <tr>
+	 <td>JSP &raquo; </td>
+	 <td>http://YOUR_WEBSERVER_ADDRESS:YOUR_WEBSERVER_PORT/pixenate/themes/slick/index.jsp</td>
+  </tr>
+</table>
+
+<p>
+  If you are using ColdFusion or a web programming language other
+  than ASP, JSP, or PHP you can quickly verify that the install worked
+  by visiting the following URL and trying out some editing
+  operations...
+  <pre>
+	 http://YOUR_WEBSERVER_ADDRESS:YOUR_WEBSERVER_PORT/pixenate/themes/slick/index.pl
+  </pre>
+</p>
+<p>
+  (replace YOUR_WEBSERVER_ADDRESS and YOUR_WEBSERVER_PORT with
+  appropriate values)
+</p>
+<p>
+  If you cannot open the appropriate page or if editing operations
+  fail please contact <a href="mailto:support@sxoop.com?subject=Installation problem">support@sxoop.com</a> and we will respond as quickly as possible.
+</p>
+
+<blockquote>
+  <em>N.B.</em> If you have installed pixenate in any location other
+  than $WEBROOT/pixenate , you must change the <em>PXN8.root</em>
+  javascript variable to match the location. For example, if you
+  installed Pixenate at <em>$WEBROOT/myapp/editor</em> , then you would
+  need to change <em>PXN8.root</em> as follows (the best place to do so
+  is prior to calling PXN8.initialize() - see the <a href="API-Reference.html">API Reference</a> for more
+  details).
+  <pre>
+	 PXN8.root = "/myapp/editor/";
+	 PXN8.initialize("path/to/image.jpg");
+  </pre>
+  The above snippet of code is placed in the HTML page for your photo
+  editor. (in themes/slick/index.php for example )
+</blockquote>
+
+<h2><a name="post-install">Optional Post-installation steps.</a></h2>
+
+<h3>Disable access to .ini and .pm files.</h3>
+<p>
+  We recommend disabling access to .pm and .ini files that are sitting in the web
+  root. You can do this by adding the following to your httpd.conf or
+  .htaccess file (for Apache).
+</p>
+<blockquote>
+<pre>
+   &lt;Files ~ "\.(pm|ini)$">
+       Order deny,allow
+       Deny from all
+   &lt;/Files>
+</pre>
+</blockquote>
+
+
+<h3>Remove old files from Pixenate's cache directory, in the background</h3>
+
+<p>
+  By default the <em>pxn8.pl</em> perl script which performs all of the
+  image processing, will also remove old temporary files from
+  the <em>pixenate/cache</em> directory each time it is called. On
+  high-traffic sites it is advisable to disable this behavior and to
+  perform cleanup of old temporary files via a scheduled background
+  process.
+</p>
+
+<p>
+  To stop the <em>pxn8.pl</em> script from removing old files change
+  the <em>DELETE_TEMPS_CGI</em> variable in the <em>pixenate/config.ini</em>
+  configuration file from <em>1</em> to <em>0</em>.
+</p>
+
+<p>
+  If you disable removal of the temporary files via CGI you should
+  have another mechanism in place to remove these
+  files. A <em>pixenate_cleanup_cache.pl</em> script is provided for
+  this purpose and is located in the <em>pixenate/cgi-extra</em>
+  directory. You should first edit the script changing
+  the <em>$ENV{PIXENATE_WORKING_DIRECTORY}</em> variable to match the
+  directory where pixenate resides. Move the file to a non-web
+  accessible location on your server, then add the following to your
+  crontab...
+</p>
+
+<pre>
+0 * * * * perl /PATH/TO/pixenate_cleanup_cache.pl
+</pre>
+
+<p>
+  Use the <em>crontab -e</em> command to edit your crontab file.
+</p>
+
+<h2><a name="appendix-a">Appendix A: Virtual Directories and Secure Sites (HTTPS)</a></h2>
+<p>It is possible that you might wish to use the combination of
+  Virtual directories for your images and HTTPS (secure site) setup
+  for your production web server. If you do so , the following will be
+  useful to you. For background information on this problem please
+  refer to <a href="http://sxoop.wordpress.com/2009/03/24/pixenate-virtual-directories-and-secure-websites/">this entry</a> in the Sxoop blog.</p>
+
+<p>Pixenate's default behavior assumes that there is a simple mapping of URL to file-system path. E.g. If the IIS DocumentRoot is at </p>
+<p>C:\InetPub\wwwroot </p>
+<p>...and if an image can be accessed via the following url...</p>
+<p>http://localhost/images/abc.jpg</p>
+<p>... then the file resides on the file system at C:\InetPub\wwwroot\images\abc.jpg , and Pixenate can be initialized by calling...</p>
+<p>PXN8.initialize("/images/abc.jpg");</p>
+<p>...or... </p>
+
+<p>PXN8.initialize( { url: "/images/abc.jpg" } );</p>
+<p>...or even...</p>
+<p>PXN8.initialize( { url: "/images/abc.jpg" , filepath: "../images/abc.jpg" } );</p>
+<p>(this last example assumes pixenate has been installed at C:\InetPub\wwwroot\pixenate - see <a href="http://pixenate.com/pixenate/docs/API-Reference.html#PXN8.initialize">PXN8.initialize()</a> in the API reference.)</p>
+
+<p>Why would you want to use the last example? Well imagine your photos are served from a secure site ( one which uses https instead of http ). In this scenario, the most common PXN8.initialize("/images/abc.jpg"); will still work because Pixenate will try to load the C:\InetPub\wwwroot\images\abc.jpg file if it exists. </p>
+<p>If a Virtual directory was in use so that /images/ actually pointed to D:\images , Pixenate would no longer work because having tried and failed to read C:\InetPub\wwwroot\images\abc.jpg it would then try to retrieve https://localhost/images/abc.jpg using Perl's LWP::Simple ( libwww-perl library ) and fail.</p>
+<p>In this scenario, Pixenate must be given a back-stage pass so it can bypass https. Just how do you do this? Well the documented 'filepath' property won't work because the image resides in a virtual directory which isn't accessible from the pixenate directory (in this example, the virtual directory maps to a different disk but it could just as easily map to an entirely different computer).</p>
+<p>The standard methods of loading Images in Pixenate (either from the filesystem on which pixenate resides or via LWP::Simple) won't suffice if HTTPS and virtual directories are in use. This calls for some custom image loading code. Fortunately it's possible in Pixenate to specify your own custom image loader and use that instead.</p>
+
+<p>In this scenario, the Pixenate server needs to load images from the D:\images directory, and to do this you need to provide a server-side plugin...</p>
+<p><code>
+<pre>use strict;
+use Sxoop::PXN8 ':all';
+#
+#
+# insert the following new property/line to your pixenate/config.ini file...
+#
+# VIRTUAL_IMAGE_ROOT = "D:/images/" ,
+#
+#
+sub fetch_from_vpath
+{
+	 my ($image, $params) = @_;
+
+	 unless (exists $ENV{PIXENATE_VIRTUAL_IMAGE_ROOT} )
+	 {
+		  die "The VIRTUAL_IMAGE_ROOT configuration property has not been set!\n";
+	 }
+
+	 my $path = $ENV{PIXENATE_VIRTUAL_IMAGE_ROOT} . $params-&gt;{virtual_path};
+
+	 unless (-e $path){
+		  die "File $path does not exist\n";
+	 }
+	 my $imrc = $image-&gt;Read($path);
+
+	 if (is_imagick_error($imrc)){
+		  die "ImageMagick cannot open file: $imrc\n";
+	 }
+	 return $image;
+}
+AddOperation('vpath', \&amp;fetch_from_vpath);
+1;</pre>
+<p></code></p>
+<p>Save the code above to a filename ending in .pm and copy it to the pixenate/lib/Sxoop/PXN8/plugins directory.<br />
+To use the plugin when starting pixenate use the following javascript code ...</p>
+<p><code>
+<pre>PXN8.initialize( { url: "/images/abc.jpg" , // for the web client
+                   source: "vpath",          // specifies which plugin should be used for loading
+                   virtual_path: "abc.jpg"  // the path used by the plugin
+                  } );
+</pre>
+<p></code><br />
+
+This will enable you to use Pixenate on a secure server with virtual directories set up for images.<br />
+There are many possible ways of storing photos, filesystem (local or remote), database, cloud (S3) but I'm confident Pixenate is flexible enough to cope with whatever exotic permutations of the above can be thrown at it.</p>
+
+
+<h2><a name="appendix-b">Appendix B: Installing Bundled Fonts</a></h2>
+<p>
+As of April 2009, Pixenate includes some open-source or free-licensed
+fonts which can be used by Pixenate. All of the fonts bundled are made
+available by their creators free of charge. All copyright on the fonts
+remains with their original owners. The fonts are located in
+the <b>pixenate/fonts/</b> directory.
+</p>
+
+<h3>Linux</h3>
+<p>A file <b>type-pixenate.xml</b> is included in pixenate/fonts/ directory.
+You should open that file in an editor and modify the 'glyphs'
+attribute of each &lt;type> element to include the full absolute path to
+the .ttf or .otf file.
+</p>
+<p>
+Then edit your type.xml file (see <a href="#imagemagick_linux_fonts">ImageMagick & Fonts on Linux</a>)
+ and add the following line...
+</p>
+<p>
+&lt;include file="type-pixenate.xml" />
+</p>
+<p>
+Copy the type-pixenate.xml file to the same directory where type.xml
+resides and you're done. ImageMagick will automatically pick up the
+newly registered fonts.
+</p>
+
+<h3>Windows</h3>
+<p>Copy the *.otf and *.ttf files from the <b>pixenate/fonts/</b>
+  directory to the fonts folder in your windows
+control panel. ImageMagick will automatically pick up fonts used by
+  the system. </p>
+
+<h2>&copy; Copyright 2005 - 2009 Sxoop Technologies Ltd. All Rights Reserved</h2>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <style type="text/css">
+      </style>
+    <script type="text/javascript" src="/pixenate/javascript/3rdparty/raphael-uncompressed.js"></script>
+    <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+    </head>
+  <body>
+    <button onclick="start_redeye_mode()">Red-eye removal...</button>
+    <button onclick="PXN8.zoom.zoomIn()">Zoom +</button>
+    <button onclick="PXN8.zoom.zoomOut()">Zoom -</button>
+    <button onclick="PXN8.tools.undo()">Undo</button>
+    <button onclick="PXN8.tools.redo()">Redo</button>
+
+    <div id="redeye_pane" style="display: none;">
+      <p>
+        <label for="brush">Brush Size:</label>
+        <input onclick="PXN8.freehand.width = this.value" name="brush" type="radio" value="1" checked="checked">1x1 Pixel</input>
+        <input onclick="PXN8.freehand.width = this.value" name="brush" type="radio" value="2">2x2 Pixels</input>
+        <input onclick="PXN8.freehand.width = this.value" name="brush" type="radio" value="3">3x3 Pixels</input>
+        <input onclick="PXN8.freehand.width = this.value" name="brush" type="radio" value="4">4x4 Pixels</input>
+        <input onclick="PXN8.freehand.width = this.value" name="brush" type="radio" value="5">5x5 Pixels</input>
+      </p>
+      <button onclick="apply()">Apply</button>
+      <button onclick="cancel()">Cancel</button>
+    </div>
+    <div id="pxn8_canvas"></div>
+  </body>
+  <script type="text/javascript">
+
+PXN8.initialize("/pixenate/images/samples/redeye.jpg");
+PXN8.freehand.color = "#404040";
+PXN8.freehand.width = 3;
+
+function start_redeye_mode()
+{
+    document.getElementById("redeye_pane").style.display = "block";
+    PXN8.freehand.start();
+}
+function cancel()
+{
+    document.getElementById("redeye_pane").style.display = "none";
+    PXN8.freehand.end();
+}
+PXN8.freehand.width = 1;
+
+function apply()
+{
+    var paths = PXN8.freehand.getPaths();
+
+    var image = PXN8.ImageMagick.start();
+
+    var top = image.Clone(); // top image (red-channel will be applied to this)
+
+    var sz = PXN8.getImageSize();
+
+    var red_channel = new PXN8.ImageMagick();  // red-channel
+    red_channel.Set({size: sz.width + "x" + sz.height});
+    red_channel.Read("xc:#303030"); // make the red-channel dark-gray
+
+    var mask = PXN8.ImageMagick.maskFromPaths(sz,paths); // construct a mask image
+
+    // overlay the darkened red channel
+    top.Composite(   { image: red_channel, compose: "CopyRed"}); 
+
+    // apply the mask to the top image
+    top.Composite(   { image: mask,        compose: "CopyOpacity"}); 
+
+    // superimpose the top image.
+    image.Composite( { image: top,         compose: "Over" });  
+
+    PXN8.ImageMagick.end(image);
+
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,function(){
+        document.getElementById("redeye_pane").style.display = "none";
+        PXN8.freehand.end();
+    });
+
+}
+  </script>
+  </html>

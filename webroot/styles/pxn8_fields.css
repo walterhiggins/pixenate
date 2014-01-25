@@ -1,0 +1,100 @@
+/*
+ * The following CSS styling is for PXN8 elements which are added by 
+ * javascript at runtime.
+ */
+
+.pxn8_color_box {
+	border: 1px solid #cccccc;
+	width: 16px;
+   height: 16px;
+}
+
+/**
+ *
+ * Slider control styling
+ * 
+ */
+div.pxn8_slide:hover {
+	background-color: white;
+}
+
+span.pxn8_slider {
+  background-color: #800000;
+  position: absolute;
+  top: 12px;
+  left: 58px;
+  width: 6px;
+  height: 16px;
+}
+
+div.pxn8_slide {
+  background: transparent url(../images/scale.gif) bottom center no-repeat;
+  position: relative;
+  width: 126px;
+  height: 28px;
+  cursor: pointer;
+
+}
+.pxn8_slidervalue 
+{
+	border: 1px solid #cccccc;
+	width: 32px;
+}
+
+input.pxn8_field
+{
+	border: 1px solid #cccccc;
+	line-height: 16px;
+	background-color: white;
+}
+
+input.pxn8_small_field
+{
+     width: 60px;
+	  border: 1px solid #cccccc;
+	  background-color: white ;
+	  line-height: 16px;
+}
+
+select.pxn8_field
+{
+	border: 1px solid #cccccc;
+	line-height: 16px;
+	background-color: white;
+}
+
+.pxn8_colorwell
+{
+	border: 1px solid black;
+	width: 24px;
+	height: 16px;
+	overflow: visible;
+}
+
+.pxn8_checked {
+	background: url(../images/collapsed.gif) top left no-repeat;
+	padding-left: 16px;
+	font-weight: bold;
+}
+
+.pxn8_unchecked {
+	padding-left: 16px;
+	font-weight: normal;
+}
+/**
+ * How button-like links should be displayed
+ */
+a.pxn8_button, a.pxn8_button:visited 
+{
+	text-decoration: none;
+	border-top: 2px solid #f0f0f0;
+	border-left: 2px solid #f0f0f0;
+	border-right: 2px solid #b0b0b0;
+	border-bottom: 2px solid #b0b0b0;
+	background-color: steelblue;
+	line-height: 24px;
+	font-weight: bold;
+	color: white;
+	padding: 2px 4px 2px 4px;
+
+}

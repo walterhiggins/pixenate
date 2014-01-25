@@ -1,0 +1,1135 @@
+Pixenate Release Notes
+======================
+
+Release notes are displayed in reverse chronological order.
+
+The Installation Guide can be found at...
+
+http://pixenate.com/pixenate/docs/Installation-Guide.html
+
+The Installation Guide (and all other documenation) is also included
+in the Pixenate tar.gz file.
+
+20110531
+--------
+Add support for https (secure http). (changed upload.pl and Fetch.pm modules)
+
+20110205
+--------
+Changed issconfig.gif - Added "" (doublequotes) around perl parameters
+(for case of folders with spaces in them on Windows)
+
+20110202
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.5sp3                                                             |
++----------------------------------------------------------------------+
+Fix for security bug in save.pl & upload.pl 
+(sanitize image & filename parameters before opening) 
+
+20101212
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.5sp2                                                             |
++----------------------------------------------------------------------+
+
+Miscellaneous bug fixes.
+
+20100119
+--------
+Added new example file example-minimum-resolution.html which
+demonstrates limiting the selection area based on a product chosen
+from a drop-down list (common in photo-merchandising).
+
+20091221
+--------
+Bug Fix: canvas not initialized correctly when inside a FancyBox container.
+Changed file: pxn8_dom.js
+
+20091004
+--------
+Added new zoom helper functions PXN8.zoom.toWidth()
+PNX8.zoom.shrinkToWidth() PXN8.zoom.expandToWidth()
+PXN8.zoom.toHeight() PXN8.zoom.shrinkToHeight() PXN8.zoom.expandToHeight()
+
+20091002
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.5sp1                                                             |
++----------------------------------------------------------------------+
+
+20090827
+--------
+Bug Fix: Freehand Drawing did not work correctly with the BEEP
+plugin. This has been fixed.
+
+20090826
+--------
+Added new example-text-placement page which demonstrates how to place
+text on the image using a combination of PXN8.ImageMagick and
+PXN8.overlay functions.
+
+20090802
+--------
+Bug Fix: Freehand drawing did not account for window scrolling. The
+window.pageXOffset and window.pageYOffset attributes were ignored when
+performing freehand drawing. This has been fixed.
+
+
+20090726
+--------
+Bug Fix: Pixenate fails to load edited images if the path where
+pixenate is installed contains a . (dot) character. This has been
+fixed.
+
+20090501
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.5                                                                |
++----------------------------------------------------------------------+
+
+20090430
+--------
+Bug Fix: Interoperability problems with Prototype 1.6. When operations
+were wrapped inside a PXN8.tools.startTransaction() and
+PXN8.tools.endTransaction(), and the prototype library was being used,
+an error would appear when trying to edit the photos...
+
+  The '' plugin is not available in this version of the software.
+
+This problem has now been fixed.
+
+20090430
+--------
+Added new PXN8.tools.freehand() tool to the 'slick' theme.
+
+20090429
+--------
+Improved color picker used in Slick theme.
+
+20090417
+--------
+Added new freehand drawing example page. /pixenate/docs/example-freehand.html
+
+20090416
+--------
+Added PXN8.dom.css() function for convenient setting of CSS properties
+on an element.
+
+20090414
+--------
+Added PXN8.freehand.* module for freehand drawing on top of photos.
+See updated API-Reference for more details.
+
+
+20090407
+--------
+Improved Fetch.pm plugin. Now works better with IIS / mod_perl (file
+test twice - once without and once with PIXENATE_WORKING_DIRECTORY
+prefix).
+
+20090327
+--------
+Added pixenate/fonts/ directory which includes a small sample of free
+fonts which can be used in Pixenate. (also includes type-pixenate.xml
+and instructions for installing the fonts for use with
+ImageMagick/Pixenate )
+
+20090324
+--------
+Update Installation guide. Appendix A added - Using Pixenate in a
+secure website (SSL) with Virtual Directories.
+
+20090320
+--------
+Bug Fix: Memphis / Hires Themes constrain the canvas to a fixed width
+and height. The constraints did not work in IE when any DOCTYPE was
+declared.
+This has been fixed.
+(see bug:http://mt-olympus.com/emmett/bug_overflow_positionrelative.php )
+
+
+20090318
+--------
+Bug Fix: Spirit-level mode (as used in Slick theme) selected off-image
+areas when the image was zoomed and then changed. This behaviour has
+been fixed.
+
+20090318 
+--------
+Improved initialization handling in PXN8.select and PXN8.zoom family
+of functions. Now possible to write the following code without need
+for PXN8.listener.onceOnly() calls...
+   
+   PXN8.initialize("/pixenate/images/samples/garinish.jpg");
+	PXN8.selectByRatio("1x1");
+	PXN8.zoom.zoomByValue(2);
+
+
+20090317
+--------
+Changed PXN8.selectByRatio() to work in the following scenario...
+
+   PXN8.initialize("/pixenate/images/samples/garinish.jpg");
+   PXN8.selectByRatio("1x1");
+
+Previously this would not have worked because the image would not have
+yet loaded by the time PXN8.selectByRatio() was called.
+
+20090305
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.4sp1                                                             |
++----------------------------------------------------------------------+
+
+20090220
+--------
+Added support/documentation for setting up Pixenate on Tomcat 6 and
+SUN's App Server version 8. (Running Pixenate on J2EE server's which
+don't directly support CGI).
+
+20090130
+--------
+Bug Fix: upload.pl returned incorrect headers for IIS 7. upload.pl was
+returning non-parsed headers for all web servers except IIS 6 and
+Apache. Now the script will only send headers for IIS 5.
+
+20090128
+--------
+Optimized performance of slick theme. Now uses a single CSS sprite for all
+tool palette icons, resulting in fewer HTTP requests and faster page
+load times.
+
+20090123
+--------
+Bug Fix: Cardmaker theme. Crop Preview was broken in FF3 and IE6.
+
+20090119
+--------
+Don't output debug information when no script is supplied to pxn8.pl
+unless the PIXENATE_DEBUG flag is set.
+
+20090107
+--------
+Documentation: Added new variable PXN8.convertToJPEG to documentation.
+
+20090107
+--------
+Bug Fix: All operations performed after a PXN8.tools.transparency()
+operation, failed to keep the alpha-channel, effectively wiping out
+the PXN8.tools.transparency() change. This has been fixed.
+
+20090105
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.4                                                                |
++----------------------------------------------------------------------+
+
+20081204
+--------
+New Tool: Transparent lets you make a color in a photo
+transparent. This can be really useful for quickly removing black or
+white backgrounds from images.
+See PXN8.tools.transparent() in the API Reference for more details.
+
+20081203
+--------
+Changes to PXN8.ImageMagick.end() to allow for deferred commit of
+ImageMagick operations to the server. (see updated section in
+Customization Guide - Advanced Techniques: Cloning ).
+
+20081202
+--------
+Bug Fix: PXN8.select.enable(false) didn't always fully disable
+selections. If the selection height was non-zero, a selection was made
+even when the selection width was 0. This has been fixed.
+
+20081201
+--------
+Updated Documentation: Customization-Guide.html now includes sample
+PHP code for saving images using the licensed edition and the hosted
+edition.
+
+20081130
+--------
+Updated Installation guide. Notes on installing Pixenate in a location
+other than $WEBROOT/pixenate.
+
+20081129
+--------
+Bug fix: The upload form in the memphis and hi-res themes was
+incorrectly uploading to pixenate.com. This has been fixed so that the
+upload is to the same server where pixenate is installed.
+
+20081121
+--------
+Added new javascript property PXN8.select.constrainToImageBounds :
+This property (default value is true) controls whether or not the user
+can select an area outside of the bounds of the image. This can be
+important when adding clip-art to an image.
+
+20081120
+--------
+Fixed upload bug in pixenate/themes/default/index.asp/php/jsp. Upload
+form was using the wrong upload path for the Hosted edition.
+
+20081114
+--------
+Added PXN8.basename variable to the Javascript library.
+PXN8.basename's default value is "pxn8.pl". This is the name of the
+CGI script or server-side process which performs image-editing in Pixenate.
+
+20081111
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.3 sp1                                                            |
++----------------------------------------------------------------------+
+
+20081021
+--------
+Bug Fix. When used in combination with Image URLs which contained
+parameters (e.g. http://localhost/image.png?v=2033), the
+PXN8.convertToJPEG flag caused problems when set to false because
+Pixenate incorrectly assumed the Image URL wouldn't include
+parameters.
+This has been fixed with a modification to the
+PXN8.ajax.submitScript() function (location
+pixenate/javascript/pxn8_ajax.js)
+
+20081015
+--------
+Updated Installation-Guide.html to include Windows/PerlMagick
+troubleshooting tips.
+
+20081014
+--------
+Added new example to ImageMagick plugin documentation.
+
+20080923
+--------
+Bug fix: Adding text as part of a transaction
+(PXN8.tools.startTransaction() / PXN8.tools.endTransaction() ) failed
+if image was cropped.
+
+20080831
+--------
+Bug Fix: In Overlay mode, zooming the image caused the overlay outline
+to be out of synch with the selection area. This has been fixed.
+
+20080828
+--------
+Bug Fix: Editing or Zooming in a PXN8.ON_IMAGE_LOAD event handler
+failed in Safari. Safari's img.onload is executed *after* DOM2-style
+event handlers so event handlers were being notified of a
+ON_IMAGE_LOAD event before the image was really ready. This has been
+fixed.
+
+20080825
+--------
+Fixed PXN8.selectByRatio() so that it will work with floating point
+numbers too. (e.g. PXN8.selectByRatio("7.5x4.6"); )
+
+
+20080729
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.3                                                                |
++----------------------------------------------------------------------+
+
+20080728
+--------
+Fixed bug in Internet Explorer 6 - Clustered Edition /
+PXN8.ImageMagick long scripts failed to load. Problem is fixed by
+setTimeout() for IE6.
+
+20080725
+--------
+New fun effects available:
+Poloaroid: Turns photos into polaroid photos with a single click.
+Warhol/Pop Art: Turns your photo into a warholesque pop-art photo.
+Each of these fun effects use the new PXN8.ImageMagick API.
+
+20080624
+--------
+Fixed a bug in PXN8.rotateSelection() which caused selections to
+extend beyond the bounds of the photo when the width of the selection
+was greater than the height of the photo or the height of the
+selection was greater than the width of the photo.
+
+20080611
+--------
+Added a new Pixenate Javascript variable PXN8.convertToJPEG which has
+a default value of true. This variable indicates whether or not the
+image being edited should be converted to a JPEG image. The default
+behaviour is that all images (PNG, GIF etc) are converted to JPEGs. To
+disable this behaviour set PXN8.convertToJPEG = false . 
+
+20080611
+--------
+Fixed bug in the Overlay plugin which caused overlays of foreign or
+even same-host URLs to fail. (showed up in the Pixenate Facebook App).
+
+20080610
+--------
+Added option to disable old temp file removal via the pxn8.pl CGI
+script. On high-volume servers, the process of finding and removing
+old temporary files in the pixenate/cache directory can be costly so
+it doesn't make sense to do so in the CGI script when it can be done
+by a background process. Please refer to the updated
+Installation Guide for more details.
+
+
+20080519
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.2sp2                                                             |
++----------------------------------------------------------------------+
+
+20080515
+--------
+Fixed PXN8.overlay package to support correct display of PNG in IE6.
+
+20080514 
+--------
+Changes to how the PXN8.fonts package and supporting images are
+generated.
+
+Previous builds of Pixenate included a server-side CGI script called
+fonts.pl located in the pixenate/ directory.
+This CGI script was used to generate a list of fonts which could be
+used by PXN8.tools.add_text() and it was also used to generated sample
+font images in the pixenate/images/fonts directory.
+
+This CGI script is no longer present as of version 1.3.2sp2. 
+
+All referencese to /pixenate/fonts.pl in the sample themes have been
+changed to refer to /pixenate/javascript/pxn8_fonts.js instead. By
+default, this pxn8_fonts.js file contains no fonts. In order to create
+a valid pxn8_fonts.js file you must run the new generate_fonts.pl perl
+script from the command line after you have unzipped the pxn8.tar.gz
+file. To execute the script you must have open a shell prompt on the
+server and execute the following commands (using your own paths)...
+
+On windows do the following...
+
+C:\> cd C:\Inetpub\wwwroot\pixenate
+C:\> perl generate_fonts.pl
+
+on unix do the following...
+
+$ cd /usr/local/www/htdocs/pixenate
+$ perl generate_fonts.pl
+
+If you install more fonts at a later date and want those fonts to be
+be recognized by Pixenate then you should run this script again.
+
+20080512
+--------
+[1] Introduced PXN8.tools.startTranasaction() and
+PXN8.tools.endTransaction() to make combining multiple operations
+easier. (see API-Reference and Customization-Guide for details).
+
+[2] Introduced the ImageMagick plugin and PXN8.ImageMagick API (see
+API-Reference for details).
+
+20080511
+--------
+Fixed bug present in Pixenate with newer versions of ImageMagick - All
+return codes were flagged as errors. Only return codes greater than or
+equal to 400 are actual errors, return codes less than 400 are
+warnings and should not be displayed to the end user.
+
+20080507
+--------
+[1] Fixed Filter.pm (Filter plugin) to work with ImageMagick version 6.4
+and later.
+
+[2] Updated API-Reference to include all possible add_text() parameters.
+
+20080429
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.2sp1                                                             |
++----------------------------------------------------------------------+
+
+20080421 
+--------
+Added PXN8.select.enable() function to enable and disable the
+selection tool.
+
+
+20080415
+--------
+[1] Fixed problem in Firefox: When image is rotated, black background
+shows through on right-hand side (90 degree rotations). 
+
+[2] Updated Example-1.html for customization guide.
+
+20080328
+--------
+Better isolation of server-side plugin errors.
+
+20080322
+--------
+[1] Fixed bug in Overlay plugin - Overlays resulted in incorrect page
+offset.
+
+[2] Added Rearrange plugin for moving parts of photos around.
+
+20080301
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.2                                                                |
++----------------------------------------------------------------------+
+
+20080228
+--------
+Documentation updates.
+
+20080226
+--------
+[1] Fixed Filter bug. When the 'Filter' plugin was applied to an image
+which was already modified in memory (not fresh from disk), the filter
+would appear at the bottom of the image, not the top. This was most
+noticeable when two or more operations (one of which was Filter) were
+applied to an image and then it's hi-res equivalent.
+
+[2] Fixed Text/Hi-Res bug. Text was not being resized for hi-res images.
+
+20080221 
+--------
+Improved error handling throughout the server code.
+
+20080214 
+--------
+Updated Installation-Guide.html. 
+Command to verify ImageMagick install should be...
+perl -MImage::Magick -e " print 'OK' "
+
+20080120
+--------
+Added the Mask plugin tool (premium edition only). See updated
+API-Reference for details and examples.
+
+20071228
+--------
+All Perl modules are now located in ./lib instead of ./modules
+Some modules have been renamed.
+
+20071219
+--------
+Address problems with cPanel/mod_perl2 and the use of cwd() and
+chdir() in server code.
+
+20071213
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.1sp1                                                             |
++----------------------------------------------------------------------+
+
+20071212
+--------
+Added PXN8.tools.hi_res() function and documentation to make handling
+of hi-res editing easier (see API reference).
+
+20071211 
+--------
+[1] Added clipart (santa hats for the moment) to slick theme. 
+See clipart.js javascript in the slick folder.
+
+[2] Add PXN8.zoom.zoomByValue() function. (see API reference).
+
+20071128
+--------
+Improved Toolbar Theme. Added tooltips for each menuitem as well as
+the toolbar buttons.
+
+20071105
+--------
+Improved selection behaviour. Better handling of selection by core
+PXN8 code when selections are dragged.
+
+20071031
+--------
+Added PXN8.selectByRatio() example to documentation.
+
+20071025
+--------
+Fixed bug in PXN8.selectByRatio() function - Selection was resized
+when attempting to move selection out of image bounds. Correct
+behaviour is to prohibit movement of selection out of bounds when an
+aspect ratio is enforced.
+
+20071020
+--------
+Improved Logging in pxn8.pl CGI script.
+
+20071019
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.1                                                                |
++----------------------------------------------------------------------+
+
+20071001
+--------
+Fixed selection bug: Drag selection to left or bottom and the
+selection is resized. Should not be resized. This is important when 
+you have a selection listener which dictates the minimum size of a selection.
+
+20070907
+--------
+Updated the Installation-Guide.html document to describe the
+workaround for 'Permission Denied' problems with IIS and Pixenate.
+
+20070905
+--------
+Added the 'CardMaker' theme. A one-page theme for creating greeting
+cards using Pixenate.
+
+20070904 
+--------
+[1] Updated the AddText.pm plugin. (see API-Reference.html)
+
+[2] upload.pl now supports 'pass-thru' parameters. These are parameters
+which will be passed directly thru hthe upload.pl script and back to
+to page to which upload.pl redirects.
+
+e.g.
+
+<form action="/pixenate/upload.pl" method="POST" enctype="mulipart/form-data">
+  <input type="file" name="filename"/>
+  <input type="hidden" name="pxn8_root" value="/pixenate"/>
+  <input type="hidden" name="next_page" value="/gallery/upload_done.php"/>
+  <input type="hidden" name="_userid" value="1234"/>
+</form>
+
+In the above example, when the upload is complete, upload.pl redirects
+to /gallery/upload_done.php?userid=1234...
+
+All pass-thru parameters must be prefixed by _ (underscore). the _ is
+removed when passed to the redirected page.
+
+20070828 
+--------
+[1] Bug Fix: PXN8.selectByRatio()'s behaviour was not working correctly. 
+
+[2] Bug Fix: PXN8.tools.preview_crop failed to hide the new topright,
+topleft, bottomleft and bottomright non-selected DIVs.
+
+20070824
+--------
+[1] Added Marching Ants on the selection area.
+
+[2] Added support for Opera 9.0 (desktop version - not mobile).
+
+20070820
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.0sp2                                                             |
++----------------------------------------------------------------------+
+
+20070818 
+--------
+Improved support for ImageMagick 6.3.3 + . 
+
+20070813
+--------
+Fix IM6.3.3 and CGI bug. IM6.3.3 interferes with CGI on FreeBSD. The
+fix for this is to change 'use Image::Magick' to 'require
+Image::Magick' and don't load the imagemagick module until after all
+of the CGI POST parameters have been read.
+
+20070812
+--------
+Added new 'barcelona' YahooUI-based theme to the premium edition.
+
+20070810
+--------
+Updated and Improved API Reference documentation.
+
+20070808
+--------
+Improved Preview handling. Multiple photo-editing operations can now be combined
+into a single user operation using PXN8.tools.updateImage(). Now
+multiple operations can now also be previewed too.
+PXN8.preview.show() will now take (as it's 2nd argument) either an
+operation object or an array of operation objects. Please refer to the
+updated Pixenate API documentation for more details.
+
+20070802
+--------
+IMPORTANT CHANGES TO LOCATION OF JAVASCRIPT FILES !
+
+pxn8_tooltips.js and pxn8_tools_ui.js have both been moved from ...
+
+pixenate/javascript/
+
+...to...
+
+pixenate/themes/shared/javascript/
+
+and have been renamed to tooltips.js and tools_ui.js respectively. 
+
+If you're customized photo editor relies on the same display of
+tooltips used by the Slick and Default themes, then you should add the
+following code to your theme's <head> section....
+
+<script type="text/javascript" src="../shared/javascript/tooltips.js"></script> 
+
+... to reenable the display of tooltips.
+
+Similarly if your theme relies on the PXN8.tools.ui.* suite, you
+should add the following code to your theme's <head> section....
+
+<script type="text/javascript" src="../shared/javascript/tools_ui.js"></script> 
+
+20070725
+--------
+Fixed high-res Cropping bug. Successive crops on an in-memory image
+need to account for adjusted canvas offsets.
+
+20070711
+--------
+Added extra optimizations (consecutive normalize operations are
+ignored - only the first normalize operation is applied).
+
+--------
+pxn8_toolbar.js is now included in pxn8_all.js and
+pxn8_all_minimized.js - no need to include this file separately.
+
+
+20070710
+--------
+pxn8_basic.js has been deprecated. Either use individual pxn8_*.js
+files, pxn8_all.js (for debugging) or pxn8_all_minimized.js (for
+production).
+
+20070705
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.0sp1                                                             |
++----------------------------------------------------------------------+
+
+20070702 
+--------
+Added Buffering to the editor. When a photo is changed, it's revised
+version is loaded into an non-visible buffer and then swapped with the
+visible photo when it has fully loaded.
+
+20070627 
+--------
+API ADDITION: Multiple Operations (e.g. crop, rotate, resize etc) can be
+combined into a single user operation. Please refer to the updated
+API-Reference for further details.
+
+
+20070624
+--------
+BUG FIX: Fixed hi-resolution theme (broken in previous update).
+
+20070618 
+--------
+Changed toolbar1 theme to accept 'image' parameter just like other themes.
+
+20070615
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.3.0                                                                |
++----------------------------------------------------------------------+
+
+20070613
+--------
+Fix bug : Cross-hairs on the selected area was displayed off-center by
+up to 2 pixels.
+
+20070612
+--------
+Improved Teeth-Whitening - Now uses a better mask for applying the
+teeth-whitening filter. The whitening is now more apparent too.
+
+20070611
+--------
+Fix bug : White noise in Internet Explorer. 
+Some darker images were displaying random white pixels. This was due
+to a bug in IE whereby 100% black pixels are interpreted as being
+transparent and thus show the background color of the enclosing
+element. The workaround is to set the background color of the
+pxn8_image_container div to black.
+
+
+20070530
+--------
+Fix bug : Rounded Corners - color undefined. (introduced in 200705).
+
+20070522
+--------
+Added Guernica Theme.
+
+20070512
+--------
+TOOL ADDITION: UnsharpMask tool added to PXN8.tools.*
+
+20070508
+--------
+Fixed problems with PXN8.ON_IMAGE_LOAD handlers and
+zooming. Previously, any zooming should have been done in a timeout
+because the internal housekeeping performed by Pixenate's javascript
+core might not have been called before the custom PXN8.ON_IMAGE_LOAD
+was called. Now it is guaranteed that internal PXN8 housekeeping will
+have been performed by the time the PXN8.ON_IMAGE_LOAD handler is
+called.
+
+20070426
+--------
+PXN8.tools.crop() - use current selection if no parameters are supplied.
+
+20070425 
+--------
+Added the following API functions...
+
+PXN8.dom.addClass()
+PXN8.dom.removeClass()
+PXN8.dom.isClass()
+PXN8.tools.preview_crop()
+
+(see pixenate/docs folder for details)
+
+Removed pixenate/lib/Sxoop/PXN8/plugins/SpiritLevel.pm - Math is now
+done in Javascript on the client.
+
+20070420
+--------
+Added Installation-Guide.html and Cheatsheet.html to the /docs folder.
+
+20070412
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.9                                                                |
++----------------------------------------------------------------------+
+
+20070403
+--------
+Hi-Res theme: Let user make further changes after they've saved the
+hi-res image.
+
+20070328
+--------
+Added Pixenate-API-CheatSheet.pdf to /docs folder.
+
+20070309
+--------
+[1] Fixed documentation for PXN8.dom.id()
+
+[2] Allow double-quotes inside the 'text' property for the add_text
+operation. Double-quotes caused JSON errors when using the 'Text' tool.
+
+20070307
+--------
+Added Overlay operation (yet to be documented).
+
+20070302
+--------
+Fixed the Hi-Res theme. The Hi-Resolution version of the image will
+only be created when the user clicks on the 'save' button.
+
+20070228
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.8                                                                |
++----------------------------------------------------------------------+
+
+20070222
+--------
+[1] Added Customization-Guide.html to the docs folder with example code
+and pages. The Customization-Guide is a work in progress.
+
+[2] Clicking on the image in 'Filter' mode and 'Spirit-Level' mode made
+the pin icons appear a few pixels higher than they should have. This
+has been fixed.
+
+20070221
+--------
+[1] Selection area is cleared after the user uses the 'Whiten' tool.
+
+[2] Added a new Pixenate EVENT type : PXN8.ON_SELECTION_COMPLETE which is
+fired when the user has completed making a selection.
+
+20070220
+--------
+[1] Add pxn8 color preview box for the 'filter' and 'rounded corners' and
+'text' config panels.
+
+[2] pxn8_tool_prompt DIV was not being cleared prior to displaying 'text'
+config panel.
+
+20070219
+--------
+Optimized Javascript code for Rotating, Flipping and Resizing.
+
+20070214
+--------
+Trying to fetch an image using a CGI url like...
+
+http://localhost/myScript.cgi?imgId=2432
+
+... would cause an error in the lib/Sxoop/PXN8/plugins/Standard.pm
+module. The Standard.pm module would attempt to fetch the image from
+the following URL...
+
+http://localhost/http://localhost/myScript.cgi?imgId=2432
+
+(prepending the protocol and domain name to the URL).
+This bug has been fixed so that the protocol and domain are only
+prepended if not already present.
+
+20070209
+--------
+Fixed bug: Cross-hairs image not appearing when PXN8.root is set after
+the pxn8_xhairs.js or pxn8_all.js or pxn8_all_minimized.js files have
+loaded.
+
+20070207
+--------
+Fixed rounding error in PXN8.selectArea() which causes the following
+bug...
+
+If an image is zoomed, PXN8.rotateSelection() will not work because
+the selection box is not updated due to a rounding error. The selection
+appears unchanged but in actual fact the selection-model has changed.
+
+20070206
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.8                                                                |
++----------------------------------------------------------------------+
+
+20070205
+--------
+[1] Add 'Oil-Paint' and 'Charcoal' effects to the 'Slick' Theme.
+
+[2] The JPEG quality of images used in the browser can be configured via
+the JPEG_QUALITY parameter in the config.ini file.
+
+[3] Removed unneeded graphics files from the distribution.
+
+
+20070202 
+--------
+Added 'Preview' pane for previewing colors and effects.
+
+20070130
+--------
+Fixed critical error when modifying Animated GIFs. Only the first
+frame will now be used.
+
+20070129
+--------
+[1] Improved RedEye Reduction. (Green blotches are far less common now).
+
+
+[2] Improved Whitening Tool (fixed bug which caused 'pink' teeth due to
+code error (blue and green values were swapped).
+
+20070125
+--------
+The shipped themes now pick a random image.
+
+20070124
+--------
+Support relative Image paths in PXN8.initialize(). 
+E.g. If the page is at http://mydomain/myapp/photos/edit.php and your gallery image is
+http://mydomain/myapp/gallery/flowers.jpg .. you can call PXN8.initialize('../gallery/flowers.jpg')
+In other words you can use the same URL you would use if using an <IMG> tag on the page.
+
+20070123
+--------
+Fixed cross-hairs display bug in Safari/Mac (cross-hairs displayed in
+top-left corner in red-eye mode).
+
+20070122
+--------
+Fixed syntax bug in pxn8_all_minimized.js (missing ';' characters in pxn8_tools.js
+
+20070120
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.7                                                                |
++----------------------------------------------------------------------+
+
+20070119
+--------
+Improved Redeye reduction UI (in Slick theme - see end of slick.js) and server-side plugin.
+
+20070117
+--------
+[1] Fixed bug in Upload-and-Save-to-Disk workflow where if a client
+uploaded a file with spaces in the name, the save-to-disk operation
+would always fail in Internet Explorer. Changed upload.pl and save.pl
+to strip leading paths and replace ' ' with '_'.
+
+[2] Fixed IE-specific bug : Images saved to same filename/url appeared
+strecthed to old dimensions when opened subsequently in Pixenate.
+
+20070115
+--------
+[1] Fixed javascript code to play nice with older versions of Prototype
+and other libraries that override the object prototype. 
+for (var i in object) { ... } will iterate over newly introduced
+functions. This is not desirable in some cases in PXN8 so the
+object[i] type is checked where appropriate.
+
+[2] PXN8.replaceOnSave defaults to true to avoid caching issues when
+overwriting the same file on save-to-server.
+
+[3] PXN8.root defaults to '/pixenate/' and is declared in
+pxn8_core/pxn8_basic/pxn8_all.js files.
+
+[4] Improved "Teeth Whiten" tool - Whitening only applies to an
+approximate "Teeth-shaped" area - lips and surrounding areas will not
+appear milky-white.
+
+20070114
+--------
+Migrated to JSON for submitting scripts to the server.
+JSON's advantage over the old approach (line separated commands with
+tab-separated command arguments) is that JSON is a standard.
+The client-side script can be submitted directly to the server as-is.
+
+20070108
+--------
+Improved selection-handling when a fixed aspect ratio is enforced.
+
+20070104
+--------
+[1] Changed PXN8.save.toServer() function so that pxn8_save_image() (if
+defined) will be called even if no changes are made to image.
+
+[2] Changed redeye tool (javascript function) to only apply redeye reduction to the area inside
+of the selection handles.
+
+[3] PXN8.loadImage() is deprecated in favour of PXN8.initialize()
+
+20070102
+--------
+Spirit-Level tool - the optimal area is automatically selected when
+the user adjusts the horizon using the spirit level tool.
+
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.6                                                                |
++----------------------------------------------------------------------+
+
+20061220
+--------
+Fixed bug in upload.pl script whereby NPH (Non-Parsed Headers) were
+being used for IIS/6.0 - NPH won't work with Apache or IIS/6.0
+
+20061210
+--------
+Fixed bug in PXN8.listener.onceOnly() whereby some listeners never got
+notified because the listener is removed inside a loop and the loop
+skips past a listener.
+
+20061203
+--------
+Fixed text size bug: Changed "point-size" to "pointsize" to fix text
+tool problems (size was always too small).
+
+20061201
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.6                                                                |
++----------------------------------------------------------------------+
+
+20060913
+--------
+Improved upload.pl script to allow for resizing of large images in
+conjunction with PXN8.hires mode.
+
+
+20060909
+--------
+Fixed a bug which caused javascript errors when the user tried to
+perform an operation while an existing operation was still in
+progress.
+
+20060905
+--------
+You can now edit multiple images (not at the same time) from the same
+page. This feature is demonstrated in the new toolbar_thumbnails
+theme.
+
+20060828
+--------
+Per requests from a number of customers, the location of the cache
+directory is now configurable using the CACHE_DIR variable in
+config.ini.
+
+20060824
+--------
+Added "Text" tool to the Slick theme. Need to add this feature to all
+other themes. (esp. The toolbar).
+
+20060822
+--------
+added PXN8.dom.table function to simplify construction of tables.
+
+--------
+Introduced improved Color Picker.
+
+20060820
+--------
+Fixed PXN8.selectByRatio() function. Added 'override' boolean param to
+ignore image orientation (landscape/portrait) when selecting ratio.
+
+20060817
+--------
+Fixed bugs introduced by changing page DOCTYPE to strict. (The tagname
+can be lowercase)
+
+20060814
+--------
+Fixed redirect problems with Uploading files. Redirect was not working
+in IIS 5.1 (worked ok with IIS5.0).
+
+20060809
+--------
+Made zoom 'sticky' (it retains its zoom factor after the image has
+been updated). Also fixed PXN8.show.alert so it wont stretch beyond
+the bounds of #pxn8_canvas element.
+
+
+20060805
+--------
++----------------------------------------------------------------------+
+| Version                                                              |
+| 1.2.5                                                                |
++----------------------------------------------------------------------+
+
+20060803
+--------
+When the pxn8.pl script is called with no parameters, it will output
+information about the version of imagemagick installed, file-formats
+supported and fonts installed.

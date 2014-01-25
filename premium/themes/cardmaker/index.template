@@ -1,0 +1,304 @@
+[%!include "prehtml.template";%]<html>
+<head>
+<link media="screen" title="CSS Stylesheet" rel="stylesheet" href="style.css" type="text/css"/>
+<!--
+    MUST include pixenate's javascript library
+-->
+[% if ($pg->{target} eq "hosted") { %]
+		<script type="text/javascript" src="http://pixenate.com/h/js"></script>
+[% } else {%]
+   <script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+[% } %]
+<!-- 
+     CardMaker theme uses the Open-source jQuery javascript library.
+     For more information on jQuery please go to http://www.jquery.com 
+-->
+<script type="text/javascript" src="3rdparty/jquery-1.1.4.js"></script>
+<!--
+    The database of card information
+-->
+<script type="text/javascript" src="card_db.js"></script>
+<!--  
+    Theme-specific javascript
+-->
+<script type="text/javascript" src="cardmaker.js"></script>
+<script type="text/javascript">
+// ------------------------------------------------------------------------
+//
+// GLOBAL VARIABLES 
+//
+// ------------------------------------------------------------------------
+
+//
+// The path (relative to pixenate/ directory) where card images are stored.
+// (see fullsize property in card_db.js)
+//
+gPathToCards = "./themes/cardmaker/";
+
+//
+// gActiveCard is the filename part of the chosen card thumbnail
+// in this theme, the assumption is made that each thumbnail url's
+// filename part (e.g. if url is /files/thumbs/x.jpg, the filename part is x.jpg)
+// has a matching entry in the gCardDB object (see card_db.js for details)
+//
+
+[%
+
+ my @params = ("gActiveCard","gPlaceholder","gPlaceholdersFilled","gCardPath","gCardURL");
+
+%]
+
+[%if ($pg->{language} eq "php"){ %]
+[%foreach my $p (@params){ %] 
+  [%print $p;%] = "<?php echo $_GET["[%print $p;%]"] ?>"; 
+[% } %]
+var photo = "<?php echo $_GET["photo"] ?>";
+[% } %]
+
+
+[%if ($pg->{language} eq "asp"){ %]
+[%foreach my $p (@params){ %] 
+  [%print $p;%] = "<%=Request.QueryString("[%print $p;%]") %>";
+[% } %]
+var photo = "<%=Request.QueryString("photo") %>";
+[% } %]
+
+
+[%if ($pg->{language} eq "jsp"){ %]
+[%foreach my $p (@params){ %] 
+  [%print $p;%] = "<%=request.getParameter("[%print $p;%]")!=null?request.getParameter("[%print $p;%]"):""%>";
+[% } %]
+var photo = "<%=request.getParameter("photo")!=null?request.getParameter("photo"):""%>";
+[% } %]
+
+[%if ($pg->{language} eq "pl"){ %]
+[% 
+	sub esc (&){
+	   my ($coderef) = @_;
+		print "["."%";
+		$coderef->();
+		print "%"."]";
+	}
+%]
+[%foreach my $p (@params){ %] 
+[%print $p;%] = "[%esc {%]
+
+print $request->param("[%print $p;%]");
+
+[%}; # end esc{} block%]";
+[% } %]
+var photo = "[%esc {%]
+print $request->param("photo") ne ""?$request->param('photo') : "";
+[%}; # end esc{} block%]";
+[% } %]
+
+//
+// the placeholder color is the color of placeholders for cards that
+// have more than one photo to superimpose over them
+//
+gPlaceholderColor = "#CCCCCC";
+//
+// this variable is used to reduce the card (which can normally be big)
+// so it can be displayed in the page when the user is choosing a placeholder
+// for their photos (only applicable for cards that have 1+ placeholders).
+//
+gCardMaxHeight = 400;
+
+//
+// the maximum display size (zoomed to) to use when in crop mode 
+// (please note the photo won't actually be resized to this size -
+// it's display in the browser.
+// 
+gCropModeMaxPhotoWidth = 640;
+gCropModeMaxPhotoHeight = 480;
+
+gEditModeMaxPhotoWidth = 800;
+gEditModeMaxPhotoHeight = 600;
+
+// ------------------------------------------------------------------------
+//
+// JAVASCRIPT STARTS HERE
+// ------------------------------------------------------------------------
+
+start_cardmaker(photo,function(){
+    var card = PXN8.server + PXN8.root + "/" + PXN8.getUncompressedImage();
+    prompt ("Your card is ready for printing:", card);
+});
+
+</script>
+</head>
+<body>
+<img src="cardmaker_logo.gif"/>
+<br/>
+<div id="loading" class="panel">
+  <h1>Loading. Please wait...</h1>
+</div>
+
+<div id="products" class="panel" style="display: none;">
+   <div class="trail"><em>Choose a Product</em> &raquo; Choose a Photo &raquo; Edit your Photo &raquo; Crop your Photo &raquo; Add a Message</div>
+   <h1>Choose a Product</h1>
+   <ul>
+      <li><img src="products/calendar.jpg"/></li>
+      <li><img src="products/mug.jpg"/></li>
+      <li><img src="products/card.jpg"/></li>
+      <li><img src="products/t-shirt.jpg"/></li>
+   </ul>
+</div>
+
+<div id="cards" class="panel" style="display: none;">
+   <div class="trail"><em>Choose a Card</em> &raquo; Choose a Photo &raquo; Edit your Photo &raquo; Crop your Photo &raquo; Add a Message</div>
+   <h1>Choose a Card</h1>
+   <ul>
+      <li><img src="cards/thumbnails/birthday1.jpg"/></li>
+      <li><img src="cards/thumbnails/birthday2.jpg"/></li>
+      <li><img src="cards/thumbnails/birthday3.jpg"/></li>
+      <li><img src="cards/thumbnails/birthday4.jpg"/></li>
+      <li><img src="cards/thumbnails/getwellsoon1.jpg"/></li>
+      <li><img src="cards/thumbnails/getwellsoon2.jpg"/></li>
+      <li><img src="cards/thumbnails/getwellsoon3.jpg"/></li>
+      <li><img src="cards/thumbnails/weddinginvitation1.jpg"/></li>
+   </ul>
+   <!-- following is required for overflow: auto to work in IE 6 -->
+   <br style="clear: both;"/>&nbsp;
+</div>
+
+<div id="placeholders" class="panel" style="display: none;">
+   <div class="trail">Choose a Card &raquo; <em>Choose a Placeholder</em> &raquo; Choose a Photo &raquo; Edit your Photo &raquo; Crop your Photo &raquo; Add a Message</div>
+  <h1>Choose a Placeholder</h1>
+  <div id="placeholders_container"></div>
+</div>
+
+<div id="photos" class="panel" style="display: none;">
+   <div class="trail">Choose a Card &raquo; <em>Choose a Photo</em> &raquo; Edit your Photo &raquo; Crop your Photo &raquo; Add a Message</div>
+   <h1>Choose a Photo</h1>
+   <!--
+       This theme uses the 'upload.pl' script which is supplied with
+   Pixenate . You can alternatively use your own upload.php,
+   upload.asp, or upload.jsp.
+       Upload.pl will redirect the user back to a page defined in the
+   'next_page' parameter.
+       Any parameter passed into upload.pl with a prefix of _
+   (underscore) will also be passed back to the redirected page (without the prefix)
+   For example. the _gActiveCard parameter is passed to upload.pl (upload.pl
+   does nothing with this parameter - it is only used by the url that
+   the upload.pl script will redirect to. In the following example the
+   '_gActiveCard' parameter is passed to the upload.pl - upload.pl removes the
+   leading _ and passes a 'gActiveCard' parameter to the the redirected url
+   (specified in the 'next_page' parameter).
+   -->
+
+   <form action="/pixenate/upload.pl" method="POST"
+         enctype="multipart/form-data" onsubmit="on_upload(this)">
+      <input type="file" name="filename"/>
+      <input type="hidden" name="next_page" value="/pixenate/themes/cardmaker/index.[%print $pg->{language};%]"/>
+      <input type="hidden" name="pxn8_root" value="/pixenate"/>
+      <input type="hidden" name="image_param_name" value="photo"/>
+
+      <input type="hidden" name="_gActiveCard" value=""/>
+      <input type="hidden" name="_gPlaceholder" value=""/>
+      <input type="hidden" name="_gCardURL" value=""/>
+      <input type="hidden" name="_gCardPath" value=""/>
+      <input type="hidden" name="_gPlaceholdersFilled" value=""/>
+      <input type="submit" value="Upload"/>
+   </form>
+   <!-- 
+		  You should replace the following code which simply shows a
+		  list of static thumbnails, with a list that displays the logged-in
+		  user's photo thumbnails 
+   -->
+   <ul>
+      <li><img src="photos/thumbnails/greenleaves.jpg"/></li>
+      <li><img src="photos/thumbnails/hongkong.jpg"/></li>
+      <li><img src="photos/thumbnails/kinsalesunset.jpg"/></li>
+      <li><img src="photos/thumbnails/elmleaves.jpg"/></li>
+      <li><img src="photos/thumbnails/garinish.jpg"/></li>
+   </ul>
+</div>
+
+<div id="edit_and_crop" class="panel" style="display: none;">
+
+   <div id="editor" style="display: none;">
+      <div class="trail">Choose a Card &raquo; Choose a Photo &raquo; <em>Edit your Photo</em> &raquo; Crop your Photo &raquo; Add a Message</div>
+      <h1>Edit your photo</h1>
+      <ul>
+         <li><button onclick="PXN8.tools.rotate({angle:90});return false;">Rotate 90&deg;</button></li>
+         <li><button onclick="PXN8.tools.normalize();return false;">Fix Colors</button></li>
+         <li><button onclick="PXN8.tools.enhance();return false;">Enhance</button></li>
+         <li><button onclick="PXN8.tools.sepia('#a28a65');return false;">Sepia</button></li>
+         <li><button onclick="PXN8.tools.fill_flash();return false;">Fill Flash</button></li>
+         <li><button onclick="PXN8.tools.undo();return false;">Undo</button></li>
+         <li><button onclick="PXN8.tools.redo();return false;">Redo</button></li>
+         <li><button class="next" onclick="mode_crop_photo(); return false;">Next &raquo;</button></li>
+      </ul>
+   </div>
+   <div id="cropper" style="display: none;">
+      <div class="trail">Choose a Card &raquo; Choose a Photo &raquo; Edit your Photo &raquo; <em>Crop your Photo</em> &raquo; Add a Message</div>
+      <h1>Crop your Photo</h1>
+      <ul>
+         <li><button onclick="crop_and_overlay();return false;">Crop</button></li>
+      </ul>
+   </div>
+   <div id="add_text" style="display: none;">
+      <div class="trail">Choose a Card &raquo; Choose a Photo &raquo; Edit your Photo &raquo; Crop your Photo &raquo; <em>Add a Message</em></div>
+      <h1>Add a Message</h1>
+      <ul id="messages"></ul>    
+      <ul>
+         <li><button onclick="add_message_to_card();return false;">Add Text</button></li>
+         <li><button onclick="undo_add_message();return false;">Undo</button></li>
+         <li><button onclick="end_cardmaker();return false;">Next &raquo;</button></li>
+      </ul>
+   </div>
+
+   <div id="pxn8_canvas"></div>
+
+   <div id="crop_preview_container" style="display:none;">
+		<div id="crop_preview">
+			<div id="clipped"></div>
+		</div>
+   </div>
+
+</div><!-- end of edit_and_crop -->
+
+</body>
+<!--[if gte IE 5.5000]>
+<script type="text/javascript">
+gSpanIdToSrc = {};
+gGenId = 0;
+
+// yuck.
+function correctPNG() // correctly handle PNG transparency in Win IE 5.5 or higher.
+{
+    for(var i=0; i<document.images.length; i++){
+        var img = document.images[i];
+        var imgName = img.src.toUpperCase();
+        if (imgName.substring(imgName.length-3, imgName.length) == "PNG"){
+            var imgID = (img.id) ? "id='" + img.id + "' " : "";
+            if (img.id){
+                gSpanIdToSrc[img.id] = {src: img.src, width: img.width, height: img.height};
+            }else{
+                var id  = 'pngHack_' + gGenId++;
+                gSpanIdToSrc[id] = {src: img.src, width: img.width, height: img.height};
+                imgID = "id=\"" + id + "\" ";
+            }
+            
+            var imgClass = (img.className) ? "class='" + img.className + "' " : "";
+
+            var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' ";
+            var imgStyle = "display: inline-block; " + img.style.cssText ;
+            if (img.align == "left"){imgStyle = "float:left;" + imgStyle;}
+            if (img.align == "right") {imgStyle = "float:right;" + imgStyle;}
+            if (img.parentElement.href){imgStyle = "cursor:hand;" + imgStyle;}
+            var strNewHTML = "<span " + imgID + imgClass + imgTitle 
+                + " style=\"width: " + img.width + "px; height: " + img.height + "px; " + imgStyle + ";"
+                + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+                + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" ;
+            img.outerHTML = strNewHTML;
+            i = i-1;
+        }
+    }
+}
+window.onload = correctPNG;
+</script>
+<![endif]-->
+</html>
+[%!include "posthtml.template";%]

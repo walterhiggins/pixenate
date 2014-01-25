@@ -1,0 +1,24 @@
+* {font-family: Arial; font-size: 14px;}
+#pxn8_timer {position: absolute; top: 0px; left: 0px; background-color: #303030; color: white;}
+#crop_preview {position: relative; float: left; margin-left: 20px;}
+#crop_preview img {position: absolute; top: 0px;left:0px;border: 1px solid #ccc;}
+#clipped {position: absolute; background-color: red;overflow: hidden;}
+#clipped img {position: absolute; }
+#pxn8_canvas {clear:left; border: 1px solid #ccc;}
+#messages li {float: none;}
+#placeholders_container { position: relative; border: 1px solid #ccc; float: left; margin-top: 8px;}
+
+.panel ul { padding: 0px; margin: 0px; overflow: auto; }
+.panel li { float: left; list-style: none; padding: 0px; margin: 0px; cursor: pointer;}
+.panel li img { margin: 8px; padding: 8px; background-color: white; border: 1px solid #ccc;}
+.panel li button { margin: 4px;}
+
+div.panel { overflow: auto; background-color: white; padding: 8px; border: 1px solid #ccc; border-bottom: 2px solid #aaa; border-right: 2px solid #aaa;}
+h1 { margin: 0px; padding: 0px;  font-size: 24px;}
+button { border: 1px solid #aaa; font-size: 14px; padding: 4px; cursor: pointer;}
+button.next { }
+div.trail { background-color: #30D030; color: white; padding: 4px; border-bottom: 1px solid #ccc; }
+em {font-weight: bold; font-style: normal;}
+input.text, textarea { border: 1px solid #ddd; padding: 4px; font-size: 16px;}
+input.text { width: 300px;}
+div.placeholder p { font-size: 200%; text-align: center; margin-top: 40%;}

@@ -1,0 +1,170 @@
+<html>
+<head>
+<style type="text/css">
+* { font-family: Arial;}
+#pxn8_canvas 
+{
+  position: absolute;
+  top: 20px;
+  left: 280px;
+}
+#text_panel { width: 260px;}
+</style>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<script type="text/javascript" src="/pixenate/fonts.pl"></script>
+
+<script type="text/javascript">
+
+function add_text()
+{
+    var _ = PXN8.dom;
+    var sel = PXN8.getSelection();
+    
+    var tf = _.id("text_field");
+    var ff = _.id("font_field");
+    var font = ff.options[ff.selectedIndex].value;
+    var cf = _.id("color_field");
+    var color = cf.options[cf.selectedIndex].value;
+    var sf = _.id("size_field");
+    var size = sf.options[sf.selectedIndex].value;
+    
+    //
+    // exit text mode when the new image has loaded
+    //
+    PXN8.listener.onceOnly(PXN8.ON_IMAGE_CHANGE,stop_text_mode);
+    
+    //
+    // change the image
+    //
+    PXN8.tools.add_text({
+            "text":tf.value,
+            "gravity": "NorthWest",
+            "x" : sel.left,
+            "y" : sel.top,
+            "font" : font,
+                "fill" : color,
+                "pointsize" : size    
+        });
+
+}
+
+function start_text_mode()
+{
+    var _ = PXN8.dom;
+    var ff = _.id("font_field");
+    for (var i in PXN8.fonts){
+        var o = _.ce("option", {"value": i});
+        _.ac(o,_.tx(i));
+        _.ac(ff,o);
+    }
+    ff.onchange = update_preview;
+    _.id("text_field").onchange = update_preview;
+    _.id("size_field").onchange = update_preview;
+    _.id("color_field").onchange = update_preview;
+
+
+    PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,update_preview);
+    
+    var rects = ["top","bottom","left","right","topright","topleft","bottomleft","bottomright"];
+
+    for (var i = 0;i < rects.length; i++){
+        _.opacity("pxn8_" + rects[i] + "_rect",0);
+    }
+
+    var sel = PXN8.getSelection();
+    if (sel.width < 1){
+        PXN8.select(0,0,60,60);
+    }else{
+        update_preview();
+    }
+    
+    
+    _.id("text_panel").style.display = "block";
+    
+}
+function stop_text_mode()
+{
+    var _ = PXN8.dom;
+    var rects = ["top","bottom","left","right","topright","topleft","bottomleft","bottomright"];
+    for (var i = 0;i < rects.length; i++){
+        _.opacity("pxn8_" + rects[i] + "_rect",.30);
+    }
+    _.id("text_panel").style.display = "none";
+    PXN8.listener.remove(PXN8.ON_SELECTION_CHANGE,update_preview);
+    PXN8.unselect();
+    _.id("text_preview").innerHTML = "";
+    
+}
+
+function update_preview(){
+
+    var _ = PXN8.dom;			
+
+
+    var tf = _.id("text_field");
+    var ff = _.id("font_field");
+    var font = ff.options[ff.selectedIndex].value;
+    var cf = _.id("color_field");
+    var color = cf.options[cf.selectedIndex].value;
+    var sf = _.id("size_field");
+    var size = sf.options[sf.selectedIndex].value;
+    var p = _.id("text_preview");
+    if (p == null){
+        p = _.ce("div", {"id": "text_preview"});
+        p.style.position = "absolute";
+        p.style.margin = "0px";
+        p.style.padding = "0px";
+        
+        _.ac(_.id("pxn8_canvas"),p);
+    }
+    p.innerHTML = tf.value;
+    p.style.fontSize = size + "px";
+    p.style.fontFamily = font;
+    var sel = PXN8.getSelection();
+    p.style.left = sel.left + "px";
+    p.style.top = sel.top + "px";
+    p.style.color = color;
+    
+}
+</script>
+</head>
+<body>
+
+<button onclick="start_text_mode();">Add Text</button>
+<button onclick="PXN8.tools.undo();">Undo</button>
+<button onclick="PXN8.tools.redo();">Redo</button>
+
+
+<div id="text_panel" style="display: none;">
+<p>Please drag the selection box to place the text where you would like it.</p>
+<label for="text">Text: </label><input type="text" name="text" id="text_field" value="Hello World"/><br/>
+<label for="font">Font: </label><select name="font" id="font_field"></select><br/>
+<label for="size">Size: </label><select name="size" id="size_field">
+<option value="12">12</option>
+<option value="16">16</option>
+<option value="20">20</option>
+<option value="24" selected>24</option>
+<option value="28">28</option>
+<option value="32">32</option>
+<option value="36">36</option>
+</select><br/>
+<label for="color">Color: </label><select name="color" id="color_field">
+    <option value="#000000">Black</option>
+    <option value="#FFFFFF" selected>White</option>
+    <option value="#FF0000">Red</option>
+    <option value="#0000FF">Blue</option>
+</select><br/>
+<button onclick="add_text();">Apply</button>
+<button onclick="stop_text_mode();">Cancel</button>
+
+
+<script type="text/javascript">
+</script>
+
+</div>
+
+
+<div id="pxn8_canvas"></div>
+<script type="text/javascript">PXN8.initialize("/pixenate/images/samples/greenleaves.jpg");</script>
+</body>
+</html>

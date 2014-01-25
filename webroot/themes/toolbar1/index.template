@@ -1,0 +1,120 @@
+[%!include "prehtml.template";%]
+<html>
+<head>
+[%if ($pg->{target} eq "hosted") {%]
+<script type="text/javascript" src="http://pixenate.com/h/js"></script>
+[%}else{%]
+<script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+[%}%]
+
+<style type="text/css">
+@import url(../../styles/pxn8_toolbar.css);     /* PXN8 toolbar presentation  */
+#pxn8_canvas{ border: 8px solid #dddddd; }   /* Create an 8-pixel border around image */
+* { font-family: Arial; font-size: 12px;line-height: 20px;}
+body { text-align: center;}
+div { text-align: left;}
+h2 { font-size: 20px; color: maroon;}
+h1 { margin: 4px; font-size: 32px; color: steelblue;line-height: 40px;}
+#content { margin-left: auto; margin-right: auto;  width: 860px; }
+#header { height: 100px; border-bottom: 6px solid #e0e0e0; }
+#main { position: relative;}
+#left { width: 660px;}
+#right { position: absolute;  top: 0px;left: 660px;}
+.comment { color: #303030;margin: 8px;padding-bottom: 8px;border-bottom: 1px dashed #e0e0e0;}
+.comment img { margin: 8px;}
+</style>
+
+</head>
+<body>
+[%!include "body_inc.template";%]
+
+<div id="content">
+
+<div id="header">
+  <h1>PhotoCommune</h1>
+  <h2>Your photos on the web</h2>
+</div> <!-- header -->
+
+<div id="main">
+  <div id="left">
+    <h2>Hong Kong Skyline</h2>
+
+    <script type="text/javascript">
+
+PXN8.toolbar.crop_options = ["freehand","4x6","5x8","6x8","8x11"];
+
+PXN8.toolbar.draw(['undo',
+                   'redo',
+	                'selectall',
+	                'unselect',
+                   'zoomin',
+                   'zoomout',
+                   'rotate',
+                   'crop',
+                   'instantFix',
+                   'fillflash',
+                   'save'
+                   ]);
+    </script>
+
+    <div id="pxn8_canvas">
+    <!-- This is where the image will appear -->
+    </div>
+
+    <br style="clear:both;"/>
+
+    <div id="comments">
+      <h2>Comments</h2>
+      <div class="comment">
+         <img src="../shared/images/persona.gif" align="left"/>
+         Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec eget
+         nulla vitae purus imperdiet varius. Quisque elementum, massa in
+         rutrum eleifend, augue turpis hendrerit felis, id posuere nisl
+         nisl a sem. Integer vel nisl. Donec pretium. Nulla faucibus
+         lectus a magna. Maecenas eget ligula. In mattis. Praesent enim
+         lectus, tempor condimentum, convallis quis, facilisis non,
+         sem. Vivamus tristique felis facilisis erat. Curabitur sem
+         nisi, dapibus sit amet, pretium ac, fermentum eget,
+         purus. Phasellus laoreet arcu nec erat.
+      </div>
+      <div class="comment">
+         <img src="../shared/images/persona.gif" align="left"/>
+         Nulla venenatis. Lorem ipsum dolor sit amet, consectetuer
+         adipiscing elit. Donec eleifend aliquet nibh. Aliquam erat
+         volutpat. Aliquam molestie ipsum rutrum ante. Maecenas faucibus
+         nibh ut nibh. Duis lobortis interdum urna. In velit enim,
+         malesuada eu, consequat a, dapibus ornare, tellus. Donec
+         adipiscing arcu nec ante. Sed molestie est vel felis. Sed erat
+         mi, sodales hendrerit, nonummy eu, mattis nec, dui. Aenean eget
+         augue eu turpis commodo semper. Curabitur laoreet ultricies
+         leo. Nunc a urna. Nullam eleifend.
+      </div>
+      <div class="comment">
+         <img src="../shared/images/persona.gif" align="left"/>
+         Mauris gravida scelerisque erat. Aenean tortor. Donec consectetuer
+         iaculis quam. Nam consequat purus non arcu. Nam libero metus,
+         dapibus in, laoreet vestibulum, luctus in, mauris. Proin turpis
+         enim, placerat nec, faucibus at, feugiat ac,
+         lorem. Pellentesque lobortis tellus eu massa. Suspendisse
+         egestas lorem ut lectus. Aliquam dui nunc, fermentum ut,
+         pharetra a, dapibus ac, eros. Mauris elementum
+         erat. Pellentesque sed sapien non felis adipiscing
+         egestas. Mauris neque urna, sagittis et, nonummy congue,
+         scelerisque sed, enim. Integer purus pede, consequat vel,
+         aliquam nec, placerat quis, nisl. Duis enim.
+      </div>
+    </div> <!-- comments -->
+  </div> <!-- left -->
+
+  <div id="right">
+    <h2>About</h2>
+    This theme demonstrates the power of PXN8's photo-editing Toolbar. 
+    The PXN8 toolbar is the easiest way to add photo-editing to your existing photo website. 
+    <p>This particular theme demonstrates the Toolbar in use in typical 2-column layout.
+    Please take a look at the source to this page. (Right-click and select 'View Source')</p>
+  </div><!-- right -->
+</div><!-- main -->
+</div><!-- content -->
+</body>
+</html>
+[%!include "posthtml.template";%]

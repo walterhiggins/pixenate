@@ -1,0 +1,54 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+* { font-family: Arial; 
+}
+     
+</style>
+</head>
+<body>
+<p>In this example, you cannot select an area of the photo less
+  than 400 pixels wide and 200 pixels high.</p>
+<div id="pxn8_canvas"></div>
+</body>
+<script type="text/javascript">
+PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+
+function snapToMinimum(width,height){
+    return function()
+    {
+        var sel = PXN8.getSelection();
+        if (sel.width == 0){
+            return;
+        }
+        var tooSmall = false;
+        if (sel.width < width){
+            sel.width = width;
+            tooSmall = true;
+        }
+        if (sel.height < height){
+            sel.height = height;
+            tooSmall = true;
+        }
+        if (tooSmall){
+            PXN8.select(sel);
+        }
+    };
+}
+
+//
+// Don't allow user to select an area less than 400x200
+//
+
+var minimum = snapToMinimum(400,200);
+
+PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,minimum);
+
+//
+// to later remove this restriction ...
+//
+// PXN8.listener.remove(PXN8.ON_SELECTION_CHANGE,minimum);
+
+</script>
+</html>

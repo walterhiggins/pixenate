@@ -1,0 +1,69 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+* { font-family: Arial; 
+}
+     
+</style>
+</head>
+<body>
+<p>In this example, the image will be cropped and resized to 400 x
+  200 Pixels. The user can move the crop area to choose which part of
+  the image they would like to keep, but they cannot resize the
+  crop area.</p>
+
+<div>
+Image Size: <span id="pxn8_image_size">---</span> Selection Size:
+<span id="pxn8_selection_size">---</span>
+</div>
+<div id="pxn8_canvas"></div>
+
+<div style="clear:left;">
+<button id="btn1" onclick="crop_and_resize();return false;">Crop &amp; Resize</button>
+</div>
+
+</body>
+<script type="text/javascript">
+
+// load the photo
+PXN8.initialize("/pixenate/images/samples/hongkong.jpg");
+
+//
+// after the photo has loaded select an area based on ratio of 400x200
+// and disable the selection resize handles
+//
+PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+  PXN8.selectByRatio("400x200",true);
+  PXN8.resize.enable(["n","s","e","w","nw","ne","sw","se"],false);
+});
+
+
+function crop_and_resize(){
+    //
+    // 1st create a 'crop' object 
+    // the easiest way to do this is from the selection area
+    //
+    var crop = PXN8.getSelection();
+    crop.operation = "crop";
+
+    // then create a 'resize' object
+    //
+    var resize = {operation: "resize", width: 400, height: 200};
+
+    // now pass both objects to the PXN8.tools.updateImage() function
+    //
+    PXN8.tools.updateImage([crop,resize]);
+
+    // disable all further selections
+    PXN8.listener.add(PXN8.ON_SELECTION_CHANGE,function(){
+      var sel = PXN8.getSelection();
+      if (sel.width > 0){ PXN8.unselect();}  
+    });
+
+    // hide the button
+    document.getElementById("btn1").style.display = "none";
+
+}
+</script>
+</html>

@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Setting up Pixenate on a J2EE server which doesn't support CGI</title>
+<link rel="stylesheet" href="docs.css" type="text/css" />
+  <script type="text/javascript" src="showcode.js"></script>
+</head>
+<body>
+<h1>Setting up Pixenate on a J2EE server which doesn't support CGI</h1>
+
+<p>If you would like to run Pixenate on a J2EE server which doesn't
+  support CGI, please follow these steps...
+</p>
+
+<h2>Tomcat 6</h2>
+
+<ol>
+  <li>
+	 In the <em>pixenate/cgi-extra/</em> directory there is a file called
+	 pxn8.jsp. Copy this file to the <em>pixenate/</em> directory.
+  </li>
+  <li>
+	 Open the <em>pixenate/pxn8.jsp</em> file in an editor and add the
+	 following code at the top of the java block...
+	 <pre><code>String script = "YOUR_ABSOLUTE_PATH_TO_PXN8.PL_SCRIPT";</code></pre>
+	 ... inserting your own absolute path to the pxn8.pl script. (see
+	 examples for Sun App Server and Tomcat already provided in the source).
+  </li>
+  <li>
+	 Change the <em>perlExe</em> String value to the absolute path to
+	 perl on your machine. e.g. <em>"C:\\Perl\\bin\\perl.exe"</em>.
+  </li>
+  <li>
+	 In your editor JSP page,
+	 (e.g. <em>pixenate/themes/slick/index.jsp</em>) add the following javascript
+	 code <em>before</em> the call to <em>PXN8.initialize()</em>...
+	 <pre><code>PXN8.basename = "pxn8.jsp";</code></pre>
+  </li>
+  <li>
+	 In a browser, visit the
+	 URL <a href="http://localhost:8080/pixenate/pxn8.jsp">http://localhost:8080/pixenate/pxn8.jsp</a>.
+	 (changing the servername, port and path to match your own
+	 install). The output should look something like this...
+	 <pre><code>{ "width" : -1, "status" : "ERROR", "opNumber" : 0, "errorMessage" : "No script supplied",...</code></pre>
+	 ... if you get the following error message...
+	 <pre><code>Unable to load server-side pixenate perl modules...</code></pre>
+	 ... please refer to <a href="Installation-Guide.html#troubleshoot_modperl_iis6">Troublshooting</a>.
+  </li>
+  <li>
+	 In a browser, visit your local editor page (the one you changed in
+	 step 4) and try to edit a photo (e.g. rotate). The editor should
+	 change the photo without problem.
+  </li>
+</ol>
+
+<h2>Sun App Server 8</h2>
+<p>The steps to setup Pixenate on Sun's App Server 8 are the same as
+  Tomcat 6. You need to perform the following additional step...
+</p>
+<p>
+  Change your domain's policy file (the policy file is found
+  in <em>domains/${DOMAIN_NAME}/config/server.policy</em>) as follows... 
+</p>
+<p>
+  Find the following line under the global grant statement ...
+  <pre><code>	permission java.io.FilePermission       "<<ALL FILES>>", "read,write";</code></pre>
+  ... and change it to ...
+  <pre><code>	permission java.io.FilePermission       "<<ALL FILES>>", "read,write,execute";</code></pre>
+  Restart the domain server so that the new permissions are granted.
+</p>
+</body>
+</html>
+

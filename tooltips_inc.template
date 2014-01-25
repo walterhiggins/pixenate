@@ -1,0 +1,19 @@
+[%if ($pg->{language} eq "pl") { %]
+
+	[%%include "../shared/tooltips.html";%]
+
+[% }elsif ($pg->{language} eq "php"){ 
+
+	  my $path = "../shared/tooltips.html";
+	  if ($pg->{target} eq "website"){
+			$path = "./pixenate/themes/shared/tooltips.html";
+	  }
+%]
+   <?php include "[%print $path;%]"?>
+
+[% }elsif ($pg->{language} eq "jsp"){ %]
+  <%@ include file="../shared/tooltips.html" %>
+
+[% }elsif ($pg->{language} eq "asp"){ %]
+  <!-- #include file="../shared/tooltips.html"-->
+[% } %]

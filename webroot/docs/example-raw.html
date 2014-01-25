@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+			 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+	 <style type="text/css">
+		</style>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+	 </head>
+  <body>
+	 <div id="fill"></div>
+	 <div>
+		<form action="/pixenate/pxn8.pl" onsubmit="return false;">
+		  <textarea id="pxn8_script" cols="160" rows="40">
+		  </textarea>
+		  <button onclick="sendScript()">Submit</button>
+		</form>
+	 </div>
+<script type="text/javascript">
+function sendScript(){
+     var script = document.getElementById("pxn8_script").value;
+     try{
+     script = eval(script);
+     }catch(e){
+          alert(e);
+     }  
+
+     PXN8.ajax.submitScript(script,function(response){
+         var img = PXN8.dom.ce("img",{src: "/pixenate/" + response.image});
+         PXN8.dom.ac(document.body,img);
+     });
+}
+</script>
+	 </body>
+  </html>

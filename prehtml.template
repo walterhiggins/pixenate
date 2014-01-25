@@ -1,0 +1,16 @@
+[%
+
+if ($pg->{language} eq "pl"){
+	if ($pg->{target} eq "website"){ 
+		 print "#!/usr/bin/perl -Ipixenate/lib/\n";
+	}else{
+       print "#!/usr/bin/perl -I../../lib/\n";
+	}
+%]
+use strict;
+use CGI ':standard';
+use Sxoop::TinyTemplate ':all';
+my $request = new CGI;
+print "Content-type: text/html\n\n";
+my $perlcode = Sxoop::TinyTemplate::parse<<'HTML';
+[% } %]

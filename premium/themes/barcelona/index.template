@@ -1,0 +1,786 @@
+[%!include "prehtml.template";%]<html>
+<head>
+
+<!-- Pixenate Javascript Dependencies -->
+[% if ($pg->{target} eq "hosted") { %]
+	<script type="text/javascript" src="http://pixenate.com/h/js"></script>
+[% } else { %]
+   <script type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+[% } %]
+<!-- Yahoo UI Dependencies -->
+<script type="text/javascript" src="yahoo/yahoo.js"></script>
+<script type="text/javascript" src="yahoo/dom.js"></script>
+<script type="text/javascript" src="yahoo/event.js"></script>
+<script type="text/javascript" src="yahoo/animation.js"></script>
+<script type="text/javascript" src="yahoo/dragdrop.js"></script>
+<script type="text/javascript" src="yahoo/connection.js"></script>
+<script type="text/javascript" src="yahoo/container.js"></script>
+<script type="text/javascript" src="yahoo/slider.js"></script>
+<script type="text/javascript" src="yahoo/js/color.js" ></script>
+
+<link rel="stylesheet" type="text/css" href="yahoo/container.css" />
+
+<style type="text/css">
+/**
+ * COLOR Picker styling
+ */
+.hue_thumb { cursor:default; width:18px; height:18px; z-index: 9; position:absolute; }
+.hue_bg { -moz-outline: none; outline:0px none; position:absolute; left: 192px; height:198px;  width:18px;  background:url(yahoo/img/hue.png) no-repeat;  top:0px;}
+.color_container { -moz-outline: none; outline:0px none; position:absolute; top: 2px;left:0px; width:188px;  height:187px; background-color:#FF0000; 
+/* background:url(yahoo/img/pickerbg.png) no-repeat; */
+}
+.color_bg { position:absolute; z-index: 1; top:0px; left:0px; } 
+.color_selector { cursor:default; width:11px; height:11px; z-index: 9; position:absolute; top:0px; left:0px; }
+div.color_value { text-align:right; position:absolute; top: 66px; left:214px; } 
+div.color_swatch { position:absolute; left:224px; top:6px; height:60px; width:60px; border:2px solid #aaaaaa; }
+
+/*
+ *  Radius slide is between 1 and 8
+ */
+.pxn8_radius_slide {position: relative; background: url(yahoo/img/horizBg1.gif) no-repeat; height:26px; width:193px;zindex:5 text-align: center;margin-right: auto; margin-left:auto; }
+.pxn8_100_slide {position: relative; background: url(yahoo/img/horizBg100.gif) no-repeat; height:26px; width:178px;zindex:5 text-align: center;margin-right: auto; margin-left:auto; }
+.pxn8_200_slide {position: relative; background: url(yahoo/img/horizbg200.gif) no-repeat; height:26px; width:218px;zindex:5 text-align: center;margin-right: auto; margin-left:auto; }
+.pxn8_contrast_slide {position: relative; background: url(yahoo/img/horizbgcontrast.gif) no-repeat; height:26px; width:218px;zindex:5 text-align: center;margin-right: auto; margin-left:auto; }
+
+.pxn8_slide_thumb {position: absolute; top: 8px; cursor: default;width: 18px;height: 18px;}
+.pxn8_preview {text-align: center;margin-right: auto;margin-left:auto; font-size: 24px;font-weight: bold;color: white;overflow: hidden;}
+
+.pxn8_dialog { background-color: #f4f4f4; font-size: 11px; color: #404040; }
+
+/**
+ * Overrides of /yahoo/container.css stylings
+ */     
+.button-group button { font-size: 11px;font-family: Arial; }
+.panel .hd { background-color:#bbbbbb;}
+
+/**
+ * PAGE stuff
+ */
+     
+* {font-family: Arial; font-size: 12px;}
+#pxn8_timer, #pxn8_warning {position: absolute; top: 0px; left: 0px; background-color: teal; color: white; display: block; opacity: 0.7; -moz-opacity: 0.7; filter: alpha(opacity: 70); padding: 4px 0px 4px 4px;}
+#pxn8_canvas { overflow: hidden; }
+
+#ddCanvas { position: absolute; background-color: #eeeeee; top: 200px; left: 20px; padding: 2px;}
+#canvas_handle { background-color: #bbbbbb; height: 10px; cursor: move; }
+
+div.pxn8_panel_handle { padding: 4px; color: #444444; font-weight: bold; cursor: move; background-color: #bbbbbb;}
+div.pxn8_panel {position: absolute; padding: 2px; background-color: #f4f4f4;}
+
+body {
+   background: url(../shared/images/pixenate_bg.gif) 100% 100% no-repeat; 
+   background-attachment: fixed;
+   
+}
+    
+</style>
+<script type="text/javascript">
+//<![CDATA[
+/**
+ * Adapted from YAHOO's ColorPicker example
+ * http://developer.yahoo.com/yui/examples/slider/rgb2.html?mode=dist
+ */
+ColorPicker = function() {
+
+    var Slider=YAHOO.widget.Slider;
+    var Color=YAHOO.util.Color;
+    var Dom=YAHOO.util.Dom;
+
+    var pickerSize=180;
+    
+    return {
+        init: function (id,callback) {
+		      var selectorId = id + "_selector";
+            var hueId = id + "_hue";
+            var thumbId = id + "_thumb";
+            var hexId = id + "_hex";
+            var swatchId = id + "_swatch";
+            var pickerId = id + "_picker";
+            
+            var hue,picker;
+
+            // hue, int[0,359]
+            var getH = function() {
+                var h = (pickerSize - hue.getValue()) / pickerSize;
+                h = Math.round(h*360);
+                return (h == 360) ? 0 : h;
+            };
+            
+            
+            // saturation, int[0,1], left to right
+            var getS = function() {
+                return picker.getXValue() / pickerSize;
+            };
+            
+            
+            // value, int[0,1], top to bottom
+            var getV = function() {
+                return (pickerSize - picker.getYValue()) / pickerSize;
+            };
+            
+            
+            var swatchUpdate = function() {
+                var h=getH(), s=getS(), v=getV();
+                var rgb = Color.hsv2rgb(h, s, v);
+                var styleDef = "rgb(" + rgb.join(",") + ")";
+                Dom.setStyle(swatchId, "background-color", styleDef);
+                Dom.get(hexId).value = Color.rgb2hex(rgb[0], rgb[1], rgb[2]);
+            };
+            
+            var hueUpdate = function(newOffset) {
+                var rgb = Color.hsv2rgb(getH(), 1, 1);
+                var styleDef = "rgb(" + rgb.join(",") + ")";
+                Dom.setStyle(pickerId, "background-color", styleDef);
+                swatchUpdate();
+            };
+            
+            
+            hue = Slider.getVertSlider(hueId, thumbId, 0, pickerSize);
+
+            hue.subscribe("change", hueUpdate);
+            hue.subscribe("slideEnd", callback);
+
+				picker = Slider.getSliderRegion(pickerId, selectorId, 0, pickerSize, 0, pickerSize);
+            picker.subscribe("change", swatchUpdate);
+            picker.subscribe("slideEnd",callback);
+            
+            hueUpdate(0);
+        }
+    }
+}();
+
+function init_200(bg,thumb,initValue,input,callback)
+{
+    var dom = YAHOO.util.Dom;
+    var initpx = initValue;
+    
+    dom.setStyle(thumb,"left",initpx + "px");
+    
+    var xslider = YAHOO.widget.Slider.getHorizSlider(bg, thumb, initpx, 200-initpx, 5);
+
+    xslider.subscribe("change", function(offsetFromStart) {        
+        var v = offsetFromStart ;
+        var vv = v - (v % 5);
+        dom.get(input).value = initValue + v;
+    });
+    
+    xslider.subscribe("slideEnd", function(){
+        var v  = this.getValue();
+        var vm = v % 5;
+        var vv = vm > 3 ? (v - vm + 5) : v - vm;
+
+        var percentage = initValue + vv;
+        callback(percentage);
+
+    });
+    
+    return xslider;
+    
+}
+
+function init_percentage(bg,thumb,initValue,input,callback)
+{
+    var dom = YAHOO.util.Dom;
+    var initpx = Math.ceil(1.6 * initValue);
+    
+    dom.setStyle(thumb,"left",initpx + "px");
+    
+    var xslider = YAHOO.widget.Slider.getHorizSlider(bg, thumb, initpx, 160-initpx, 1);
+
+    xslider.subscribe("change", function(offsetFromStart) {        
+        var v = offsetFromStart ;
+        var vv = v - (v % 8);
+        dom.get(input).value = initValue + (Math.ceil((vv*5)/8));
+    });
+    
+    xslider.subscribe("slideEnd", function(){
+        var v  = this.getValue();
+        var vm = v % 8;
+        var vv = vm > 4 ? (v - vm + 8) : v - vm;
+
+        //        if (vv != v){
+        //            this.setValue(vv);
+        //        }else{
+            var percentage = initValue + (Math.ceil(vv*5)/8 );
+            callback(percentage);
+            //        }
+    });
+    
+    return xslider;
+}
+
+function init_radius(bg,thumb,initValue,input,callback)
+{
+    var dom = YAHOO.util.Dom;
+    var initpx = 25 * (initValue-1);
+    
+    dom.setStyle(thumb,"left",initpx + "px");
+    
+    var xslider = YAHOO.widget.Slider.getHorizSlider(bg, thumb, initpx, 175-initpx, 25);
+    xslider.subscribe("change", function(offsetFromStart) {        
+        dom.get(input).value = initValue + (offsetFromStart / 25);
+    });
+    
+    xslider.subscribe("slideEnd", function(){
+        var radius = initValue + (this.getValue() / 25);
+        callback(radius);
+    });
+    
+    return xslider;
+}
+
+function init_contrast(bg,thumb,initValue,input,callback)
+{
+    var dom = YAHOO.util.Dom;
+    var initpx = 25 * (initValue+4);
+    
+    dom.setStyle(thumb,"left",initpx + "px");
+    
+    var xslider = YAHOO.widget.Slider.getHorizSlider(bg, thumb, initpx, 200-initpx, 25);
+    xslider.subscribe("change", function(offsetFromStart) {        
+        dom.get(input).value = initValue + (offsetFromStart / 25);
+    });
+    
+    xslider.subscribe("slideEnd", function(){
+        var radius = initValue + (this.getValue() / 25);
+        callback(radius);
+    });
+    
+    return xslider;
+}
+//]]>
+</script>
+
+</head>
+<body>
+[%!include "body_inc.template";%]
+
+<!-- ======================================================================== 
+  --                                                                          
+  -- Initilize the Pixenate Editor                                            
+  --                                                                          
+  -- ======================================================================== -->
+<script type="text/javascript">
+PXN8.replaceOnSave = false;
+PXN8.dom.addLoadEvent(function(){
+    PXN8.initialize(image);
+    panel = new YAHOO.util.DD("ddCanvas");
+    panel.setHandleElId("canvas_handle");
+
+    var fitPanelToImage = function(){
+        var canvas = PXN8.dom.id("ddCanvas");
+        var image = PXN8.dom.id("pxn8_image");
+        canvas.style.width = image.width + 4 + "px";
+    };
+    
+    
+    PXN8.listener.add(PXN8.ON_IMAGE_LOAD,fitPanelToImage);
+                      
+});
+</script>
+
+<!-- ======================================================================== 
+  --                                                                          
+  -- The toolbar
+  --                                                                          
+  -- ======================================================================== -->
+  <div id="basic_adjustments" class="pxn8_panel" style="top: 10px; left: 10px;">
+    <div id="basic_adjustments_handle" class="pxn8_panel_handle" style="background-color: lavender;">Basic Adjustments</div>
+  <span class="button-group">
+  <button onclick="PXN8.tools.rotate({angle: 90});">Rotate CW</button>
+  <button onclick="PXN8.tools.rotate({angle: 270});">Rotate CCW</button>
+  <button onclick="PXN8.tools.rotate({fliphz: true});">Mirror</button>
+  <button onclick="show_crop_dialog()">Crop...</button>
+  </span>
+  </div>
+  <script type="text/javascript">
+    YAHOO.util.Event.addListener(window, "load", function(){
+        var panel = new YAHOO.util.DD("basic_adjustments");
+        panel.setHandleElId("basic_adjustments_handle");                      
+    });
+  </script>
+
+
+  <div id="enhancements" class="pxn8_panel" style="top: 70px; left: 10px;">
+    <div id="enhancements_handle" class="pxn8_panel_handle" style="background-color: lemonchiffon;">Enhancements</div>
+  <span class="button-group">
+  <button onclick="PXN8.tools.normalize();">Normalize</button>
+  <button onclick="PXN8.tools.enhance();">Enhance</button>
+  <button onclick="show_fillflash_dialog()">Fill-Flash...</button><br/>
+  <button onclick="show_colors_dialog()">Colors...</button>
+  <button onclick="var sel = PXN8.getSelection(); if (sel.width > 0){PXN8.tools.fixredeye(sel);}else{alert('Please select an area to fix');}">Fix Red-Eye</button>
+  <button onclick="var sel = PXN8.getSelection(); if (sel.width > 0){PXN8.tools.whiten(PXN8.getSelection());}else{alert('Please select an area to fix');}">Whiten Teeth</button>
+  </span>
+  </div>
+  <script type="text/javascript">
+    YAHOO.util.Event.addListener(window, "load", function(){
+        var panel = new YAHOO.util.DD("enhancements");
+        panel.setHandleElId("enhancements_handle");                      
+    });
+  </script>
+
+  <div id="effects" class="pxn8_panel" style="top: 160px; left: 10px;">
+    <div id="effects_handle" class="pxn8_panel_handle" style="background-color: mistyrose;">Effects</div>
+  <span class="button-group">
+  <button onclick="show_oilpaint_dialog()">Oil-paint...</button>
+  <button onclick="show_charcoal_dialog()">Charcoal...</button>
+  <button onclick="show_sepia_dialog()">Sepia/B&amp;W...</button>
+  </span>
+  </div>
+  <script type="text/javascript">
+    YAHOO.util.Event.addListener(window, "load", function(){
+        var panel = new YAHOO.util.DD("effects");
+        panel.setHandleElId("effects_handle");                      
+    });
+  </script>
+
+
+
+
+<!-- ======================================================================== 
+  --                                                                          
+  -- The Pixenate Canvas
+  --                                                                          
+  -- ======================================================================== -->
+<div id="ddCanvas" style="top: 10px; left: 280px;">
+      <div id="canvas_handle">&nbsp;</div>
+  <span class="button-group">
+  <button onclick="PXN8.tools.undo();">Undo</button>
+  <button onclick="PXN8.tools.redo();">Redo</button>
+  <button onclick="PXN8.save.toDisk();">Download...</button>
+  </span>
+<div id="pxn8_canvas"></div>
+</div>
+
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Oil-Paint dialog                                                     --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="oilpaint_dialog" class="pxn8_dialog" >
+	<div class="hd">Oil-Painting Effect</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST"  action="">
+			<label for="radius">Enter Radius:</label><input type="text" id="oilpaint_radius_value" name="radius" />
+         <div id="oilpaint_radius_slide"  class="pxn8_radius_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="oilpaint_radius_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+         <div id="oilpaint_preview"  class="pxn8_preview" style="width: 160px; height: 160px;"></div>
+      </form>
+	</div>
+</div>
+<script type="text/javascript">
+/**
+ * Setup dialog
+ */
+             var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    var radius = this.getData().radius;
+    PXN8.tools.oilpaint(Math.max(1,Math.min(8,radius)));
+    this.hide();
+};
+var oilpaint_dialog = new YAHOO.widget.Dialog("oilpaint_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+oilpaint_dialog.cfg.queueProperty("buttons", myButtons);
+oilpaint_dialog.render();
+oilpaint_dialog.hide();
+oilpaint_dialog.cfg.setProperty("modal", false);
+
+function oilpaint_preview(radius){
+    PXN8.preview.show(oilpaintPreviewer,{"operation":"oilpaint","radius":radius});
+}
+function show_oilpaint_dialog(){
+    oilpaint_dialog.show();
+    oilpaintPreviewer = PXN8.preview.initialize("oilpaint_preview");
+    /**
+     * Setup slider
+     */
+    oilpaint_slider = init_radius("oilpaint_radius_slide",
+                                  "oilpaint_radius_thumb",4,
+                                  "oilpaint_radius_value",
+                                  oilpaint_preview);
+}
+</script>
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Charcoal dialog                                                      --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="charcoal_dialog" class="pxn8_dialog">
+	<div class="hd">Charcoal Effect</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST" action="">
+			<label for="radius">Enter Radius:</label><input type="text" id="charcoal_radius_value" name="radius" />
+         <div id="charcoal_radius_slide" class="pxn8_radius_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="charcoal_radius_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+         <div id="charcoal_preview" class="pxn8_preview" style="width: 160px; height: 160px;"></div>
+      </form>
+	</div>
+</div>
+<script type="text/javascript">
+/**
+ * Setup dialog
+ */
+             var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    var radius = this.getData().radius;
+    PXN8.tools.charcoal(Math.max(1,Math.min(8,radius)));
+    this.hide();
+};
+var charcoal_dialog = new YAHOO.widget.Dialog("charcoal_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+charcoal_dialog.cfg.queueProperty("buttons", myButtons);
+charcoal_dialog.render();
+charcoal_dialog.hide();
+charcoal_dialog.cfg.setProperty("modal", false);
+
+function charcoal_preview(radius){
+    PXN8.preview.show(charcoalPreviewer,{"operation":"charcoal","radius":radius});
+}
+function show_charcoal_dialog(){
+    charcoal_dialog.show();
+    charcoalPreviewer = PXN8.preview.initialize("charcoal_preview");
+    /**
+     * Setup slider
+     */
+    charcoal_slider = init_radius("charcoal_radius_slide",
+                                  "charcoal_radius_thumb",4,
+                                  "charcoal_radius_value",
+                                  charcoal_preview);
+}
+</script>
+
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Crop dialog                                                      --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="crop_dialog" class="pxn8_dialog">
+	<div class="hd">Crop Photo</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST" action="">
+			<label for="ratio">Aspect Ratio:</label><select onchange="on_aspect_ratio_change(this);" name="aspect_ratio" >
+             <option selected value="free">Free Select</option>
+             <option value="1x1">1 x 1 (Square)</option>
+             <option value="4x6">4 x 6 </option>
+             <option value="5x7">5 x 7 </option></select><br/>
+         <span class="button-group"><button onclick="preview_crop()">Preview</button> <button onclick="PXN8.rotateSelection()">Rotate Selection</button></span>
+      </form>
+	</div>
+</div>
+<script type="text/javascript">
+
+function on_aspect_ratio_change(combobox)
+{
+    var selected = combobox.options[combobox.selectedIndex];
+    PXN8.selectByRatio(selected.value);
+}
+
+function update_selection_view(color,opacity)
+{
+    var _ = PXN8.dom;
+    var rects = ["left","right","top","bottom"];
+    for (var i  = 0;i < rects.length; i++){
+        var rect = _.id("pxn8_" + rects[i] + "_rect");
+        rect.style.backgroundColor = color
+        _.opacity(rect,opacity);
+    }
+}
+/**
+ * A nice feature to have: preview a crop operation before doing it.
+ */
+function preview_crop()
+{
+    update_selection_view("white",1.00);
+    var oldcolor = PXN8.style.notSelected.color;
+    var oldopacity = PXN8.style.notSelected.opacity;
+    setTimeout(function(){update_selection_view(oldcolor,oldopacity);},3500);
+}
+/**
+ * Setup dialog
+ */
+var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    PXN8.tools.crop(PXN8.getSelection());
+
+    this.hide();
+};
+var crop_dialog = new YAHOO.widget.Dialog("crop_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+crop_dialog.cfg.queueProperty("buttons", myButtons);
+crop_dialog.render();
+crop_dialog.hide();
+crop_dialog.cfg.setProperty("modal", false);
+
+function show_crop_dialog(){
+    crop_dialog.show();
+}
+</script>
+
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Fill-Flash dialog                                                    --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="fillflash_dialog" class="pxn8_dialog">
+	<div class="hd">Fill-Flash Effect</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST" action="">
+			<label for="opacity">Luminosity:</label><input type="text" id="fillflash_opacity_value" name="opacity" />
+         <div id="fillflash_opacity_slide" class="pxn8_100_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="fillflash_opacity_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+         <div id="fillflash_preview" class="pxn8_preview" style="width: 160px; height: 160px;"></div>
+      </form>
+	</div>
+</div>
+<script type="text/javascript">
+/**
+ * Setup dialog
+ */
+var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    var opacity = this.getData().opacity;
+    PXN8.tools.fill_flash(Math.max(0,Math.min(100,opacity)));
+    this.hide();
+};
+var fillflash_dialog = new YAHOO.widget.Dialog("fillflash_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+fillflash_dialog.cfg.queueProperty("buttons", myButtons);
+fillflash_dialog.render();
+fillflash_dialog.hide();
+fillflash_dialog.cfg.setProperty("modal", false);
+
+
+function fillflash_preview(opacity){
+    PXN8.preview.show(fillflashPreviewer,{"operation":"fill_flash","opacity":opacity});
+}
+
+
+function show_fillflash_dialog(){
+    fillflashPreviewer = PXN8.preview.initialize("fillflash_preview");
+    /**
+     * Setup slider
+     */
+    fillflash_slider = init_percentage("fillflash_opacity_slide","fillflash_opacity_thumb",
+                                       50,
+                                       "fillflash_opacity_value",fillflash_preview);
+    PXN8.preview.centerOffset(fillflashPreviewer);
+    fillflash_dialog.show();
+}
+</script>
+
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Sepia-Tone dialog                                                    --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="sepia_dialog" style=" width: 300px;" class="pxn8_dialog">
+	<div class="hd">Sepia-Tone / Black & White Effect</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST" action="">
+
+<div  style="position: relative; height: 200px; ">
+    <div id="sepia_picker" class="color_container" tabindex="-1" hidefocus="true">
+      <img class="color_bg" src="yahoo/img/pickerbg.png" alt="" />
+      <div id="sepia_selector" class="color_selector" ><img src="yahoo/img/select.gif" /></div> 
+    </div>
+
+    <div id="sepia_hue" class="hue_bg" tabindex="-1" hidefocus="true">
+      <div id="sepia_thumb" class="hue_thumb"><img src="yahoo/img/hline.png" /></div> 
+    </div> 
+
+    <div class="color_value">
+        <form name="rgbform">
+        <br />
+        # <input autocomplete="off" name="sepia_hex" id="sepia_hex" type="text" value="0" size="6" maxlength="6" onchange="sepia_preview();"/>
+        <br />
+        </form>
+    </div>
+    <div id="sepia_swatch" class="color_swatch">&nbsp;</div>
+</div>
+
+    <label for="sepia">Sepia-Tone:</label><input type="radio" checked name="sepia" value="sepia" id="sepia" onclick="sepia_preview();" /><br/>
+    <label for="grayscale">Black & White:</label><input type="radio" name="sepia" value="grayscale" onclick="sepia_preview();" /><br/>
+      </form>
+      <div id="sepia_preview" class="pxn8_preview" style="width: 160px; height: 160px;"></div>
+	</div>
+</div>
+<script type="text/javascript">
+/**
+ * Setup dialog
+ */
+var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    var color = this.getData().sepia_hex;
+    var sepia = YAHOO.util.Dom.get("sepia").checked;
+    if (sepia){
+        PXN8.tools.sepia(color);
+    }else{
+        PXN8.tools.grayscale();
+    }
+    this.hide();
+};
+var sepia_dialog = new YAHOO.widget.Dialog("sepia_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+sepia_dialog.cfg.queueProperty("buttons", myButtons);
+sepia_dialog.render();
+sepia_dialog.hide();
+sepia_dialog.cfg.setProperty("modal", false);
+
+function sepia_preview(){
+    if (typeof sepiaPreviewer == 'undefined'){
+        return;
+    }
+    var sepia = YAHOO.util.Dom.get('sepia');
+    if (sepia.checked){
+        var color = YAHOO.util.Dom.get('sepia_hex').value;
+        PXN8.preview.show(sepiaPreviewer,{"operation":"sepia","color": color});
+    }else{
+        PXN8.preview.show(sepiaPreviewer,{"operation":"grayscale"});
+    }
+}
+function show_sepia_dialog(){
+    sepia_dialog.show();
+    sepiaPreviewer = PXN8.preview.initialize("sepia_preview");
+}
+    /**
+     * Setup color picker
+     */
+YAHOO.util.Event.addListener(window, "load", function(){
+    ColorPicker.init("sepia",sepia_preview);
+});
+
+                             
+</script>
+
+
+<!-- ======================================================================== --
+  --                                                                          --
+  -- The Colors dialog                                                        --
+  --                                                                          --
+  -- ======================================================================== -->
+<div id="colors_dialog" class="pxn8_dialog" >
+	<div class="hd">Color configuration</div>
+	<div class="bd">
+		<form name="dlgForm" method="POST"  action="">
+			<label for="brightness">Brightness:</label><input type="text" id="brightness" name="brightness" />
+         <div id="brightness_slide"  class="pxn8_200_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="brightness_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+			<label for="saturation">Saturation:</label><input type="text" id="saturation" name="saturation" />
+         <div id="saturation_slide"  class="pxn8_200_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="saturation_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+			<label for="hue">Hue:</label><input type="text" id="hue" name="hue" />
+         <div id="hue_slide"  class="pxn8_200_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="hue_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+			<label for="contrast">Contrast:</label><input type="text" id="contrast" name="contrast" />
+         <div id="contrast_slide"  class="pxn8_contrast_slide" tabindex="0" title="Horizontal Slider" >
+           <div id="contrast_thumb" class="pxn8_slide_thumb"><img alt="" src="yahoo/img/horizSlider.png" /></div> 
+         </div>
+         <div id="colors_preview"  class="pxn8_preview" style="width: 160px; height: 160px;"></div>
+      </form>
+	</div>
+</div>
+<script type="text/javascript">
+/**
+ * Setup dialog
+ */
+var handleCancel = function() {	this.cancel(); };
+var handleSubmit = function() {	
+    var brightness = this.getData().brightness;
+    var saturation = this.getData().saturation;
+    var hue = this.getData().hue;
+    var contrast = this.getData().contrast;
+    PXN8.tools.colors({"brightness": brightness, "saturation": saturation, "hue": hue, "contrast":contrast});
+    
+    this.hide();
+};
+var colors_dialog = new YAHOO.widget.Dialog("colors_dialog"); 
+
+var myButtons = [ { text:"Submit", handler:handleSubmit, isDefault:true },
+				  { text:"Cancel", handler:handleCancel } ];
+colors_dialog.cfg.queueProperty("buttons", myButtons);
+colors_dialog.render();
+colors_dialog.hide();
+colors_dialog.cfg.setProperty("modal", false);
+
+function colors_preview(){
+    var brightness = PXN8.dom.id("brightness").value;
+    var saturation = PXN8.dom.id("saturation").value;
+    var hue = PXN8.dom.id("hue").value;
+    var contrast = PXN8.dom.id("contrast").value;
+    
+    PXN8.preview.show(colorsPreviewer,{"operation":"colors","brightness": brightness,"saturation": saturation,"hue": hue,"contrast": contrast});
+    
+}
+function show_colors_dialog(){
+    colors_dialog.show();
+    colorsPreviewer = PXN8.preview.initialize("colors_preview");
+    /**
+     * Setup sliders
+     */
+    brightness_slider = init_200("brightness_slide","brightness_thumb",100,"brightness",colors_preview);
+    saturation_slider = init_200("saturation_slide","saturation_thumb",100,"saturation",colors_preview);
+    hue_slider = init_200("hue_slide","hue_thumb",100,"hue",colors_preview);
+    contrast_slider = init_contrast("contrast_slide","contrast_thumb",0,"contrast",colors_preview);
+}
+</script>
+
+
+<!--[if gte IE 5.5000]>
+<script type="text/javascript">
+
+// yuck.
+
+function correctPNG() // correctly handle PNG transparency in Win IE 5.5 or higher.
+   {
+   for(var i=0; i<document.images.length; i++)
+      {
+      var img = document.images[i]
+      var imgName = img.src.toUpperCase()
+      if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+         {
+         var imgID = (img.id) ? "id='" + img.id + "' " : ""
+         var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+         var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+         var imgStyle = "display:inline-block;" + img.style.cssText 
+         if (img.align == "left") imgStyle = "float:left;" + imgStyle
+         if (img.align == "right") imgStyle = "float:right;" + imgStyle
+         if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle       
+         var strNewHTML = "<span " + imgID + imgClass + imgTitle
+         + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+         + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+         + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
+         img.outerHTML = strNewHTML
+         i = i-1
+         }
+      }
+   }
+
+YAHOO.util.Event.addListener(window, "load", correctPNG);
+
+</script>
+<![endif]-->
+
+</body>
+</html>
+[%!include "posthtml.template";%]

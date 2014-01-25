@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+			 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+	 <title>Pixenate example code : Combining many operations in a single click.</title>
+
+	 <style type="text/css">
+* { font-family: Arial;}
+
+#pxn8_timer {
+  position: absolute; top: 0px; left: 0px;
+  padding: 6px 0px 6px 28px; font-family: Arial; 
+  background: white url(/pixenate/images/countdown.gif) 6px 2px no-repeat;
+  opacity: 0.7;
+  filter: "alpha(opacity: 70)";
+ } 
+	 </style>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+	 <script type="text/javascript">
+
+function prepareImage()
+{
+    // combine more than one image-editing operation into a single user operation.
+    PXN8.tools.startTransaction();
+
+    // [1] crop (user-selected area)
+    PXN8.tools.crop();          
+
+    // [2] resize
+    PXN8.tools.resize(480,720); 
+
+    // [3] convert to grayscale
+    PXN8.tools.grayscale();     
+
+    // [4] add a nice mask (soft edges - this can be changed by supplying a different mask image)
+    PXN8.tools.mask({filepath: "images/overlays/feathered_mask.jpg",background_color: "#ffffff"});
+
+    // complete transaction (commit changes)
+    PXN8.tools.endTransaction();
+
+    // turn off selection
+    PXN8.unselect();
+}		
+	 </script>
+  </head>
+  <body>
+	 <div>
+		<p>This example demonstrates how multiple image-editing
+		operations can be combined and applied with a single
+		click. When you click the <i>Crop & Prepare</i> button, the
+		image will be cropped, converted to gray-scale, resized and a
+		diffuse border added around the image. This functionality is
+		useful for photo-merchandising websites, allowing for
+		simplified workflows for turning user-supplied photos into
+		custom photo products - T-Shirts, Laser etchings, etc.</p>
+		<p>Please select the area of the photo you would like to use.</p>
+		<button onclick="prepareImage()">Crop & Prepare Image</button>
+		<button onclick="PXN8.tools.undo()">Undo</button>
+		<button onclick="PXN8.tools.redo()">Redo</button>
+	 </div>
+	 <div id="pxn8_canvas" />
+	 <script type="text/javascript">
+		PXN8.initialize("dog.jpg");
+      // image is big - zoom to fit in a browser window
+		PXN8.zoom.shrinkToWidth(800);
+		PXN8.selectByRatio("4x6",true);
+	 </script>
+  </body>
+</html>

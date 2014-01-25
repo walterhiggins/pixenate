@@ -1,0 +1,38 @@
+<html>
+  <head>
+	 <style type="text/css">
+* { font-family: Arial;}
+#pxn8_canvas { background: url(/pixenate/images/checkerboard.png); }
+input { border-width: 1px; width: 400px;}	 
+	 </style>
+	 <script type="text/javascript" src="../javascript/pxn8_all.js"></script>
+	 </head>
+  <body>
+
+	 <button onclick="PXN8.tools.rotate();">Rotate</button>
+
+	 <p>
+	 <label for="url">Enter an Image URL: </label><input type="text" name="url" id="url" onchange="PXN8.initialize(this.value);"/>
+	 </p>
+
+	 <p>Click on any part of the image and the color at that point will become transparent.</p>
+
+	 <div id="pxn8_canvas">
+	 </div>
+	 <script type="text/javascript">
+
+		PXN8.replaceOnSave = false;
+		PXN8.initialize("dress.jpg");
+		PXN8.select.enable(false,true);
+		PXN8.event.addListener("pxn8_canvas","click",function(event){
+
+		    var x = event.x || event.layerX;
+		    var y = event.y || event.layerY;
+		    PXN8.tools.transparent({ x: x, y: y, reduce: 'true'});
+   //       PXN8.tools.updateImage([{operation: "transparent", x: x, y: y, __extension: ".png"}]);
+      });
+	 </script>
+
+
+  </body>
+</html>

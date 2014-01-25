@@ -1,0 +1,76 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+* {font-family: Arial;} 
+li { float: left; list-style: none; margin: 8px;}
+div.box { border: 1px solid #ccc; overflow: auto; float: right;}
+img { background: url(checkerboard.gif) top left ;}
+ul { margin: 0px;padding: 0px; }
+span.wrong { color: red; font-weight: bold; font-size: 150%;}
+
+</style>
+</head>
+<body>
+<h1>Using PXN8.tools.overlay() to add Borders to Photos</h1>
+
+<div id="pxn8_canvas"></div>
+
+<div class="box">
+	<ul>
+	  <li><img src="border1.jpg"/></li>
+	  <li>+</li>
+	  <li><img src="pigeon200x150.jpg"/></li>
+	  <li><button onclick="add_border_1();return false;">Overlay !</button></li>
+	</ul>
+	<br style="clear: both;"/>
+	<p>PXN8.tools.overlay({filepath: "docs/border1.jpg", <b>position: "back"</b>, left: 50, top: 37});</p>
+</div>
+
+<div class="box">
+	<ul>
+	  <li><img src="border2.png"/></li>
+	  <li>+</li>
+	  <li><img src="pigeon200x150.jpg"/></li>
+	  <li><button onclick="add_border_2();return false;">Overlay !</button></li>
+	</ul>
+	<br style="clear: both;"/>
+	<p><span class="wrong">X</span> PXN8.tools.overlay({filepath: "docs/border2.png", position: "front", left: 50, top: 37});</p>
+</div>
+
+<div class="box">
+	<ul>
+	  <li><img src="border2.png"/></li>
+	  <li>+</li>
+	  <li><img src="pigeon200x150.jpg"/></li>
+	  <li><button onclick="add_border_3();return false;">Overlay !</button></li>
+	</ul>
+	<br style="clear: both;"/>
+	<p>PXN8.tools.overlay({filepath: "docs/border2.png", position:	"front", left: 50, top: 37, <b>extend: true</b>});</p>
+</div>
+
+
+<script type="text/javascript">
+function add_border_1(){
+   PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+	PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+	   PXN8.tools.overlay({filepath: "docs/border1.jpg", position: "back", left: 50, top: 37});
+   });
+}
+function add_border_2(){
+   PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+	PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+	   PXN8.tools.overlay({filepath: "docs/border2.png", position: "front", left: 50, top: 37});
+   });
+}
+function add_border_3(){
+   PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+	PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+	   PXN8.tools.overlay({filepath: "docs/border2.png", position: "front", left: 50, top: 37, extend: true});
+   });
+}
+
+
+</script>
+</body>
+</html>

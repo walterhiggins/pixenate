@@ -1,0 +1,48 @@
+@import url(../../styles/pxn8_tooltips.css); /* tooltip elements */
+@import url(../../styles/pxn8_fields.css);   /* tool fields  */
+@import url(../../styles/pxn8_core.css);   /* core PXN8 elements  */
+
+* { 
+    font-family: Arial, courier;
+    font-size: 12px;
+}
+
+#toolArea
+{
+    position: absolute; 
+    top: 18px; 
+    left: 12px; 
+    width: 170px;
+}
+
+table.infotable td {
+	padding-right: 12px;
+}
+
+.infolabel{
+	font-weight: bold;
+}
+
+#canvas_container 
+{
+    position:absolute; 
+    top: 12px; 
+    left:200px;
+    
+}
+#uploadArea {
+   padding: 6px;
+	padding-top: 0px;
+   position: absolute; 
+   top: 5px;
+   left: 5px; 
+   background-color: white;
+}
+
+fieldset { border: 1px solid #cccccc;}
+legend { padding: 0px 8px 0px 8px; }
+button { border-width: 1px; padding: 2px; margin: 2px;
+	      background: #e0e0e0 url(../shared/images/gradient-silver.gif);
+}
+#edits button { padding: 1px; margin: 1px;}
+

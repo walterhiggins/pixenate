@@ -1,0 +1,33 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+ li { float: left; list-style: none; margin: 8px; font-size: 300%;}
+ p { font-family: Tahoma; font-size: 150%;}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><img src="border1.jpg"/></li>
+  <li>+</li>
+  <li><img src="pigeon200x150.jpg"/></li>
+  <li>=</li>
+  <li><div id="pxn8_canvas"></div></li>
+  <li><button onclick="add_border();return false;">Overlay !</button></li>
+</ul>
+<br style="clear: both;"/>
+<p>PXN8.tools.overlay({image: "docs/border1.jpg", position: "back", left: 50, top: 37});</p>
+
+<script type="text/javascript">
+function add_border(){
+   PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+	PXN8.listener.onceOnly(PXN8.ON_IMAGE_LOAD,function(){
+	   PXN8.tools.overlay({image: "docs/border1.jpg", position: "back", left: 50, top: 37});
+   });
+}
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+div.pxn8_color_container a
+{
+   width: 11px;
+   height: 11px;
+   display: block;
+   border: none;
+}
+div.pxn8_color_well {
+   width: 40px;
+   height: 40px;
+   float: left;
+   margin-right: 8px;
+}
+div.pxn8_color_picker 
+{
+   padding: 8px;
+}
+
+div.pxn8_color_picker input 
+{
+   border: 1px solid #ccc;
+   text-transform: uppercase;
+}
+div.pxn8_color_picker button 
+{
+   display: block;
+}

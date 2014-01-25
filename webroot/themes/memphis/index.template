@@ -1,0 +1,21 @@
+[%!include "prehtml.template";%]
+<html>
+<head>
+<title>Memphis Photo Editor (Powered by Pixenate)</title>
+<link media="screen" title="Default Style" rel="stylesheet" href="memphis.css" type="text/css"/>
+[%if ($pg->{target} eq "hosted") { %]
+  <script language="JavaScript" type="text/javascript" src="http://pixenate.com/h/js"></script>
+[%}else{%]
+  <script language="JavaScript" type="text/javascript" src="../../javascript/pxn8_all.js"></script>
+  <script language="JavaScript" type="text/javascript" src="../../javascript/pxn8_strings_en.js"></script>
+[%}%]
+
+<script language="JavaScript" type="text/javascript" src="./memphis.js"></script>
+
+</head>
+<body bgcolor="white">
+[%!include "body_inc.template";%]
+[%!include "memphis.template";%]
+</body>
+</html>
+[%!include "posthtml.template";%]

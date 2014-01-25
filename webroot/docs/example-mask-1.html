@@ -1,0 +1,43 @@
+<html>
+  <head>
+	 <style type="text/css">
+		* { font-family: Arial;}
+	 </style>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+	 <script type="text/javascript" src="/pixenate/javascript/pxn8_strings_en.js"></script>
+	 <script type="text/javascript">
+		function apply_mask(image){
+		   PXN8.tools.undoall();
+		   PXN8.tools.mask({filepath: image, background_color: "#ffffff"});
+		}
+	 </script>	
+  </head>
+  <body>
+	 <table>
+		<tr>
+		  <td><div id="pxn8_canvas" style="float: none;"></div></td>
+		</tr>
+	 </table>
+	 <script type="text/javascript">
+		PXN8.initialize("/pixenate/images/samples/venetian_canal.jpg");
+	 </script>
+	 <table>
+		<tr>
+		  <td><img src="/pixenate/images/overlays/jagged_border_mask.jpg"/></td>
+		  <td><img src="/pixenate/images/overlays/heart_mask.jpg"  width="200" height="200"/></td>
+		  <td><img src="/pixenate/images/overlays/feathered_mask.jpg"  width="200" height="200"/></td>
+		</tr>
+		<tr>
+		  <td>
+			 <button onclick="apply_mask('images/overlays/jagged_border_mask.jpg')">Apply</button>
+		  </td>
+		  <td>
+			 <button onclick="apply_mask('images/overlays/heart_mask.jpg')">Apply</button>
+		  </td>
+		  <td>
+			 <button onclick="apply_mask('images/overlays/feathered_mask.jpg')">Apply</button>
+		  </td>
+		</tr>
+	 </table>
+  </body>
+</html>

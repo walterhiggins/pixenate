@@ -1,0 +1,45 @@
+<html>
+<head>
+<script type="text/javascript" src="/pixenate/javascript/pxn8_all.js"></script>
+<style type="text/css">
+ li { float: left; list-style: none; margin: 8px; font-size: 300%;}
+ p { font-family: Tahoma; font-size: 150%;}
+</style>
+</head>
+<body>
+<div id="pxn8_canvas"></div>
+
+<br style="clear:both;"/>
+
+<button onclick="run();return false;">Add Border</button>
+
+<script type="text/javascript">
+PXN8.initialize("/pixenate/docs/pigeon200x150.jpg");
+
+function run()
+{
+
+    //
+    // start an editing session using PXN8.ImageMagick
+    //
+    var image = PXN8.ImageMagick.start();
+
+    var sz = PXN8.getImageSize();
+    var longest = Math.max(sz.width, sz.height);
+    var x = (longest - sz.width) / 2;
+    var y = (longest - sz.height) / 2;
+    
+    var bg = new PXN8.ImageMagick();
+    bg.Set({size: longest + "x" + longest});
+    bg.Read("xc:#808080");
+    
+    bg.Composite({"image": image, "compose": "Overlay", "x": x, "y": y});
+    
+    PXN8.ImageMagick.end(bg);
+        
+}
+
+
+</script>
+</body>
+</html>
